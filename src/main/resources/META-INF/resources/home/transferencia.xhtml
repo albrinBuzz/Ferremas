@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition lang="es"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/main.xhtml">
+
+    <ui:define name="contenido">
+        <h:form enctype="multipart/form-data">
+            <p:panel header="Formulario de Transferencia Bancaria" style="max-width:600px; margin:auto;">
+
+                <p:messages id="msgs" showDetail="true" closable="true" />
+
+                <h:panelGrid columns="2" cellpadding="5" style="width:100%">
+
+                    <h:outputLabel for="monto" value="Monto transferido (CLP):" />
+                    <p:inputNumber id="monto" value="#{transferenciaBean.transferencia.monto}" required="true"
+                                   decimalPlaces="0" thousandSeparator="." />
+
+                    <h:outputLabel for="fecha" value="Fecha de transferencia:" />
+                    <p:calendar id="fecha" value="#{transferenciaBean.transferencia.fecha}" pattern="dd/MM/yyyy"
+                                showIcon="true" required="true" />
+
+                    <h:outputLabel for="comentario" value="Comentario adicional:" />
+                    <p:inputTextarea id="comentario" value="#{transferenciaBean.transferencia.comentario}"
+                                     rows="3" autoResize="true" maxlength="255" counter="charCount" />
+
+                    <f:facet name="footer">
+                        <h:outputText id="charCount" />
+                    </f:facet>
+
+                    <h:outputLabel for="comprobante" value="Comprobante de transferencia (PDF/JPG/PNG):" />
+                    <p:fileUpload id="comprobante" mode="simple" skinSimple="true"
+                                  value="#{transferenciaBean.file}"
+                                  allowTypes="/(\.|\/)(pdf|jpg|jpeg|png)$/"
+                                  label="Subir archivo" required="true" />
+
+                </h:panelGrid>
+
+                <p:commandButton value="Enviar Transferencia" action="#{transferenciaBean.guardarTransferencia}"
+                                 icon="pi pi-save" update="msgs" styleClass="p-mt-3" />
+
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

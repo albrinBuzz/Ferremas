@@ -1,0 +1,92 @@
+<ui:composition lang="es"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fs="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/main.xhtml">
+
+    <h:head>
+        <title>Registro de Cliente</title>
+    </h:head>
+
+    <ui:define name="contenido">
+        <div class="card">
+            <h:form id="formRegistroCliente">
+                <p:growl id="msgs" showDetail="true" life="5000" />
+
+                <h1 style="text-align:center; color:#007ad9; margin-bottom: 2rem;">
+                    <i class="pi pi-user-plus" style="margin-right: 10px;"></i>
+                    Registro de Nuevo Cliente
+                </h1>
+
+                <div class="ui-fluid formgrid grid">
+
+                    <!-- Columna izquierda -->
+                    <div class="col-12 md:col-6">
+                        <div class="field">
+                            <p:outputLabel for="rut" value="RUT" />
+                            <p:inputText id="rut" value="#{userBean.usuarioRegistro.rutUsuario}" required="true"
+                                         requiredMessage="El RUT es obligatorio" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="correo" value="Correo Electrónico" />
+                            <p:inputText id="correo" value="#{userBean.usuarioRegistro.correo}" required="true"
+                                         requiredMessage="El correo es obligatorio">
+                            <!--  <f:validateRegex pattern="^[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,4}$" /> -->
+                          </p:inputText>
+                      </div>
+
+                      <div class="field">
+                          <p:outputLabel for="contrasena" value="Contraseña" />
+                          <p:password id="contrasena" value="#{userBean.contrasenaInput}" required="true"
+                                      feedback="true" toggleMask="true" promptLabel="Ingrese una contraseña segura"
+                                      weakLabel="Débil" goodLabel="Buena" strongLabel="Fuerte" />
+                      </div>
+                  </div>
+
+                  <!-- Columna derecha -->
+                    <div class="col-12 md:col-6">
+                        <div class="field">
+                            <p:outputLabel for="nombreUsuario" value="Nombre de Usuario" />
+                            <p:inputText id="nombreUsuario" value="#{userBean.usuarioRegistro.nombreusuario}" required="true" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="nombre" value="Nombre del Cliente" />
+                            <p:inputText id="nombre" value="#{userBean.cliente.nombre}" required="true" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="telefono" value="Teléfono" />
+                            <p:inputText id="telefono" value="#{userBean.cliente.telefono}" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="direccion" value="Dirección" />
+                            <p:inputTextarea id="direccion" value="#{userBean.cliente.direccion}" rows="3" autoResize="true" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="flex justify-content-center mt-4">
+                    <p:commandButton value="Guardar Cliente"
+                                     icon="pi pi-save"
+                                     actionListener="#{userBean.guardarCliente}"
+                                     update="@form"
+                                     styleClass="ui-button-success"
+                                     style="margin-right:1rem;" />
+
+                    <p:commandButton value="Limpiar"
+                                     icon="pi pi-refresh"
+                                     actionListener="#{clienteBean.limpiarFormulario}"
+                                     update="@form"
+                                     styleClass="ui-button-secondary"
+                                     type="reset" />
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

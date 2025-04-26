@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition lang="es"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fs="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/main.xhtml">
+
+    <h:head>
+        <title>Ferremas - Ferretería Online</title>
+    </h:head>
+
+    <ui:define name="contenido">
+        <!-- Sección de Banner Promocional -->
+        <div class="container-fluid bg-light py-5 text-center">
+            <h1 class="display-4 text-primary">Bienvenido a Ferremas</h1>
+            <p class="lead">Tu tienda online de confianza para todos los productos de ferretería.</p>
+            <p>
+                <a href="/home/tienda.xhtml" class="btn btn-primary btn-lg">Explora nuestros productos</a>
+            </p>
+        </div>
+
+
+        <div class="card">
+            <p:carousel value="#{tiendaBean.productos}" var="product" circular="true" autoplayInterval="3000"
+                        responsiveOptions="#{carouselView.responsiveOptions}" numVisible="3" numScroll="1">
+
+                <div class="product-item">
+                    <div class="product-item-content">
+                        <div class="mb-3">
+                            <p:graphicImage url="/resources/images/product/#{product.imagen}"
+                                            alt="#{product.nombre}" style="width:100%; height:200px; object-fit:contain;" />
+                        </div>
+                        <div>
+                            <h4 class="mb-1">#{product.nombre}</h4>
+                            <h6 class="mt-0 mb-3">
+                                <h:outputText value="#{product.precio}">
+                                    <f:convertNumber type="currency" pattern="¤#0" currencySymbol="$" />
+                                </h:outputText>
+                            </h6>
+                            <div class="mt-5">
+                                <p:linkButton outcome="/home/detalle.xhtml" value="Ver Detalle"
+                                              icon="pi pi-search" styleClass="btn btn-outline-primary">
+                                    <f:param name="productId" value="#{product.idProducto}" />
+                                </p:linkButton>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </p:carousel>
+        </div>
+
+
+        <!-- Sección de Testimonios -->
+        <div class="container py-5" id="testimonios">
+            <h2 class="text-center text-primary mb-4">Lo que nuestros clientes dicen</h2>
+            <div class="row">
+                <!-- Testimonio 1 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card border-light">
+                        <div class="card-body">
+                            <p class="card-text">"Excelente servicio y productos de alta calidad. ¡Muy recomendados!"</p>
+                            <footer class="blockquote-footer">Carlos López, <cite title="Source Title">Cliente</cite></footer>
+                        </div>
+                    </div>
+                </div>
+                <!-- Testimonio 2 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card border-light">
+                        <div class="card-body">
+                            <p class="card-text">"Me encantó la experiencia de compra en línea, ¡muy fácil y rápido!"</p>
+                            <footer class="blockquote-footer">Ana Martínez, <cite title="Source Title">Cliente</cite></footer>
+                        </div>
+                    </div>
+                </div>
+                <!-- Testimonio 3 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card border-light">
+                        <div class="card-body">
+                            <p class="card-text">"Gran variedad de productos, siempre encuentro lo que necesito."</p>
+                            <footer class="blockquote-footer">Juan Pérez, <cite title="Source Title">Cliente</cite></footer>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de "Sobre Nosotros" -->
+        <div class="container py-5 bg-light" id="nosotros">
+            <h2 class="text-center text-primary mb-4">Sobre Nosotros</h2>
+            <p class="text-center">En Ferremas, nos dedicamos a ofrecer los mejores productos de ferretería al mejor precio. Con más de 10 años de experiencia, nos hemos consolidado como una tienda online de confianza para todos los aficionados y profesionales de la construcción y reparación.</p>
+            <p class="text-center">Visítanos y descubre todo lo que tenemos para ti.</p>
+        </div>
+
+        <!-- Sección de Carrito -->
+        <div class="container py-5">
+            <h2 class="text-center text-primary mb-4">Tu Carrito de Compras</h2>
+            <p class="text-center">
+                <a href="/carrito.xhtml" class="btn btn-success">Ver mi carrito</a>
+            </p>
+        </div>
+
+    </ui:define>
+
+</ui:composition>

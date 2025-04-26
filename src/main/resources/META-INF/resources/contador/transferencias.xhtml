@@ -1,0 +1,247 @@
+<ui:composition lang="es"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fs="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/main.xhtml">
+    <h:head>
+        <title>Gestión de Pedidos</title>
+
+        <style>
+
+            .estado-pendiente {
+    background-color: #ffcccc !important;  /* Rojo claro */
+}
+
+.estado-en-proceso {
+    background-color: #ffff99 !important;  /* Amarillo claro */
+}
+
+.estado-completado {
+    background-color: #99ff99 !important;  /* Verde claro */
+}
+
+
+        </style>
+    </h:head>
+
+    <ui:define name="contenido">
+        <h:form id="formPedidos">
+            <p:messages autoUpdate="true" closable="true" />
+
+            <h1>Transferencias de los Pedidos de la Sucursal #{pedidoBean.sucursal.nombre}</h1>
+
+
+
+            <p:dataTable id="tablaPedidos" value="#{transferenciasBean.pedidos}" var="pedido" sortMode="multiple"
+                         paginator="true" rows="10" emptyMessage="No hay pedidos para mostrar" responsiveLayout="scroll"
+                         filteredValue="#{pedidoBean.filteredPedidos}" widgetVar="pedidoTable" rowKey="#{pedido.idPedido}"
+                         resizableColumns="true" sortable="true" rowStyleClass="#{pedidoBean.obtenerEstiloFila(pedido)}">
+                <!-- Filtro Global -->
+                <f:facet name="header">
+                    <p:outputPanel>
+                        <h:outputText value="Buscar: " />
+                        <p:inputText id="globalFilter" onkeyup="PF('pedidoTable').filter()"
+                                     style="width:150px" placeholder="Filtrar..." />
+                    </p:outputPanel>
+                </f:facet>
+
+                <p:column style="width:2rem" ariaHeaderText="Row Toggler">
+                    <p:rowToggler/>
+                </p:column>
+
+                <!-- Columnas -->
+                <p:column headerText="ID Pedido" filterBy="#{pedido.idPedido}">
+                    <h:outputText value="#{pedido.idPedido}" />
+                </p:column>
+                <p:column headerText="Fecha" filterBy="#{pedido.fecha}" >
+                    <h:outputText value="#{pedido.fecha}" pattern="dd/MM/yyyy HH:mm"/>
+                </p:column>
+
+                <p:column headerText="Estado" filterBy="#{pedido.estadopedido.nombre}" filterMatchMode="exact"
+                          sortBy="#{pedido.estadopedido.nombre}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('pedidoTable').filter()" styleClass="ui-custom-filter">
+                            <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{transferenciasBean.estados}"
+                                           var="estado"
+                                           itemLabel="#{estado.nombre}"
+                                           itemValue="#{estado.nombre}" />
+                        </p:selectOneMenu>
+                    </f:facet>
+
+
+                    <h:outputText value="#{pedido.estadopedido.nombre}" />
+
+                </p:column>
+
+                <p:column headerText="Cliente" filterBy="#{pedido.rutcliente}">
+                    <h:outputText value="#{pedido.rutcliente}" />
+                </p:column>
+                <p:column headerText="Total" filterBy="#{pedido.total}" >
+                    <h:outputText value="#{pedido.total}" />
+                </p:column>
+                <p:column headerText="Sucursal" filterBy="#{pedido.sucursal.nombre}">
+                    <h:outputText value="#{pedido.sucursal.nombre}" />
+                </p:column>
+
+                <!-- Acciones -->
+                <p:column headerText="EditarEstado">
+                    <p:commandButton icon="pi pi-pencil" title="Editar Estado"
+                                     action="#{transferenciasBean.editarEstado(pedido)}"
+                                     process="@this"
+                                     update=":formPedidos:dlgEstado"
+                                     oncomplete="PF('dlgEstado').show()" />
+                </p:column>
+
+                <!-- Tabla anidada: Transferencias asociadas -->
+                <p:rowExpansion>
+                    <p:dataTable value="#{pedido.transferencias}" var="trn"
+                                 style="margin:0; font-size:0.85em;"
+                                 rendered="#{not empty pedido.transferencias}">
+
+                        <p:column headerText="ID">
+                            <h:outputText value="#{trn.idtransferencia}" />
+                        </p:column>
+
+                        <p:column headerText="Monto">
+                            <h:outputText value="#{trn.monto}" />
+                        </p:column>
+
+                        <p:column headerText="Fecha">
+                            <h:outputText value="#{trn.fecha}">
+                                <f:convertDateTime pattern="dd-MM-yyyy" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Estado">
+                            <h:outputText value="#{trn.estadotransferencia.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Comentario">
+                            <h:outputText value="#{trn.comentario}" />
+                        </p:column>
+
+                        <p:column headerText="Comprobante">
+                            <h:outputText value="#{trn.comprobante}" />
+                            <p:commandButton icon="pi pi-eye" title="Ver Comprobante"
+                                             actionListener="#{transferenciasBean.verComprobante(trn)}"
+                                             update=":comprobanteDialog"
+                                             oncomplete="PF('comprobanteDialogWidget').show()" />
+                        </p:column>
+
+                        <p:column headerText="EditarEstado">
+                            <p:commandButton icon="pi pi-pencil" title="Editar Estado"
+                                             action="#{transferenciasBean.editarEstadoTransa(trn)}"
+                                             process="@this"
+                                             update=":formPedidos:dlgEstadoTransa"
+                                             oncomplete="PF('dlgEstadoTransa').show()" />
+                        </p:column>
+
+                    </p:dataTable>
+                </p:rowExpansion>
+
+            </p:dataTable>
+
+
+            <!-- Dialogo de Edición de Estado -->
+            <p:dialog header="Editar Estado del Pedido" widgetVar="dlgEstado"
+                      modal="true" showEffect="fade" hideEffect="fade" id="dlgEstado">
+
+                <h:panelGrid columns="2">
+
+                    <p:outputLabel value="ID Pedido:" />
+                    <h:outputText value="#{transferenciasBean.pedidoSeleccionado.idPedido}" />
+
+                    <p:outputLabel value="Estado Actual:" />
+                    <h:outputText value="#{transferenciasBean.pedidoSeleccionado.estadopedido.nombre}" />
+
+                    <p:outputLabel for="nuevoEstado" value="Nuevo Estado:" />
+
+                    <p:selectOneMenu id="nuevoEstado"
+                                     value="#{transferenciasBean.estadoSeleccionadoID}"
+                                     styleClass="ui-fluid">
+                        <f:selectItems value="#{transferenciasBean.estados}"
+                                       var="estado"
+                                       itemLabel="#{estado.nombre}"
+                                       itemValue="#{estado.idEstadopedido}" />
+                    </p:selectOneMenu>
+
+                </h:panelGrid>
+
+                <p:commandButton value="Guardar" icon="pi pi-check"
+                                 action="#{transferenciasBean.guardarEstadoEstadoPedio}"
+                                 process="@form"
+                                 update=":formPedidos:dlgEstado :formPedidos"
+                                 oncomplete="PF('dlgEstado').hide()" />
+
+                <p:commandButton value="Cancelar" icon="pi pi-times"
+                                 onclick="PF('dlgEstado').hide()" type="button" />
+            </p:dialog>
+
+
+            <!-- Dialogo de Edición de Transferencia -->
+            <p:dialog header="Editar Estado de la Transfrencia" widgetVar="dlgEstadoTransa"
+                      modal="true" showEffect="fade" hideEffect="fade" id="dlgEstadoTransa">
+
+                <h:panelGrid columns="2">
+
+                    <p:outputLabel value="ID Transferencia:" />
+                    <h:outputText value="#{transferenciasBean.transferenciaSeleccionada.idtransferencia}" />
+
+                    <p:outputLabel value="Estado Actual:" />
+                    <h:outputText value="#{transferenciasBean.transferenciaSeleccionada.estadotransferencia.nombre}" />
+
+                    <p:outputLabel for="nuevoEstado" value="Nuevo Estado:" />
+
+                    <p:selectOneMenu id="nuevoEstadoTransa"
+                                     value="#{transferenciasBean.estadoTransaID}"
+                                     styleClass="ui-fluid">
+                        <f:selectItems value="#{transferenciasBean.estadosTransa}"
+                                       var="estadoTransa"
+                                       itemLabel="#{estadoTransa.nombre}"
+                                       itemValue="#{estadoTransa.idestadotrnsf}" />
+                    </p:selectOneMenu>
+
+                </h:panelGrid>
+
+                <p:commandButton value="Guardar" icon="pi pi-check"
+                                 action="#{transferenciasBean.guardarEstadoEstadoTransa}"
+                                 process="@form"
+                                 update=":formPedidos:dlgEstadoTransa :formPedidos"
+                                 oncomplete="PF('dlgEstadoTransa').hide()" />
+
+                <p:commandButton value="Cancelar" icon="pi pi-times"
+                                 onclick="PF('dlgEstadoTransa').hide()" type="button" />
+            </p:dialog>
+
+
+
+        </h:form>
+
+
+        <p:dialog id="comprobanteDialog"
+                  widgetVar="comprobanteDialogWidget"
+                  modal="true"
+                  header="Comprobante"
+                  closable="true"
+                  maximizable="true"
+                  resizable="true"
+                  draggable="true"
+                  width="500"
+                  height="auto">
+
+            <h:panelGroup rendered="#{not empty transferenciasBean.transferenciaSeleccionada}">
+                <p:graphicImage url="/resources/images/transa/#{transferenciasBean.transferenciaSeleccionada.comprobante}"
+                                style="max-width: 100%; max-height: 80vh; object-fit: contain;"
+                                alt="Comprobante" />
+            </h:panelGroup>
+
+        </p:dialog>
+
+
+
+
+    </ui:define>
+</ui:composition>

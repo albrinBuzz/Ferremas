@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html lang="es"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:sec="https://joinfaces.org/security"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+    <meta charset="utf-8" />
+    <title>Ferremas - Ferretería Online</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta content="ferretería, herramientas, compra online, eCommerce" name="keywords"/>
+    <meta content="Venta de herramientas, equipos de construcción y ferretería online." name="description"/>
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet"/>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"/>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
+    <style type="text/css">
+        /* Estilos para un diseño de ferretería */
+        .header {
+            background-color: #34495e; /* Gris azulado oscuro */
+            color: #fff;
+            padding: 15px 0;
+        }
+        .header .navbar {
+            padding: 15px;
+        }
+        .header .navbar-brand {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: #f39c12;
+        }
+        .header .navbar-nav .nav-link {
+            color: #ecf0f1;
+            font-weight: 500;
+        }
+        .header .navbar-nav .nav-link:hover {
+            color: #f39c12;
+        }
+        .header .navbar-toggler-icon {
+            background-color: #f39c12;
+        }
+        .header .search-bar {
+            width: 100%;
+            max-width: 300px;
+        }
+        .header .btn-cart {
+            position: relative;
+            padding: 8px 12px;
+            color: #fff;
+            background-color: #e67e22;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header .btn-cart:hover {
+            background-color: #d35400;
+        }
+        .header .btn-cart .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #e74c3c;
+        }
+        .footer {
+            background-color: #222;
+            padding-top: 50px;
+            color: #bdc3c7;
+        }
+        .footer a:hover {
+            color: #f39c12;
+        }
+    </style>
+</h:head>
+
+<body>
+
+<!-- Header: Barra de navegación -->
+<div class="container-fluid sticky-top header">
+    <div class="row align-items-center">
+        <!-- Logo de la tienda -->
+        <div class="col-6 col-lg-4 d-flex align-items-center">
+            <a href="/" class="navbar-brand text-decoration-none">
+                <i class="fas fa-hammer me-2"></i>Ferremas
+            </a>
+        </div>
+
+        <!-- Barra de navegación -->
+        <div class="col-12 col-lg-4 text-center">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+                        <li class="nav-item"><a href="/home/tienda.xhtml" class="nav-link">Tienda</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Acciones de usuario y carrito -->
+        <div class="col-6 col-lg-4 text-end">
+            <div class="d-flex align-items-center justify-content-end gap-3">
+                <!-- Barra de búsqueda
+                <input type="text" class="form-control search-bar" placeholder="Buscar productos..." />
+-->
+                <!-- Carrito -->
+                <a href="/home/carrito.xhtml" class="btn-cart position-relative">
+                    <i class="fas fa-shopping-cart fa-lg"></i>
+                    <span class="badge rounded-pill bg-danger">
+                        #{carroBean.itemCount} <!-- Este número debe indicar la cantidad de productos en el carrito -->
+                    </span>
+                </a>
+
+
+                <!-- Enlace para Estado de Pedido
+                <a href="/home/estado-pedido.xhtml" class="btn btn-light">
+                    <i class="fas fa-box-open me-2"></i>Estado de mi Pedido
+                </a>-->
+
+
+                <!-- Acciones de usuario: Login y perfil -->
+                <h:panelGroup rendered="#{!userBean.loggedIn}">
+                    <div class="dropdown">
+                        <a href="#" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-sign-in-alt me-2"></i> Ingresar
+                        </a>
+                        <div class="dropdown-menu p-4 rounded shadow-lg" style="min-width: 320px;">
+                            <!-- Formulario de login -->
+                            <h:form id="loginForm">
+                                <h:panelGroup>
+                                    <!-- Título del formulario -->
+                                    <div class="mb-4 text-center">
+                                        <h4 class="fw-bold text-primary">Iniciar sesión</h4>
+                                    </div>
+
+                                    <!-- Campo Usuario -->
+                                    <div class="mb-3 position-relative">
+                                        <h:outputLabel for="username" value="Usuario:" class="form-label" />
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-user"></i>
+                                            </span>
+                                            <h:inputText id="username" value="#{loginBean.username}" required="true"
+                                                         class="form-control" placeholder="Introduce tu usuario"
+                                                         maxlength="50" />
+                                        </div>
+                                        <h:message for="username" styleClass="invalid-feedback d-block" />
+                                    </div>
+
+                                    <!-- Campo Contraseña -->
+                                    <div class="mb-3 position-relative">
+                                        <h:outputLabel for="password" value="Contraseña:" class="form-label" />
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-lock"></i>
+                                            </span>
+                                            <p:password id="password" value="#{loginBean.password}" toggleMask="true"
+                                                        class="form-control" placeholder="Introduce tu contraseña" required="true" />
+                                        </div>
+                                        <h:message for="password" styleClass="invalid-feedback d-block" />
+                                    </div>
+
+                                    <!-- Mensajes de error -->
+                                    <h:messages id="loginMessages" styleClass="alert alert-danger mb-3" />
+
+                                    <!-- Botón de iniciar sesión -->
+                                    <div class="d-grid gap-2">
+                                        <h:commandButton value="Iniciar sesión" action="#{loginBean.login}"
+                                                         class="btn btn-primary btn-lg w-100" />
+                                    </div>
+
+                                    <!-- Enlace para recuperar la contraseña -->
+                                    <div class="text-center mt-3">
+                                        <a href="#" class="text-muted">¿Olvidaste tu contraseña?</a>
+                                    </div>
+
+                                    <!-- Enlace para registro -->
+                                    <div class="text-center mt-3">
+                                        <p:link href="/home/registro.xhtml" class="dropdown-item d-flex align-items-center">
+                                            ¿No tienes cuenta? Regístrate aquí
+                                        </p:link>
+                                    </div>
+                                </h:panelGroup>
+                            </h:form>
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <!-- Si el usuario está logueado -->
+                <h:panelGroup rendered="#{userBean.loggedIn}">
+                    <div class="dropdown">
+                        <a href="#" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-2"></i>
+                            <span>#{userBean.name}</span>
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-end shadow">
+                            <a class="dropdown-item" href="/perfil/index.xhtml">Mi Perfil</a>
+                            <!-- Solo para clientes -->
+                            <h:panelGroup rendered="#{userBean.hasRole('ROLE_CLIENTE')}">
+                                <a class="dropdown-item" href="/cliente/compras.xhtml">Mis Compras</a>
+                            </h:panelGroup>
+
+                            <!-- Vendedor -->
+                            <h:panelGroup rendered="#{userBean.hasRole('ROLE_VENDEDOR')}">
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/vendedor/pedidos.xhtml">Gestión de Pedidos</a>
+                                <a class="dropdown-item" href="/vendedor/index.xhtml">Facturación</a>
+                            </h:panelGroup>
+
+                            <!-- Bodeguero -->
+                            <h:panelGroup rendered="#{userBean.hasRole('ROLE_BODEGUERO')}">
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/bodega/productos.xhtml">Gestión de Inventario</a>
+                                <a class="dropdown-item" href="/bodega/pedidos.xhtml">Gestión de Pedidos</a>
+                                <a class="dropdown-item" href="/bodega/index.xhtml">Preparación de Despachos</a>
+                            </h:panelGroup>
+
+                            <!-- Contador -->
+                            <h:panelGroup rendered="#{userBean.hasRole('ROLE_CONTADOR')}">
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/contador/index.xhtml">Panel Contable</a>
+                                <a class="dropdown-item" href="/contador/index.xhtml">Pagos y Transacciones</a>
+                                <a class="dropdown-item" href="/contador/transferencias.xhtml">Pagos y Transacciones</a>
+                            </h:panelGroup>
+
+                            <!-- Administrador -->
+                            <h:panelGroup rendered="#{userBean.hasRole('ROLE_ADMINISTRADOR')}">
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/admin/usuarios.xhtml">Gestión de Usuarios</a>
+                                <a class="dropdown-item" href="/admin/producto.xhtml">Gestión de Productos</a>
+                            </h:panelGroup>
+
+
+
+                            <!-- Solo para administradores
+                            <sec:authorize access="hasRole('ROLE_ADMINISTRADOR')">
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/admin/dashboard">Panel de Administración</a>
+                                <a class="dropdown-item" href="/admin/usuarios">Gestión de Usuarios</a>
+                            </sec:authorize>-->
+
+
+
+
+
+                            <!-- Cierre de sesión para todos -->
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/logout">Cerrar sesión</a>
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contenido de la página -->
+<ui:insert name="contenido"></ui:insert>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 footer-section">
+                <h5>Ferremas</h5>
+                <p>Venta de herramientas y equipos para la construcción y reparación. Compra online y recibe en casa.</p>
+                <div class="contact-info">
+                    <p><i class="fas fa-map-marker-alt"></i> Calle Ficticia 123, Ciudad, País</p>
+                    <p><i class="fas fa-phone"></i> +123 456 789</p>
+                    <p><i class="fas fa-envelope"></i> contacto@ferremas.com</p>
+                </div>
+            </div>
+            <div class="col-md-4 footer-section">
+                <h5>Enlaces útiles</h5>
+                <ul class="list-unstyled">
+                    <li><a href="/home/contacto.xhtml">Contacto</a></li>
+                    <li><a href="/home/preguntas-frecuentes.xhtml">Preguntas frecuentes</a></li>
+                    <li><a href="/home/terminos.xhtml">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 footer-section">
+                <h5>Síguenos</h5>
+                <div class="social-icons">
+                    <a href="https://facebook.com" target="_blank" class="fab fa-facebook"></a>
+                    <a href="https://instagram.com" target="_blank" class="fab fa-instagram"></a>
+                    <a href="https://twitter.com" target="_blank" class="fab fa-twitter"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

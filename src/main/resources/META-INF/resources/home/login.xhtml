@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fs="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/main.xhtml">
+
+    <h:head>
+        <title>Iniciar Sesión</title>
+    </h:head>
+
+    <ui:define name="contenido">
+
+        <h:form prependId="false">
+            <p:panel header="Iniciar Sesión" style="max-width: 400px; margin: 50px auto;">
+                <p:messages id="messages" showDetail="true" closable="true" />
+
+                <p:inputText id="username" value="#{loginBean.username}" label="Correo electrónico" required="true"
+                             placeholder="Correo electrónico" styleClass="w-100" />
+                <br/><br/>
+                <p:password id="password" value="#{loginBean.password}" label="Contraseña" required="true"
+                            feedback="false" styleClass="w-100" placeholder="Contraseña" />
+                <br/><br/>
+                <p:commandButton value="Ingresar" action="#{loginBean.login}" icon="pi pi-sign-in"
+                                 update="messages" styleClass="w-100 ui-button-primary"/>
+            </p:panel>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

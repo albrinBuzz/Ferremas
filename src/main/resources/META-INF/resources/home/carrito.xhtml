@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition lang="es"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/main.xhtml">
+
+    <h:head>
+        <title>Carrito de Compras</title>
+    </h:head>
+
+    <ui:define name="contenido">
+
+        <div class="container py-5">
+            <h2 class="text-center text-primary mb-4">Carrito de Compras</h2>
+
+            <!-- Mensaje si el carrito está vacío -->
+            <h:panelGroup rendered="#{empty carroBean.pedido.detallepedidos}">
+                <h3 class="text-center text-muted">Tu carrito está vacío.</h3>
+            </h:panelGroup>
+
+            <!-- Panel con productos si el carrito tiene elementos -->
+            <h:panelGroup id="cartPanel" rendered="#{not empty carroBean.pedido.detallepedidos}">
+
+                <!-- Total y botón de pago -->
+                <!-- Total y botón -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <h4 class="text-primary">Total:
+                        <h:outputText value="#{carroBean.total}">
+                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                        </h:outputText>
+                    </h4>
+
+                    <p:linkButton outcome="/home/checkout.xhtml" value="Proceder a la compra"
+                                  icon="pi pi-check" styleClass="btn btn-success">
+                    </p:linkButton>
+
+
+                </div>
+
+                <!-- Listado de productos -->
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle text-center">
+                        <thead class="table-primary">
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Total</th>
+                            <th>Eliminar</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ui:repeat value="#{carroBean.pedido.detallepedidos}" var="item">
+                            <tr>
+                                <td>
+                                    <p:graphicImage value="/resources/images/product/#{item.producto.imagen}"
+                                                    width="80" height="80"
+                                                    alt="#{item.producto.nombre}" />
+                                </td>
+                                <td>
+                                    <h:outputText value="#{item.producto.nombre}" styleClass="h5" />
+                                </td>
+                                <td>
+                                    <h:outputText value="#{item.producto.precio}">
+                                        <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
+                                    </h:outputText>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center gap-2">
+
+                                        <!-- Botón de restar -->
+                                        <p:commandButton icon="pi pi-minus"
+                                                         styleClass="rounded-button ui-button-secondary"
+                                                         process="@this"
+                                                         update="cartPanel"
+                                                         actionListener="#{carroBean.decreamentarCantidad(item.producto)}"
+                                                         title="Disminuir cantidad">
+                                        </p:commandButton>
+
+                                        <!-- Campo cantidad -->
+                                        <h:inputText value="#{item.cantidad}"
+                                                     readonly="true"
+                                                     styleClass="form-control text-center"
+                                                     style="width: 50px; font-weight: bold;" />
+
+                                        <!-- Botón de sumar -->
+                                        <p:commandButton icon="pi pi-plus"
+                                                         styleClass="rounded-button ui-button-primary"
+                                                         process="@this"
+                                                         update="cartPanel"
+                                                         actionListener="#{carroBean.incrementarCantidad(item.producto)}"
+                                                         title="Aumentar cantidad">
+                                        </p:commandButton>
+
+                                    </div>
+
+                                </td>
+                                <td>
+                                    <h:outputText value="#{item.producto.precio * item.cantidad}">
+                                        <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
+                                    </h:outputText>
+                                </td>
+                                <td>
+                                    <p:commandButton icon="pi pi-trash"
+                                                     styleClass="btn btn-danger btn-sm"
+                                                     action="#{carroBean.removeItemFromCart(item)}"
+                                                     update="cartPanel" />
+
+                                </td>
+                            </tr>
+                        </ui:repeat>
+                        </tbody>
+                    </table>
+                </div>
+
+
+
+
+            </h:panelGroup>
+        </div>
+
+    </ui:define>
+</ui:composition>

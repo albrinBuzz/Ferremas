@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ui:composition lang="es"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fs="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/main.xhtml">
+
+    <h:head>
+        <title>Panel de Bodega</title>
+
+        <style>
+
+            .products-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.products-table .product-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
+
+.edit-button, .ui-button-warning {
+    margin-right: 10px;
+}
+
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+        </style>
+    </h:head>
+
+    <ui:define name="contenido">
+        <div class="card crud-demo">
+            <h:form id="form">
+                <p:growl id="messages" showDetail="true" />
+
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton value="Nuevo Producto" icon="pi pi-plus" actionListener="#{adminBean.openNew}"
+                                         update=":dialogs:manage-product-content" oncomplete="PF('manageProductDialog').show()"
+                                         styleClass="ui-button-success" style="margin-right: .5rem">
+                            <p:resetInput target=":dialogs:manage-product-content" />
+                        </p:commandButton>
+                        <p:commandButton id="delete-products-button" value="Eliminar"
+                                         icon="pi pi-trash" actionListener="#{adminBean.deleteSelectedProducts}"
+                                         styleClass="ui-button-danger" disabled="#{!crudView.hasSelectedProducts()}" update="@this">
+                            <p:confirm header="Confirmación" message="¿Eliminar los productos seleccionados?"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <p:dataTable id="dt-products"
+                             widgetVar="dtProducts"
+                             var="product"
+                             value="#{adminBean.productos}"
+                             paginator="true" paginatorPosition="both"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                             rowsPerPageTemplate="2,5,10,{ShowAll|'All'}"
+                             reflow="true"
+                             styleClass="products-table"
+                             selection="#{adminBean.productoSeleccionado}"
+                             rowKey="#{product.idProducto}"
+                             emptyMessage="No hay productos disponibles"
+                             filterDelay="300"
+                             lazy="true">
+
+                    <!-- Filtro global en la cabecera -->
+                    <f:facet name="header">
+                        <div class="products-table-header">
+            <span class="filter-container ui-input-icon-left">
+                <i class="pi pi-search"></i>
+                <p:inputText id="globalFilter"
+                             onkeyup="PF('dtProducts').filter()"
+                             placeholder="Buscar productos..."
+                             styleClass="ui-inputtext-sm"/>
+            </span>
+                        </div>
+                    </f:facet>
+
+                    <!-- Acción de seleccionar el producto -->
+                    <p:ajax event="rowSelect" update=":form:delete-products-button" />
+                    <p:ajax event="rowUnselect" update=":form:delete-products-button" />
+                    <p:ajax event="rowSelectCheckbox" update=":form:delete-products-button" />
+                    <p:ajax event="rowUnselectCheckbox" update=":form:delete-products-button" />
+                    <p:ajax event="toggleSelect" update=":form:delete-products-button" />
+
+                    <!-- Columna de selección múltiple -->
+                    <p:column selectionMode="multiple" exportable="false"></p:column>
+
+                    <!-- Columna de imagen -->
+                    <p:column headerText="Imagen" exportable="false" styleClass="product-image-column">
+                        <p:graphicImage url="/resources/images/product/#{product.imagen}"
+                                        library="demo"
+                                        styleClass="product-image"
+                                        alt="Imagen del producto"
+                                        rendered="#{not empty product.imagen}" />
+                        <!-- Imagen por defecto en caso de no haber imagen -->
+                        <p:graphicImage url="/resources/images/default-product-image.png"
+                                        library="demo"
+                                        styleClass="product-image"
+                                        alt="Imagen por defecto"
+                                        rendered="#{empty product.imagen}" />
+                    </p:column>
+
+                    <!-- Columna de nombre -->
+                    <p:column headerText="Nombre" sortBy="#{product.nombre}" filterBy="#{product.nombre}">
+                        <h:outputText value="#{product.nombre}" />
+                    </p:column>
+
+                    <!-- Columna de descripción -->
+                    <p:column headerText="Descripción" sortBy="#{product.descripcion}" filterBy="#{product.descripcion}">
+                        <h:outputText value="#{product.descripcion}" />
+                    </p:column>
+
+                    <!-- Columna de marca -->
+                    <p:column headerText="Marca" sortBy="#{product.marca}" filterBy="#{product.marca}">
+                        <h:outputText value="#{product.marca}" />
+                    </p:column>
+
+                    <!-- Columna de precio -->
+                    <p:column headerText="Precio" sortBy="#{product.precio}">
+                        <h:outputText value="#{product.precio}" style="font-weight: 700">
+                            <f:convertNumber currencySymbol="$" type="currency" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Categoria" sortBy="#{product.categoria.nombre}">
+                        <h:outputText value="#{product.categoria.nombre}" style="font-weight: 700">
+                        </h:outputText>
+                    </p:column>
+
+                    <!-- Columna de acciones: Editar y Eliminar -->
+                    <p:column exportable="false" ariaHeaderText="Acciones" headerText="Acciones" >
+                        <p:commandButton icon="pi pi-pencil"
+                                         update=":dialogs:manage-product-content"
+                                         oncomplete="PF('manageProductDialog').show()"
+                                         styleClass="edit-button rounded-button ui-button-success"
+                                         process="@this">
+                            <f:setPropertyActionListener value="#{product}" target="#{adminBean.productoSeleccionado}" />
+                            <p:resetInput target=":dialogs:manage-product-content" />
+                        </p:commandButton>
+                        <p:commandButton class="ui-button-warning rounded-button"
+                                         icon="pi pi-trash"
+                                         process="@this"
+                                         oncomplete="PF('deleteProductDialog').show()">
+                            <f:setPropertyActionListener value="#{product}" target="#{adminBean.productoSeleccionado}" />
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+
+
+            </h:form>
+
+            <h:form id="dialogs" enctype="multipart/form-data">
+                <p:dialog header="Detalles del producto" showEffect="fade" modal="true" widgetVar="manageProductDialog"
+                          responsive="true">
+                    <p:outputPanel id="manage-product-content" class="ui-fluid">
+                        <p:outputPanel rendered="#{not empty adminBean.productoSeleccionado}">
+
+                            <p:graphicImage url="/resources/images/product/#{adminBean.productoSeleccionado.imagen}" library="demo"
+                                            styleClass="product-image" rendered="#{not empty adminBean.productoSeleccionado.imagen}" />
+
+                            <div class="field">
+                                <p:outputLabel for="name">Nombre</p:outputLabel>
+                                <p:inputText id="name" value="#{adminBean.productoSeleccionado.nombre}" required="true" />
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="description">Descripción</p:outputLabel>
+                                <p:inputTextarea id="description" value="#{adminBean.productoSeleccionado.descripcion}" />
+                            </div>
+
+                            <div class="field">
+                                <p:outputLabel for="marca">Marca</p:outputLabel>
+                                <p:inputTextarea id="marca" value="#{adminBean.productoSeleccionado.marca}" />
+                            </div>
+
+                            <div class="field">
+                                <p:outputLabel for="categoriaProducto">Categoría</p:outputLabel>
+                                <f:selectItem  itemValue="#{adminBean.productoSeleccionado.categoria.nombre}" />
+
+                                <p:selectOneMenu id="categoriaProducto" value="#{adminBean.categoria}" styleClass="form-control">
+                                    <f:selectItems value="#{adminBean.categorias}" var="categoria" itemLabel="#{categoria.nombre}" itemValue="#{categoria.nombre}" />
+                                </p:selectOneMenu>
+                            </div>
+
+                            <!-- Campo de carga de imagen
+                            <div class="field">
+                                <p:outputLabel for="image">Imagen del Producto</p:outputLabel>
+                                <p:fileUpload id="image" value="#{adminBean.productoSeleccionado.imagen}" mode="simple"
+                                              accept="image/*" />
+                            </div> -->
+
+                            <p:growl id="messages" showDetail="true"/>
+
+                            <!-- Carga de Imagen -->
+                            <div class="field">
+                                <p:outputLabel for="upload">Imagen del Producto</p:outputLabel>
+
+                                <!-- Componente para subir imagen -->
+                                <p:fileUpload id="upload" value="#{adminBean.file}" mode="simple" skinSimple="true" accept="image/*"/>
+
+                            </div>
+
+
+                            <div class="formgrid grid">
+                                <div class="field col">
+                                    <p:outputLabel for="price">Precio</p:outputLabel>
+                                    <p:inputNumber id="price" value="#{adminBean.productoSeleccionado.precio}" symbol=" USD"
+                                                   symbolPosition="s" decimalSeparator="." thousandSeparator="," />
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                    </p:outputPanel>
+
+                    <f:facet name="footer">
+                        <p:commandButton value="Guardar" icon="pi pi-check" actionListener="#{adminBean.saveProduct}"
+                                         update="manage-product-content" process="manage-product-content @this" />
+                        <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('manageProductDialog').hide()"
+                                         class="ui-button-secondary" type="button" />
+                    </f:facet>
+                </p:dialog>
+
+                <p:confirmDialog widgetVar="deleteProductDialog" showEffect="fade" width="300"
+                                 message="¿Eliminar el producto?" header="Confirmar" severity="warn">
+                    <p:commandButton value="Sí" icon="pi pi-check" actionListener="#{adminBean.deleteProduct}"
+                                     process="@this" update=":form:delete-products-button"
+                                     oncomplete="PF('deleteProductDialog').hide()" />
+                    <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('deleteProductDialog').hide()" />
+                </p:confirmDialog>
+            </h:form>
+        </div>
+    </ui:define>
+
+</ui:composition>

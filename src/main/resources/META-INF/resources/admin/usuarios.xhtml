@@ -1,0 +1,171 @@
+<ui:composition lang="es"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fs="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/main.xhtml">
+
+    <ui:define name="contenido">
+        <div class="card crud-demo">
+            <h:form id="formUsuarios">
+                <p:growl id="messagesUsuario" showDetail="true" />
+
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton value="Nuevo Usuario" icon="pi pi-plus" actionListener="#{adminBean.openNewUsuario}"
+                                         update=":dialogs:manage-usuario-content" oncomplete="PF('manageUsuarioDialog').show()"
+                                         styleClass="ui-button-success" style="margin-right: .5rem">
+                            <p:resetInput target=":dialogs:manage-usuario-content" />
+                        </p:commandButton>
+                        <p:commandButton id="delete-usuarios-button" value="Eliminar"
+                                         icon="pi pi-trash" actionListener="#{adminBean.deleteSelectedUsuario}"
+                                         styleClass="ui-button-danger" update="@this">
+                            <p:confirm header="Confirmación" message="¿Eliminar el usuario seleccionado?"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <p:dataTable id="dt-usuarios"
+                             widgetVar="dtUsuarios"
+                             var="usuario"
+                             value="#{adminBean.usuarios}"
+                             paginator="true" rows="5"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                             selection="#{adminBean.usuarioSeleccionado}"
+                             rowKey="#{usuario.rutUsuario}"
+                             emptyMessage="No hay usuarios registrados">
+
+                    <f:facet name="header">
+                        <div class="products-table-header">
+                            <span class="filter-container ui-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <p:inputText id="globalFilterUsuario" onkeyup="PF('dtUsuarios').filter()"
+                                             placeholder="Buscar usuarios..." />
+                            </span>
+                        </div>
+                    </f:facet>
+
+                    <p:ajax event="rowSelect" update=":formUsuarios:delete-usuarios-button" />
+                    <p:ajax event="rowUnselect" update=":formUsuarios:delete-usuarios-button" />
+
+                    <p:column headerText="RUT" sortBy="#{usuario.rutUsuario}" filterBy="#{usuario.rutUsuario}">
+                        <h:outputText value="#{usuario.rutUsuario}" />
+                    </p:column>
+                    <p:column headerText="Nombre de Usuario" sortBy="#{usuario.nombreusuario}" filterBy="#{usuario.nombreusuario}">
+                        <h:outputText value="#{usuario.nombreusuario}" />
+                    </p:column>
+
+                    <p:column headerText="Correo" sortBy="#{usuario.correo}" filterBy="#{usuario.correo}">
+                        <h:outputText value="#{usuario.correo}" />
+                    </p:column>
+
+                    <p:column headerText="Roles" exportable="false">
+                        <ui:repeat value="#{usuario.roles}" var="rol" varStatus="status">
+                            <h:outputText value="#{rol.nombre}" />
+                            <h:outputText value=", " rendered="#{!status.last}" />
+                        </ui:repeat>
+                    </p:column>
+
+                    <p:column headerText="Sucursal" >
+                        <h:outputText rendered="#{not empty usuario.empleado}" value="#{usuario.empleado.sucursal.nombre}" />
+                    </p:column>
+
+
+                    <p:column headerText="Acciones">
+                        <p:commandButton icon="pi pi-pencil"
+                                         update=":dialogs:manage-usuario-content"
+                                         oncomplete="PF('manageUsuarioDialog').show()"
+                                         styleClass="edit-button rounded-button ui-button-success"
+                                         process="@this">
+                            <f:setPropertyActionListener value="#{usuario}" target="#{adminBean.usuarioSeleccionado}" />
+                            <p:resetInput target=":dialogs:manage-usuario-content" />
+                        </p:commandButton>
+
+                <!--  <p:commandButton icon="pi pi-pencil"
+                                action="#{adminBean.prepararUsuarioEdicion(usuario)}"
+                                update=":dialogs:manage-usuario-content"
+                                styleClass="edit-button rounded-button ui-button-success"
+                                oncomplete="PF('manageUsuarioDialog').show()" />-->
+
+                       <p:commandButton class="ui-button-warning rounded-button"
+                                        icon="pi pi-trash"
+                                        process="@this"
+                                        oncomplete="PF('deleteUsuarioDialog').show()">
+                           <f:setPropertyActionListener value="#{usuario}" target="#{adminBean.usuarioSeleccionado}" />
+                       </p:commandButton>
+                   </p:column>
+
+               </p:dataTable>
+            </h:form>
+
+<!-- Diálogo para agregar o editar usuario -->
+            <h:form id="dialogs">
+                <p:dialog header="Detalles del Usuario" showEffect="fade" modal="true"
+                          widgetVar="manageUsuarioDialog" responsive="true">
+                    <p:outputPanel id="manage-usuario-content" class="ui-fluid">
+                        <p:outputPanel rendered="#{not empty adminBean.usuarioSeleccionado}">
+
+                            <div class="field">
+                                <p:outputLabel for="rut">RUT</p:outputLabel>
+                                <p:inputText id="rut" value="#{adminBean.usuarioSeleccionado.rutUsuario}" required="true" />
+                            </div>
+
+                            <div class="field">
+                                <p:outputLabel for="nombreUsuario">Nombre de Usuario</p:outputLabel>
+                                <p:inputText id="nombreUsuario" value="#{adminBean.usuarioSeleccionado.nombreusuario}" required="true" />
+                            </div>
+
+                            <div class="field">
+                                <p:outputLabel for="correo">Correo</p:outputLabel>
+                                <p:inputText id="correo" value="#{adminBean.usuarioSeleccionado.correo}" required="true" />
+                            </div>
+
+                            <div class="field">
+                                <p:outputLabel for="roles">Roles</p:outputLabel>
+                                <p:selectCheckboxMenu id="roles" value="#{adminBean.rolesSeleccionados}" label="Seleccionar Roles" multiple="true" >
+                                    <f:selectItems value="#{adminBean.roles}" var="rol" itemLabel="#{rol.nombre}" itemValue="#{rol}" />
+                                </p:selectCheckboxMenu>
+                            </div>
+
+                           <div class="field">
+                                <p:outputLabel for="sucursal">Sucursal</p:outputLabel>
+                    <!--  <f:selectItem rendered="#{not empty adminBean.usuarioSeleccionado.empleado}" itemValue="#{adminBean.usuarioSeleccionado.empleado.sucursal.nombre}" />-->
+                               <p:selectOneMenu id="sucursal" value="#{adminBean.sucursalId}" requiredMessage="Debe seleccionar una sucursal.">
+                                   <f:selectItem itemLabel="Seleccione una sucursal" itemValue="#{null}" noSelectionOption="true" />
+                                   <f:selectItems value="#{adminBean.sucursals}" var="sucursal"
+                                                  itemLabel="#{sucursal.nombre}" itemValue="#{sucursal.idSucursal}" />
+                                </p:selectOneMenu>
+                            </div>
+
+
+                         <div class="field">
+                             <p:outputLabel for="contrasena">Contraseña</p:outputLabel>
+                             <p:password id="contrasena" value="#{adminBean.contrasenaInput}" feedback="true" />
+                         </div>
+
+ </p:outputPanel>
+</p:outputPanel>
+
+<f:facet name="footer">
+ <p:commandButton value="Guardar" icon="pi pi-check" actionListener="#{adminBean.saveUsuario}"
+                  update="manage-usuario-content" process="manage-usuario-content @this" />
+ <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('manageUsuarioDialog').hide()"
+                  class="ui-button-secondary" type="button" />
+</f:facet>
+</p:dialog>
+
+<!-- Confirmar eliminación -->
+                <p:confirmDialog widgetVar="deleteUsuarioDialog" showEffect="fade" width="300"
+                                 message="¿Eliminar este usuario?" header="Confirmar" severity="warn">
+                    <p:commandButton value="Sí" icon="pi pi-check" actionListener="#{adminBean.deleteUsuario}"
+                                     process="@this" update=":formUsuarios:delete-usuarios-button"
+                                     oncomplete="PF('deleteUsuarioDialog').hide()" />
+                    <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('deleteUsuarioDialog').hide()" />
+                </p:confirmDialog>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

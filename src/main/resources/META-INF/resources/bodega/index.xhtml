@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ui:composition lang="es"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fs="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/main.xhtml">
+
+    <h:head>
+        <title>Panel de Bodega</title>
+    </h:head>
+
+    <ui:define name="contenido">
+        <h:form id="bodegaForm">
+            <div class="container mt-5">
+                <h2 class="mb-4">🚚 Bienvenido, <h:outputText value="#{userBean.name}" /> (Bodeguero)</h2>
+
+                <p:messages autoUpdate="true" showDetail="true" closable="true"/>
+
+                <p:panel header="Inventario Actual" styleClass="mb-4">
+                    <p:dataTable value="#{bodegaBean.inventarios}" var="item" paginator="true" rows="10"
+                                 responsiveLayout="scroll" emptyMessage="No hay productos registrados en el inventario.">
+
+                        <p:column headerText="Producto">
+                            <h:outputText value="#{item.producto.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Marca">
+                            <h:outputText value="#{item.producto.marca}" />
+                        </p:column>
+
+                        <p:column headerText="Sucursal">
+                            <h:outputText value="#{item.sucursal.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Stock">
+                            <h:outputText value="#{item.stock}" />
+                            <h:outputText value=" ⚠️" rendered="#{item.stock lt 10}" style="color:red;"/>
+                        </p:column>
+
+                        <p:column headerText="Acción">
+                            <p:commandButton icon="pi pi-pencil" update=":bodegaForm"
+                                             actionListener="#{bodegaBean.editarStock(item)}"
+                                             title="Editar Stock" />
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+
+                <p:dialog header="Actualizar Stock" widgetVar="dlgEditar" modal="true" resizable="false"
+                          visible="#{bodegaBean.mostrarDialogo}" closable="true">
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <h:outputLabel value="Producto:"/>
+                        <h:outputText value="#{bodegaBean.itemSeleccionado.producto.nombre}" />
+
+                        <h:outputLabel value="Stock nuevo:"/>
+                        <p:inputNumber value="#{bodegaBean.nuevoStock}" minValue="0" />
+
+                        <f:facet name="footer">
+                            <p:commandButton value="Guardar" actionListener="#{bodegaBean.actualizarStock}"
+                                             oncomplete="PF('dlgEditar').hide()" update="bodegaForm"/>
+                        </f:facet>
+                    </h:panelGrid>
+                </p:dialog>
+            </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

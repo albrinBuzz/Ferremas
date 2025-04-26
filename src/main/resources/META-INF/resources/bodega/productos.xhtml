@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ui:composition lang="es"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fs="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/main.xhtml">
+
+    <h:head>
+        <title>Panel de Bodega</title>
+    </h:head>
+
+    <ui:define name="contenido">
+        <div class="card crud-demo">
+            <h:form id="form">
+                <p:growl id="messages" showDetail="true" />
+
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton value="New" icon="pi pi-plus" actionListener="#{bodegaBean.openNew}"
+                                         update=":dialogs:manage-product-content" oncomplete="PF('manageProductDialog').show()"
+                                         styleClass="ui-button-success" style="margin-right: .5rem">
+                            <p:resetInput target=":dialogs:manage-product-content" />
+                        </p:commandButton>
+                        <p:commandButton id="delete-products-button" value="Eliminar"
+                                         icon="pi pi-trash" actionListener="#{bodegaBean.deleteSelectedProducts}"
+                                         styleClass="ui-button-danger" disabled="#{!crudView.hasSelectedProducts()}" update="@this">
+                            <p:confirm header="Confirmation" message="Delete the selected products?"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:toolbarGroup>
+
+                    <!--  <p:toolbarGroup align="right">
+                         <p:fileUpload mode="simple" skinSimple="true" label="Import" chooseIcon="pi pi-download" />
+
+                         <p:commandButton value="Export" icon="pi pi-upload" styleClass="ui-button-help" ajax="false">
+                             <p:dataExporter type="pdf" target="dt-products" fileName="products" />
+                         </p:commandButton>
+                     </p:toolbarGroup>-->
+                 </p:toolbar>
+
+                 <p:dataTable id="dt-products" widgetVar="dtProducts" var="product" value="#{bodegaBean.inventarios}"
+                              reflow="true" styleClass="products-table"
+                              rowKey="#{product.producto.idProducto}" paginator="true" rows="10" selectionRowMode="add" paginatorPosition="bottom">
+                     <f:facet name="header">
+                         <div class="products-table-header">
+                              <span style="font-weight: bold">
+                            Productos - <h:outputText value="#{bodegaBean.sucursal.nombre}" />
+                              </span>
+
+                             <span class="filter-container ui-input-icon-left"> <i class="pi pi-search"></i>
+                         <p:inputText id="globalFilter" onkeyup="PF('dtProducts').filter()" placeholder="Search" />
+                     </span>
+                         </div>
+                     </f:facet>
+
+                     <p:ajax event="rowSelect" update=":form:delete-products-button" />
+                     <p:ajax event="rowUnselect" update=":form:delete-products-button" />
+                     <p:ajax event="rowSelectCheckbox" update=":form:delete-products-button" />
+                     <p:ajax event="rowUnselectCheckbox" update=":form:delete-products-button" />
+                     <p:ajax event="toggleSelect" update=":form:delete-products-button" />
+
+                     <p:column selectionMode="multiple" exportable="false"></p:column>
+
+
+
+                     <p:column headerText="Imagen" exportable="false" styleClass="product-image-column">
+                         <p:graphicImage url="/resources/images/product/#{product.producto.imagen}"
+                                         library="demo"
+                                         styleClass="product-image"
+                                         alt="Imagen del producto"
+                                         rendered="#{not empty product.producto.imagen}" />
+                         <!-- Imagen por defecto en caso de no haber imagen -->
+                         <p:graphicImage url="/resources/images/default-product-image.png"
+                                         library="demo"
+                                         styleClass="product-image"
+                                         alt="Imagen por defecto"
+                                         rendered="#{empty product.producto.imagen}" />
+                     </p:column>
+                     <p:column headerText="Nombre" sortBy="#{product.producto.nombre}" filterBy="#{product.producto.nombre}">
+                         <h:outputText value="#{product.producto.nombre}" />
+                     </p:column>
+
+                     <p:column headerText="Precio" sortBy="#{product.producto.precio}">
+                         <h:outputText value="#{product.producto.precio}" style="font-weight: 700">
+                             <f:convertNumber currencySymbol="$" type="currency" />
+                         </h:outputText>
+                     </p:column>
+
+                     <p:column headerText="Stock" sortBy="#{product.stock}">
+                         <h:outputText value="#{product.stock}" style="font-weight: 700">
+                         </h:outputText>
+                     </p:column>
+
+                     <p:column headerText="Categoria" sortBy="#{product.categoria.nombre}">
+                         <h:outputText value="#{product.producto.categoria.nombre}" style="font-weight: 700">
+                         </h:outputText>
+                     </p:column>
+
+
+                     <p:column headerText="Status" sortBy="#{product.inventoryStatus}"
+                               filterBy="#{product.inventoryStatus}">
+                         <h:outputText styleClass="product-badge status-#{product.inventoryStatus.name().toLowerCase()}"
+                                       value="#{product.inventoryStatus.text}" />
+                     </p:column>
+
+                     <p:column exportable="false" ariaHeaderText="Actions">
+                         <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-product-content"
+                                          oncomplete="PF('manageProductDialog').show()"
+                                          styleClass="edit-button rounded-button ui-button-success" process="@this">
+                             <f:setPropertyActionListener value="#{product.producto}" target="#{bodegaBean.productoSeleccionado}" />
+                             <p:resetInput target=":dialogs:manage-product-content" />
+                         </p:commandButton>
+                         <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash"
+                                          process="@this"
+                                          oncomplete="PF('deleteProductDialog').show()">
+                             <f:setPropertyActionListener value="#{product}" target="#{bodegaBean.productoSeleccionado}" />
+                         </p:commandButton>
+                     </p:column>
+
+
+
+                 </p:dataTable>
+             </h:form>
+
+             <h:form id="dialogs">
+                 <p:dialog header="Detalles del producto" showEffect="fade" modal="true" widgetVar="manageProductDialog"
+                           responsive="true">
+                     <p:outputPanel id="manage-product-content" class="ui-fluid">
+
+                         <p:outputPanel rendered="#{not empty bodegaBean.productoSeleccionado}">
+
+                             <!-- <p:graphicImage name="images/product/#{crudView.selectedProduct.image}" library="demo"
+                                              styleClass="product-image" rendered="#{not empty crudView.selectedProduct.image}" />
+ -->
+                             <p:growl id="growl" showDetail="true"/>
+
+                             <p:commandButton value="Buscar producto" icon="pi pi-search"
+                                              process="@this"
+                                              oncomplete="PF('productDialog').show()" />
+
+                             <p:column headerText="Nombre">
+                                 <h:outputText value="#{bodegaBean.productoSeleccionado.nombre}" />
+                             </p:column>
+
+
+                             <div class="formgrid grid">
+                                 <div class="field col">
+                                     <p:outputLabel for="quantity">Cantidad</p:outputLabel>
+                                     <p:spinner id="quantity" min="0" value="#{bodegaBean.stockProducto}" />
+                                 </div>
+                             </div>
+                         </p:outputPanel>
+                     </p:outputPanel>
+
+                     <f:facet name="footer">
+                         <p:commandButton value="Save" icon="pi pi-check" actionListener="#{bodegaBean.saveProduct}"
+                                          update="manage-product-content" process="manage-product-content @this" />
+                         <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageProductDialog').hide()"
+                                          class="ui-button-secondary" type="button" />
+                     </f:facet>
+                 </p:dialog>
+
+                 <p:confirmDialog widgetVar="deleteProductDialog" showEffect="fade" width="300"
+                                  message="Delete the product?" header="Confirm" severity="warn">
+                     <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{bodegaBean.deleteProduct}"
+                                      process="@this" update=":form:delete-products-button"
+                                      oncomplete="PF('deleteProductDialog').hide()" />
+                     <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                      onclick="PF('deleteProductDialog').hide()" />
+                 </p:confirmDialog>
+
+                 <p:confirmDialog global="true" showEffect="fade" width="300">
+                     <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                     <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                                      icon="pi pi-times" />
+                 </p:confirmDialog>
+             </h:form>
+         </div>
+
+        <!-- DIÁLOGO SECUNDARIO: Selección de producto -->
+        <p:dialog header="Seleccionar Producto" widgetVar="productDialog" modal="true" width="600" responsive="true">
+            <p:dataTable var="prod" value="#{bodegaBean.productosDisponibles}" paginator="true" rows="5"
+                         rowKey="#{prod.idProducto}" selectionMode="single" selection="#{bodegaBean.productoSeleccionado}"
+                         update="@form">
+                <p:ajax event="rowSelect" listener="#{bodegaBean.seleccionarProducto}"
+                        update=":dialogs:manage-product-content" oncomplete="PF('productDialog').hide()" />
+
+
+
+                <p:column headerText="Imagen" exportable="false" styleClass="product-image-column">
+                    <p:graphicImage url="/resources/images/product/#{prod.imagen}"
+                                    library="demo"
+                                    styleClass="product-image"
+                                    alt="Imagen del producto"
+                                    rendered="#{not empty prod.imagen}" />
+                    <!-- Imagen por defecto en caso de no haber imagen -->
+                    <p:graphicImage url="/resources/images/default-product-image.png"
+                                    library="demo"
+                                    styleClass="product-image"
+                                    alt="Imagen por defecto"
+                                    rendered="#{empty prod.imagen}" />
+                </p:column>
+
+
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{prod.nombre}" />
+                </p:column>
+
+                <p:column headerText="Categoría">
+                    <h:outputText value="#{prod.categoria.nombre}" />
+                </p:column>
+
+                <p:column headerText="Precio">
+                    <h:outputText value="#{prod.precio}">
+                        <f:convertNumber type="currency" currencySymbol="$" />
+                    </h:outputText>
+                </p:column>
+            </p:dataTable>
+        </p:dialog>
+
+
+    </ui:define>
+
+ </ui:composition>

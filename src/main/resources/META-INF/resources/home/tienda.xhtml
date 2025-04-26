@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition lang="es"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/main.xhtml">
+
+    <h:head>
+        <title>Tienda - Ferremas</title>
+    </h:head>
+    <ui:define name="contenido">
+
+        <!-- Banner -->
+        <div class="container-fluid bg-light py-5 text-center">
+            <h1 class="display-4 text-primary">Tienda Ferremas</h1>
+            <p class="lead">Explora nuestra amplia variedad de productos de ferretería. ¡Filtra lo que necesitas!</p>
+        </div>
+
+        <div class="container-fluid py-4">
+            <div class="row">
+
+                <!-- 📦 Filtros -->
+                <div class="col-md-3">
+                    <h:form id="filterForm">
+                        <div class="card p-3 shadow-sm">
+                            <h4 class="text-primary mb-3">Filtros</h4>
+
+                            <!-- Buscar por nombre -->
+                            <p:outputLabel for="searchQuery" value="Buscar producto" />
+                            <p:inputText id="searchQuery" value="#{tiendaBean.searchQuery}" placeholder="Ej: Taladro" styleClass="w-100 mb-3"/>
+
+                            <!-- Categoría -->
+                            <p:outputLabel for="categoria" value="Categoría" />
+                            <p:selectOneMenu id="categoria" value="#{tiendaBean.filtroCategoria}" styleClass="w-100 mb-3">
+                                <f:selectItem itemLabel="Todas" itemValue="" />
+                                <f:selectItems value="#{tiendaBean.listaCategorias}" var="cat"
+                                               itemLabel="#{cat.nombre}" itemValue="#{cat.idCategoria}" />
+                            </p:selectOneMenu>
+
+                            <!-- Precio mínimo y máximo -->
+                            <p:outputLabel value="Rango de precio" />
+                            <p:spinner value="#{tiendaBean.precioMin}" min="0" max="100000" stepFactor="1000" styleClass="w-100 mb-2"/>
+                            <p:spinner value="#{tiendaBean.precioMax}" min="0" max="100000" stepFactor="1000" styleClass="w-100 mb-3"/>
+
+                            <!-- Stock disponible
+                            <p:selectBooleanCheckbox value="#{shopBean.soloDisponibles}" itemLabel="Solo productos en stock" styleClass="mb-3"/>-->
+
+                            <!-- Botón aplicar -->
+                            <p:commandButton value="Aplicar Filtros" icon="pi pi-filter"
+                                             actionListener="#{tiendaBean.aplicarFiltros}"
+                                             update=":productForm:productGrid"
+                                             styleClass="btn btn-primary w-100" />
+                        </div>
+                    </h:form>
+                </div>
+
+                <!-- 🛒 Productos -->
+                <div class="col-md-9">
+                    <h:form id="productForm">
+                        <p:dataGrid id="productGrid" value="#{tiendaBean.productosFiltrados}" var="producto"
+                                    columns="3" rows="9" paginator="true"
+                                    rowsPerPageTemplate="3,6,9,12" emptyMessage="No se encontraron productos.">
+
+                            <p:panel styleClass="card h-100 shadow-sm">
+                                <p:graphicImage url="/resources/images/product/#{producto.imagen}"
+                                                alt="#{producto.nombre}" style="width:100%; height:200px; object-fit:contain;" />
+                                <div class="p-3">
+                                    <h5 class="text-dark">#{producto.nombre}</h5>
+                                    <p class="text-muted">#{producto.descripcion}</p>
+                                    <span class="badge bg-secondary">#{producto.categoria.nombre}</span>
+                                    <p class="h5 text-success mt-2">
+                                        <h:outputText value="#{producto.precio}">
+                                            <f:convertNumber type="currency" currencySymbol="$"/>
+                                        </h:outputText>
+                                    </p>
+                                    <div class="mt-3 d-flex justify-content-between">
+                                        <p:commandButton value="Agregar" icon="pi pi-shopping-cart"
+                                                         actionListener="#{carroBean.agregarItem(producto)}"
+                                                         update=":productForm"
+                                                         styleClass="btn btn-outline-success" />
+                                        <p:linkButton outcome="/home/detalle.xhtml" value="Ver Detalle"
+                                                      icon="pi pi-search" styleClass="btn btn-outline-primary">
+                                            <f:param name="productId" value="#{producto.idProducto}" />
+                                        </p:linkButton>
+                                    </div>
+                                </div>
+                            </p:panel>
+                        </p:dataGrid>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+    </ui:define>
+
+
+
+</ui:composition>
