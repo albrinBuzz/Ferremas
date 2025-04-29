@@ -13,4 +13,5 @@ public interface PedidoService {
     Pedido obtenerPorId(Integer id);
     void eliminar(Integer id);
     public List<Pedido> obtenerPedidosPorSucursal(int idSucursal);
+    Pedido buscarIdRut(String rut, Integer idPedido);
 }

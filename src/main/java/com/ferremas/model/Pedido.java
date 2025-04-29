@@ -55,7 +55,7 @@ public class Pedido implements Serializable {
 	private List<Transaccion> transaccions;
 
 	//bi-directional many-to-one association to Transferencia
-	@OneToMany(mappedBy="pedido")
+	@OneToMany(mappedBy="pedido",fetch = FetchType.EAGER)
 	private List<Transferencia> transferencias;
 
 	public Pedido() {
@@ -262,6 +262,8 @@ public class Pedido implements Serializable {
 		return "Pedido{" +
 				"rutcliente='" + rutcliente + '\'' +
 				", total=" + total +
+				", IdPedido=" + idPedido +
+
 				", Estado=" + estadopedido.toString() +
 				'}';
 	}

@@ -1,9 +1,11 @@
 package com.ferremas.serviceImpl;
 
+import com.ferremas.Dto.ProductoDTO;
 import com.ferremas.model.Producto;
 import com.ferremas.repository.ProductoRepository;
 import com.ferremas.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,5 +45,15 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public void eliminarPorId(Integer id) {
         productoRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<ProductoDTO> getAllProductosPaged(int page, int size, String sortBy, String direction) {
+        return null;
+    }
+
+    @Override
+    public List<Producto> buscarPorNombre(String nombre) {
+        return productoRepository.findByNombreContaining(nombre);
     }
 }

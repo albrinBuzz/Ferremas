@@ -1,6 +1,8 @@
 package com.ferremas.model;
 
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 
@@ -24,11 +26,13 @@ public class Detallepedido implements Serializable {
 	//bi-directional many-to-one association to Pedido
 	@ManyToOne
 	@JoinColumn(name="id_pedido")
+	@JsonIgnore
 	private Pedido pedido;
 
 	//bi-directional many-to-one association to Producto
 	@ManyToOne
 	@JoinColumn(name="id_producto")
+	@JsonIgnore
 	private Producto producto;
 
 	public Detallepedido() {

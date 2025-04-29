@@ -1,6 +1,9 @@
 package com.ferremas.model;
 
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -32,10 +35,12 @@ public class Producto implements Serializable {
 
 	//bi-directional many-to-one association to Detallepedido
 	@OneToMany(mappedBy="producto")
+	@JsonIgnore
 	private List<Detallepedido> detallepedidos;
 
 	//bi-directional many-to-one association to Inventario
 	@OneToMany(mappedBy="producto")
+	@JsonIgnore
 	private List<Inventario> inventarios;
 
 	//bi-directional many-to-one association to Categoria

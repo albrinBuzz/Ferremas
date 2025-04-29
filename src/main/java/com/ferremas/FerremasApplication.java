@@ -13,7 +13,7 @@ public class FerremasApplication {
 
 	public static void main(String[] args) {
 		var context= SpringApplication.run(FerremasApplication.class, args);
-
+		//context.containsBean()
 
 
 

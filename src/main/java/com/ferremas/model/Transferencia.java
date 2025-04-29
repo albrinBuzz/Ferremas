@@ -97,4 +97,14 @@ public class Transferencia implements Serializable {
 		this.pedido = pedido;
 	}
 
+
+	@Override
+	public String toString() {
+		return "Transferencia{" +
+				"comentario='" + comentario + '\'' +
+				", comprobante='" + comprobante + '\'' +
+				", fecha=" + fecha +
+				", monto=" + monto +
+				'}';
+	}
 }

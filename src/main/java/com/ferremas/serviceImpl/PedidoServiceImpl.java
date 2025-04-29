@@ -46,4 +46,9 @@ public class PedidoServiceImpl implements PedidoService {
                 .setParameter("idSucursal", idSucursal)
                 .getResultList();
     }
+
+    @Override
+    public Pedido buscarIdRut(String rut, Integer idPedido) {
+        return pedidoRepository.buscarIdRut(rut,idPedido);
+    }
 }
