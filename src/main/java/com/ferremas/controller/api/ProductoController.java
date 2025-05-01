@@ -22,40 +22,19 @@ import java.util.concurrent.atomic.AtomicLong;
 @RequestMapping("/api/productos")
 public class ProductoController {
 
-
-    private static AtomicLong contSolictues=new AtomicLong(1);
-
     @Autowired
     private ProductoService productoService;
 
     // Obtener todos los productos
     @GetMapping
-    public ResponseEntity<List<Producto>> getAllProductos(
-            @RequestParam(value = "nombre", required = false) String nombre) {
+    public ResponseEntity<List<Producto>> getAllProductos() {
         try {
-            if (nombre!=null){
-                List<Producto> productos = productoService.buscarPorNombre(nombre);
-                return ResponseEntity.ok(productos);
-            }
-
-            long startTime = System.currentTimeMillis();
-            simulateHeavyTask();
-            long endTime = System.currentTimeMillis();
-
-            // Simulación de carga costosa que toma tiempo
-            Logger.logInfo("Tarea costosa completada en " + (endTime - startTime) + " ms");
 
             List<Producto> productos = productoService.listarTodos();
             if (productos.isEmpty()) {
                 return ResponseEntity.noContent().build(); // Si no hay productos, respondemos con 204 (No Content)
             }
-
-
-            contSolictues.incrementAndGet();
-
-            Logger.logInfo("Obteniendo los aviones");
-
-            Logger.logInfo("Cantidadd Veces "+contSolictues.get());
+            
             return ResponseEntity.ok(productos); // Respondemos con 200 OK y los productos
         }  catch (Exception e) {
             // Log de la excepción
@@ -65,18 +44,6 @@ public class ProductoController {
         }
     }
 
-    private void simulateHeavyTask() {
-        try {
-            // Simulación de una operación intensiva
-            long sum = 0;
-            for (long i = 0; i < 1_000_000_000L; i++) {
-                sum += i;
-            }
-            System.out.println("Resultado de la suma costosa: " + sum);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
     // Crear un nuevo producto

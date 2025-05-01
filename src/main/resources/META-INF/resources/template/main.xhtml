@@ -216,7 +216,6 @@
                             <h:panelGroup rendered="#{userBean.hasRole('ROLE_VENDEDOR')}">
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="/vendedor/pedidos.xhtml">Gestión de Pedidos</a>
-                                <a class="dropdown-item" href="/vendedor/index.xhtml">Facturación</a>
                             </h:panelGroup>
 
                             <!-- Bodeguero -->
@@ -224,14 +223,12 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="/bodega/productos.xhtml">Gestión de Inventario</a>
                                 <a class="dropdown-item" href="/bodega/pedidos.xhtml">Gestión de Pedidos</a>
-                                <a class="dropdown-item" href="/bodega/index.xhtml">Preparación de Despachos</a>
+                                <a class="dropdown-item" href="/bodega/index.xhtml">Inventario</a>
                             </h:panelGroup>
 
                             <!-- Contador -->
                             <h:panelGroup rendered="#{userBean.hasRole('ROLE_CONTADOR')}">
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/contador/index.xhtml">Panel Contable</a>
-                                <a class="dropdown-item" href="/contador/index.xhtml">Pagos y Transacciones</a>
                                 <a class="dropdown-item" href="/contador/transferencias.xhtml">Pagos y Transacciones</a>
                             </h:panelGroup>
 

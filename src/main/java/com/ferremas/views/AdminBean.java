@@ -41,6 +41,7 @@ public class AdminBean {
     private boolean mostrarDialogo;
     private Sucursal sucursal;
     private List<Producto>productos;
+
     @Autowired
     private InventarioService inventarioService;
     @Autowired
@@ -57,6 +58,7 @@ public class AdminBean {
     private SucursalService sucursalService;
     @Autowired
     private HttpSession session;
+
     private Empleado empleado;
     private Producto productoSeleccionado;
     private List<Categoria>categorias;
@@ -83,6 +85,7 @@ public class AdminBean {
         }catch (Exception e){
             Logger.logInfo(e.getMessage());
         }
+
         rolesSeleccionados = new HashSet<>();
         productos=productoService.listarTodos();
         empleados=empleadoService.findAll();
