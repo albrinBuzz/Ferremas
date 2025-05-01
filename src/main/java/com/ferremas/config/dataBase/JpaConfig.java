@@ -6,14 +6,14 @@ import jakarta.persistence.Persistence;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+//@Configuration
 public class JpaConfig {
 
-    private EntityManagerFactory emf;
+    /*private EntityManagerFactory emf;
 
     @Bean
     public EntityManager getEntityManager() {
         emf = Persistence.createEntityManagerFactory("ferremas");
         return emf.createEntityManager();
-    }
+    }*/
 }

@@ -54,7 +54,7 @@ public class InventarioServiceImpl implements InventarioService {
         query.setParameter("p_id_sucursal", inventario.getSucursal().getIdSucursal());
         query.setParameter("p_stock", inventario.getStock());
 
-        query.execute(); // Transacción controlada por Spring
+        query.execute();
 
         return inventario;
     }

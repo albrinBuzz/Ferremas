@@ -5,3 +5,4 @@
 5-insertar el cliente invitado luego de una compra como invitado
 6-mostrar la información del cliente invitado en la transferencia (correo)
 7-hacer que se restaure el stock de los productos, cuando se elimine un pedido por parte del contador
+8-eliminar Inventario Bodega
