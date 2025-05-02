@@ -202,6 +202,12 @@ public class CheckoutBean {
                 guardarTransaccion(pedidoGuardado);
                 carritoBean.resetCart();
 
+                try {
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/home/pagoExitoso.xhtml");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
             }
 
             // Pago en efectivo, tarjeta o transferencia
