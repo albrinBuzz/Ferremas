@@ -1,5 +1,7 @@
 package com.ferremas.views;
 
+import com.ferremas.config.webPay.entity.WebPayTransactionRequest;
+import com.ferremas.config.webPay.entity.WebPayTransactionResponse;
 import com.ferremas.controller.PaypalController;
 import com.ferremas.model.*;
 import com.ferremas.service.*;
@@ -52,6 +54,10 @@ public class CheckoutBean {
 
     @Autowired
     private PaypalService paypalService;
+
+    @Autowired
+    private WebPayService webPayService;
+
     @PostConstruct
     public void init(){
 
@@ -170,11 +176,31 @@ public class CheckoutBean {
                 }
 
             }
+
+            else if (metodoPago.equals("webPay")) {
+
+                WebPayTransactionRequest request = new WebPayTransactionRequest(
+                        "ordenCompra"+new Random().nextInt(1, 99999),
+                        "sesion"+new Random().nextInt(1, 99999),
+                        carritoBean.getPedido().getTotal(),
+                        "http://localhost:8080/webpay/commit"
+                );
+                try {
+                    WebPayTransactionResponse response = webPayService.createTransaction(request);
+                    Logger.logInfo(response.toString());
+                    FacesContext.getCurrentInstance().getExternalContext().redirect(response.getUrl()+"?token_ws="+response.getToken());
+
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+
+
             else if (metodoPago.equals("tarjeta")) {
                 Pedido pedidoGuardado = guardarPedidoDesdeCarrito();
                 guardarTransaccion(pedidoGuardado);
                 carritoBean.resetCart();
-
 
             }
 

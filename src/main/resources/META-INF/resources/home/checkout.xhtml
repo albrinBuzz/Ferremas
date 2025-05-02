@@ -53,6 +53,7 @@
                             <div class="form-check">
                                 <h:selectOneRadio value="#{checkoutBean.metodoPago}" layout="pageDirection"
                                                   requiredMessage="El Metodo de pago es obligatorio" >
+                                    <f:selectItem itemLabel="webPay" itemValue="webPay"/>
                                     <f:selectItem itemLabel="Tarjeta de Crédito" itemValue="tarjeta"/>
                                     <f:selectItem itemLabel="Paypal" itemValue="paypal"/>
                                     <f:selectItem itemLabel="Transferencia Bancaria" itemValue="transferencia"/>
