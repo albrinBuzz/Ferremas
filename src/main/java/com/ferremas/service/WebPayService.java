@@ -91,8 +91,7 @@ public class WebPayService {
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest))
                 .build();
 
-        // Enviar la solicitud
-        HttpClient client = HttpClient.newHttpClient();
+
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
         // Deserializar la respuesta en un objeto WebPayTransactionResponse
@@ -156,6 +155,7 @@ public class WebPayService {
 
             // Reversa de la transacción enviando el token y monto como parámetro
             var respuesta = transaction.refund(token, amount);
+            Logger.logInfo(respuesta.toString());
             return respuesta.toString(); // Devuelve el resultado del reembolso
         } catch (TransactionRefundException e) {
             e.printStackTrace();

@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -24,17 +27,27 @@ public class ProductoController {
 
     @Autowired
     private ProductoService productoService;
+    private static final AtomicInteger successfulRequests = new AtomicInteger(0);
+    private static final int MAX_CONCURRENT_REQUESTS = 50;
+    private static final Semaphore semaphore = new Semaphore(MAX_CONCURRENT_REQUESTS);
+
 
     // Obtener todos los productos
     @GetMapping
-    public ResponseEntity<List<Producto>> getAllProductos() {
+    public ResponseEntity<?> getAllProductos() {
+        boolean acquired = false;
         try {
+
+
 
             List<Producto> productos = productoService.listarTodos();
             if (productos.isEmpty()) {
+
                 return ResponseEntity.noContent().build(); // Si no hay productos, respondemos con 204 (No Content)
             }
-            
+
+            heavyTask();
+            Logger.logInfo("Get Productos "+successfulRequests.incrementAndGet());
             return ResponseEntity.ok(productos); // Respondemos con 200 OK y los productos
         }  catch (Exception e) {
             // Log de la excepción
@@ -44,6 +57,9 @@ public class ProductoController {
         }
     }
 
+    private void heavyTask() throws InterruptedException {
+        Thread.sleep(TimeUnit.MILLISECONDS.toSeconds(3));
+    }
 
 
     // Crear un nuevo producto
