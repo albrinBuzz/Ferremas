@@ -188,7 +188,7 @@
                 </div>
 
 
-                <h:panelGroup rendered="#{miPedidoBean.pedido.transferencias != null}">
+                <h:panelGroup rendered="#{not empty miPedidoBean.pedido.transferencias}">
                     <p:panel header="Formulario de Transferencia Bancaria" styleClass="transfer-form-container">
                         <p:messages id="msgs" showDetail="true" closable="true" />
 

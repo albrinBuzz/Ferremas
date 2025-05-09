@@ -185,6 +185,7 @@ public class CheckoutBean {
                         carritoBean.getPedido().getTotal(),
                         "http://localhost:8080/webpay/commit"
                 );
+
                 try {
                     WebPayTransactionResponse response = webPayService.createTransaction(request);
                     Logger.logInfo(response.toString());
@@ -203,7 +204,9 @@ public class CheckoutBean {
                 carritoBean.resetCart();
 
                 try {
-                    FacesContext.getCurrentInstance().getExternalContext().redirect("/home/pagoExitoso.xhtml");
+
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/home/pagoExitoso.xhtml?idPedido="+pedidoGuardado.getIdPedido());
+
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

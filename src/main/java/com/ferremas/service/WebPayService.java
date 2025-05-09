@@ -100,7 +100,7 @@ public class WebPayService {
 
 
         // Confirmar una transacción
-    public boolean commitTransaction(String token) {
+    public int commitTransaction(String token) {
         try {
             // Creación de la transacción
             Transaction transaction = new Transaction(webpayOptions);
@@ -113,17 +113,18 @@ public class WebPayService {
                 Pedido pedidoGuardado = guardarPedidoDesdeCarrito();
                 guardarTransaccion(pedidoGuardado);
                 carritoBean.resetCart();
-                return  true;
+
+                return  pedidoGuardado.getIdPedido();
             }
 
         } catch (TransactionCommitException e) {
             e.printStackTrace();
-            return  false;
+
         } catch (IOException e) {
             e.printStackTrace();
-            return  false;
+
         }
-        return  false;
+        return 0;
     }
 
 
@@ -158,10 +159,10 @@ public class WebPayService {
             Logger.logInfo(respuesta.toString());
             return respuesta.toString(); // Devuelve el resultado del reembolso
         } catch (TransactionRefundException e) {
-            e.printStackTrace();
+            Logger.logInfo(e.getMessage());
             return "Error al reversar la transacción: " + e.getMessage();
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.logInfo(e.getMessage());
             return "Error de comunicación con la API: " + e.getMessage();
         }
     }
@@ -179,10 +180,10 @@ public class WebPayService {
             var respuesta = transaction.capture(token, buyOrder, authorizationCode, amount);
             return respuesta.toString(); // Devuelve el resultado de la captura
         } catch (TransactionCaptureException e) {
-            e.printStackTrace();
+            Logger.logInfo(e.getMessage());
             return "Error al capturar la transacción: " + e.getMessage();
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.logInfo(e.getMessage());
             return "Error de comunicación con la API: " + e.getMessage();
         }
     }

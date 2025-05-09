@@ -15,17 +15,14 @@ import jakarta.inject.Inject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/paypal")
 public class PaypalController {
 
@@ -99,9 +96,10 @@ public class PaypalController {
             if ("approved".equals(payment.getState())) {
                 Pedido pedidoGuardado = guardarPedidoDesdeCarrito();
                 guardarTransaccion(pedidoGuardado);
+                var IdPedido=pedidoGuardado.getIdPedido();
                 carritoBean.resetCart();
-
-                return new RedirectView("/home/pagoExitoso.xhtml");
+                //FacesContext.getCurrentInstance().getExternalContext().redirect("/home/pagoExitoso.xhtml?idPedido="+IdPedido);
+                return new RedirectView("/home/pagoExitoso.xhtml?idPedido="+IdPedido);
             }
         } catch (Exception e) {
             Logger.logError("Error en pago exitoso: " + e.getMessage());
