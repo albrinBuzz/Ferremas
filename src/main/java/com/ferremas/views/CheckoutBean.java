@@ -38,7 +38,7 @@ public class CheckoutBean {
     private CarritoBean carritoBean;
     @Inject
     private UserBean userBean;
-    private Clienteinvitado clienteInvitado;  // Aquí almacenamos los datos del invitado
+    private Clienteinvitado clienteInvitado;
     private String metodoPago;
     private Sucursal sucursal;
     private Pedido pedido;
@@ -122,32 +122,6 @@ public class CheckoutBean {
                 Logger.logInfo("Pago por PayPal");
 
                 try {
-                    // Crear el cuerpo de la solicitud
-                    /*Map<String, String> body = new HashMap<>();
-                    body.put("method", "paypal");
-                    body.put("amount", "00.01");
-                    body.put("currency", "USD");
-                    body.put("description", "Compra en Ferremas");
-
-                    // Crear headers
-                    HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-                    // Convertir body a formato URL-encoded
-                    StringBuilder formData = new StringBuilder();
-                    for (Map.Entry<String, String> entry : body.entrySet()) {
-                        formData.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
-                    }
-
-                    HttpEntity<String> entity = new HttpEntity<>(formData.toString(), headers);
-
-                    // Consumir el endpoint
-                    RestTemplate restTemplate = new RestTemplate();
-                    ResponseEntity<String> response = restTemplate.postForEntity(
-                            "http://localhost:8080/paypal/payment/create",
-                            entity,
-                            String.class
-                    );*/
 
                     String method="paypal";
                     String amount="00.01";

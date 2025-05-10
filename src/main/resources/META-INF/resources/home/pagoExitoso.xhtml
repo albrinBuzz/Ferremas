@@ -21,7 +21,7 @@
                 <h2 class="text-center text-success font-weight-bold mb-4">¡Pago Realizado con Éxito!</h2>
 
                 <!-- Imagen de confirmación de pago -->
-                <p:graphicImage url="/resources/images/imgs/pagoExitoso.png" library="images" width="150" />
+                <p:graphicImage url="/resources/images/imgs/pagoExitoso.png" library="images" />
 
                 <!-- Mensaje de agradecimiento -->
                 <p class="text-center mt-3">
@@ -37,20 +37,25 @@
                 <!-- Detalles del Pedido -->
                 <h4 class="text-center mt-4">Detalles del Pedido</h4>
                 <h:panelGrid columns="2" styleClass="mt-4 text-left mx-auto" columnClasses="font-weight-bold,text-muted">
-                    <h:outputText value="Fecha de Pedido:" />
+                    <h:outputText value="Número de Orden de Pedido:" />
+                    <h:outputText value="#{pagoExitosoBean.pedido.idPedido}" />
+
+                    <h:outputText value="Nombre del Comercio:" />
+                    <h:outputText value="Ferremas S.A." />
+
+
+                    <h:outputText value="Sucursal de retiro:" />
+                    <h:outputText value="#{pagoExitosoBean.pedido.sucursal.nombre} " />
+                    <h:outputText value="Direccion:" />
+                    <h:outputText value="#{pagoExitosoBean.pedido.sucursal.direccion} " />
+
+                    <h:outputText value="Monto y Moneda:" />
+                    <h:outputText value="$#{pagoExitosoBean.pedido.total} CLP" />
+
+                    <h:outputText value="Fecha de Transacción:" />
                     <h:outputText value="#{pagoExitosoBean.pedido.fecha}"
-                                  rendered="#{not empty pagoExitosoBean.pedido.fecha}"
                                   converter="jakarta.faces.DateTime"
-                                  converterPattern="dd/MM/yyyy HH:mm"
-                                  styleClass="font-weight-bold" />
-
-                    <h:outputText value="Total a Pagar:" />
-                    <h:outputText value="#{pagoExitosoBean.pedido.total}"
-                                  styleClass="font-weight-bold text-success" />
-
-                    <h:outputText value="Estado del Pedido:" />
-                    <h:outputText value="#{pagoExitosoBean.pedido.estadopedido.nombre}"
-                                  styleClass="font-weight-bold" />
+                                  converterPattern="dd/MM/yyyy HH:mm" />
                 </h:panelGrid>
 
                 <!-- Detalle de los productos -->

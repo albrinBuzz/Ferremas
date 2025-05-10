@@ -8,18 +8,18 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
+import cl.transbank.common.IntegrationApiKeys;
+import cl.transbank.common.IntegrationCommerceCodes;
 import cl.transbank.common.IntegrationType;
 import cl.transbank.webpay.common.WebpayOptions;
-import cl.transbank.webpay.exception.TransactionCaptureException;
 import cl.transbank.webpay.exception.TransactionCommitException;
 import cl.transbank.webpay.exception.TransactionRefundException;
-import cl.transbank.webpay.exception.TransactionStatusException;
 import cl.transbank.webpay.webpayplus.WebpayPlus.Transaction;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ferremas.config.webPay.entity.*;
-
+import com.ferremas.config.webPay.entity.WebPayTransactionRequest;
+import com.ferremas.config.webPay.entity.WebPayTransactionResponse;
+import com.ferremas.config.webPay.entity.RefundRequest;
 import com.ferremas.model.Detallepedido;
 import com.ferremas.model.Pedido;
 import com.ferremas.model.Transaccion;
@@ -31,164 +31,121 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-
+/**
+ * Servicio que encapsula la lógica de integración con WebPay Plus
+ * para crear, confirmar y anular transacciones.
+ */
 @Service
 public class WebPayService {
 
     private static final String TOKEN_KEY = "token_ws";
+    private static final String API_URL = "https://webpay3gint.transbank.cl/rswebpaytransaction/api/webpay/v1.2/transactions";
+    //@Value("${webpay.commerceCode}")
+    private static  String API_COMERCIO="597055555532";
+    //@Value("${webpay.apiKey}")
+    private static  String API_KEY ="579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C";
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final HttpClient client = HttpClient.newHttpClient();
     private WebpayOptions webpayOptions;
 
-
-    private  final ObjectMapper objectMapper = new ObjectMapper(); // Para convertir objetos a JSON
-    private  final String API_URL = "https://webpay3gint.transbank.cl/rswebpaytransaction/api/webpay/v1.2/transactions"; // Base URL de la API
-    private  final String API_KEY_ID = "597055555532"; // Tu API Key
-    private  final String API_KEY_SECRET = "579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C"; // Tu API Secret
-    private  final HttpClient client = HttpClient.newHttpClient(); // Instancia de HttpClient
-
-    @Value("${webpay.commerceCode}")
-    private String commerceCode;
-
-    @Value("${webpay.apiKey}")
-    private String apiKey;
 
     @Inject
     private CarritoBean carritoBean;
 
     @Autowired
     private PedidoService pedidoService;
+
     @Autowired
     private TransaccionService transaccionService;
+
     @Autowired
     private MetodopagoService metodopagoService;
 
     @Autowired
     private EstadopedidoService estadopedidoService;
 
-    // Inicializa las opciones de WebPay con las credenciales
-    public WebPayService() {
-
-    }
-
+    /**
+     * Inicializa las opciones de conexión con WebPay, usando modo TEST.
+     */
     @PostConstruct
-    public void init(){
-        IntegrationType integrationType = IntegrationType.TEST; // Usa TEST para pruebas, LIVE para producción
-        this.webpayOptions = new WebpayOptions(commerceCode, apiKey, integrationType);
+    public void init() {
+        this.webpayOptions = new WebpayOptions(API_COMERCIO, API_KEY, IntegrationType.TEST);
+        //IntegrationCommerceCodes.WEBPAY_PLUS_MALL, IntegrationApiKeys.WEBPAY;
     }
 
-
-    // Crear una transacción
+    /**
+     * Crea una transacción en WebPay Plus.
+     *
+     * @param request Objeto con los datos requeridos para iniciar la transacción.
+     * @return WebPayTransactionResponse con los datos para redirigir al usuario.
+     * @throws Exception si ocurre un error de red o serialización.
+     */
     public WebPayTransactionResponse createTransaction(WebPayTransactionRequest request) throws Exception {
-        // Convertir el objeto a JSON
-        ObjectMapper objectMapper = new ObjectMapper();
         String jsonRequest = objectMapper.writeValueAsString(request);
 
-        // Crear la solicitud HTTP
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(API_URL))
-                .header("Tbk-Api-Key-Id", API_KEY_ID)
-                .header("Tbk-Api-Key-Secret", API_KEY_SECRET)
+                .header("Tbk-Api-Key-Id", API_COMERCIO)
+                .header("Tbk-Api-Key-Secret", API_KEY)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonRequest))
                 .build();
 
-
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-
-        // Deserializar la respuesta en un objeto WebPayTransactionResponse
         return objectMapper.readValue(response.body(), WebPayTransactionResponse.class);
     }
 
-
-        // Confirmar una transacción
+    /**
+     * Confirma una transacción previamente iniciada, usando el token entregado por WebPay.
+     * Si la transacción es exitosa, guarda el pedido y la transacción.
+     *
+     * @param token Token de la transacción entregado por WebPay.
+     * @return ID del pedido guardado, o 0 si ocurre un error.
+     */
     public int commitTransaction(String token) {
         try {
-            // Creación de la transacción
             Transaction transaction = new Transaction(webpayOptions);
-
-            // Commit de la transacción enviando el token como parámetro
             var respuesta = transaction.commit(token);
-            Logger.logInfo(respuesta.toString());
 
-            if (respuesta.getStatus().equals("AUTHORIZED")){
+            Logger.logInfo("Respuesta WebPay: " + respuesta);
+
+            if ("AUTHORIZED".equals(respuesta.getStatus())) {
                 Pedido pedidoGuardado = guardarPedidoDesdeCarrito();
                 guardarTransaccion(pedidoGuardado);
                 carritoBean.resetCart();
-
-                return  pedidoGuardado.getIdPedido();
+                return pedidoGuardado.getIdPedido();
             }
-
-        } catch (TransactionCommitException e) {
-            e.printStackTrace();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-
+        } catch (TransactionCommitException | IOException e) {
+            Logger.logError("Error al confirmar transacción: " + e.getMessage());
         }
+
         return 0;
     }
 
-
-
-    // Buscar una transacción
-    public String searchTransaction(String token) {
-        try {
-            // Creación de la transacción
-            Transaction transaction = new Transaction(webpayOptions);
-
-            // Búsqueda de la transacción enviando el token como parámetro
-            var respuesta = transaction.status(token);
-            return respuesta.toString(); // Devuelve el estado de la transacción
-        } catch (TransactionStatusException e) {
-            e.printStackTrace();
-            return "Error al buscar el estado de la transacción: " + e.getMessage();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "Error de comunicación con la API: " + e.getMessage();
-        }
-    }
-
-    // Reversa una transacción
+    /**
+     * Realiza un rollback o anula la trasaccion, cancela la trasaccion  previamente confirmada.
+     *
+     * @param token   Token de la transacción a reversar.
+     * @param request Objeto que contiene el monto a devolver.
+     * @return Cadena con el resultado del reembolso.
+     */
     public String refundTransaction(String token, RefundRequest request) {
         try {
-            // Creación de la transacción
             Transaction transaction = new Transaction(webpayOptions);
-            double amount = request.getAmount();
+            var respuesta = transaction.refund(token, request.getAmount());
 
-            // Reversa de la transacción enviando el token y monto como parámetro
-            var respuesta = transaction.refund(token, amount);
-            Logger.logInfo(respuesta.toString());
-            return respuesta.toString(); // Devuelve el resultado del reembolso
-        } catch (TransactionRefundException e) {
-            Logger.logInfo(e.getMessage());
-            return "Error al reversar la transacción: " + e.getMessage();
-        } catch (IOException e) {
-            Logger.logInfo(e.getMessage());
-            return "Error de comunicación con la API: " + e.getMessage();
+            return respuesta.toString();
+        } catch (TransactionRefundException | IOException e) {
+
+            return "Error al anual la transacción: " + e.getMessage();
         }
     }
 
-    // Capturar una transacción
-    public String captureTransaction(String token, CaptureRequest request) {
-        try {
-            // Creación de la transacción
-            Transaction transaction = new Transaction(webpayOptions);
-            String buyOrder = request.getBuyOrder();
-            String authorizationCode = request.getAuthorizationCode();
-            double amount = request.getAmount();
-
-            // Captura de la transacción
-            var respuesta = transaction.capture(token, buyOrder, authorizationCode, amount);
-            return respuesta.toString(); // Devuelve el resultado de la captura
-        } catch (TransactionCaptureException e) {
-            Logger.logInfo(e.getMessage());
-            return "Error al capturar la transacción: " + e.getMessage();
-        } catch (IOException e) {
-            Logger.logInfo(e.getMessage());
-            return "Error de comunicación con la API: " + e.getMessage();
-        }
-    }
-
-
+    /**
+     * Guarda un nuevo pedido en base a los datos del carrito.
+     *
+     * @return Pedido persistido en la base de datos.
+     */
     private Pedido guardarPedidoDesdeCarrito() {
         Pedido pedidoCarrito = carritoBean.getPedido();
         Pedido nuevoPedido = new Pedido();
@@ -196,10 +153,15 @@ public class WebPayService {
         nuevoPedido.setRutcliente(pedidoCarrito.getRutcliente());
         nuevoPedido.setFecha(new Date());
         nuevoPedido.setSucursal(pedidoCarrito.getSucursal());
-        nuevoPedido.setEstadopedido(estadopedidoService.findById(2)
-                .orElseThrow(() -> new IllegalArgumentException("EstadoPedido no encontrado")));
         nuevoPedido.setEstado("espera");
 
+        // Asigna el estado "En espera"
+        nuevoPedido.setEstadopedido(
+                estadopedidoService.findById(2)
+                        .orElseThrow(() -> new IllegalArgumentException("EstadoPedido no encontrado"))
+        );
+
+        // Copia los detalles del carrito
         List<Detallepedido> nuevosDetalles = new ArrayList<>();
         for (Detallepedido detalle : pedidoCarrito.getDetallepedidos()) {
             Detallepedido nuevoDetalle = new Detallepedido();
@@ -215,6 +177,11 @@ public class WebPayService {
         return pedidoService.guardar(nuevoPedido);
     }
 
+    /**
+     * Registra una transacción exitosa en el sistema.
+     *
+     * @param pedido Pedido asociado a la transacción.
+     */
     private void guardarTransaccion(Pedido pedido) {
         Transaccion transaccion = new Transaccion();
         transaccion.setPedido(pedido);
@@ -224,6 +191,4 @@ public class WebPayService {
 
         transaccionService.guardar(transaccion);
     }
-
-
 }
