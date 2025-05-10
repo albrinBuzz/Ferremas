@@ -106,7 +106,7 @@ A continuación se detallan algunos errores frecuentes al ejecutar el sistema FE
 ## Error tablas o tabla inexistente
 
 ejemplo:
-```javascript
+```java
 Caused by: org.hibernate.tool.schema.spi.SchemaManagementException: Schema-validation: missing table [categoria]
 ```
 
@@ -120,7 +120,7 @@ se deben insertar los archivos [procedimientos.sql](dataBase%2Fprocedimientos.sq
 
 ## Error host no econtrado
 ejemplo:
-```javascript
+```java
 Caused by: java.net.NoRouteToHostException: No existe ninguna ruta hasta el `host'
 Caused by: org.postgresql.util.PSQLException: El intento de conexión falló.
 org.hibernate.exception.JDBCConnectionException: unable to obtain isolated JDBC connection [El intento de conexión falló.] [n/a]
