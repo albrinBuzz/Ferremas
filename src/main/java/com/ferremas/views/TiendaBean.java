@@ -10,7 +10,6 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +27,6 @@ public class TiendaBean {
     private ProductoService productoService;  // Suponiendo que tienes un servicio que maneja los productos.
     @Autowired
     private CategoriaService categoriaService;
-
 
     private List<Producto> productos;
     private List<Categoria>listaCategorias;
