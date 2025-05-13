@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <ui:composition lang="es"
                 xmlns:f="jakarta.faces.core"
                 xmlns:h="jakarta.faces.html"
@@ -16,7 +15,43 @@
                 background-color: #f4f7f9;
             }
 
-            /* Personalización de los botones */
+            /* Estilos del formulario de búsqueda */
+            .search-form-container {
+                max-width: 600px;
+                margin: 30px auto;
+                background-color: #ffffff;
+                border-radius: 8px;
+                padding: 20px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .search-form-container h3 {
+                font-size: 20px;
+                margin-bottom: 20px;
+                color: #007bff;
+            }
+
+            .search-form-container p:outputLabel {
+                font-weight: bold;
+                font-size: 16px;
+                color: #333;
+            }
+
+            .search-form-container p:inputText {
+                width: 100%;
+                margin-bottom: 20px;
+                padding: 10px;
+                border-radius: 5px;
+                border: 1px solid #ddd;
+                background-color: #f9f9f9;
+                font-size: 16px;
+            }
+
+            .search-form-container p:inputText:focus {
+                border-color: #007bff;
+                background-color: #fff;
+            }
+
             .ui-button-success {
                 background-color: #28a745;
                 border-color: #28a745;
@@ -27,11 +62,35 @@
                 padding: 10px 20px;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                 transition: background-color 0.3s ease, border-color 0.3s ease;
+                width: 100%;
+                margin-top: 10px;
             }
 
             .ui-button-success:hover {
                 background-color: #218838;
                 border-color: #1e7e34;
+            }
+
+            /* Panel de error */
+            .panel-error {
+                background-color: #f8d7da;
+                border: 1px solid #f5c6cb;
+                padding: 20px;
+                border-radius: 8px;
+                text-align: center;
+                font-size: 16px;
+                color: #721c24;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                margin-top: 20px;
+            }
+
+            /* Panel de detalles del pedido */
+            .order-details {
+                margin-top: 20px;
+                padding: 20px;
+                background-color: #ffffff;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             }
 
             /* Mejora de la tabla */
@@ -50,74 +109,6 @@
                 font-size: 14px;
             }
 
-            .detalle-pedido .ui-column-body p {
-                margin: 0;
-            }
-
-            /* Panel de error */
-            .panel-error {
-                background-color: #f8d7da;
-                border: 1px solid #f5c6cb;
-                padding: 20px;
-                border-radius: 8px;
-                text-align: center;
-                font-size: 16px;
-                color: #721c24;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                margin-top: 20px;
-            }
-
-            .panel-error h3 {
-                margin-bottom: 10px;
-                font-weight: bold;
-                font-size: 18px;
-            }
-
-            /* Mejora de los paneles */
-            .ui-panel {
-                border-radius: 8px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                padding: 20px;
-                background-color: white;
-                margin-bottom: 20px;
-            }
-
-            /* Formulario de transferencia */
-            .transfer-form-container {
-                max-width: 800px;
-                margin: 20px auto;
-                background-color: #ffffff;
-                border-radius: 8px;
-                padding: 20px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
-
-            .transfer-form-container h3 {
-                font-size: 20px;
-                margin-bottom: 20px;
-            }
-
-            .transfer-form-container p:outputLabel {
-                font-weight: bold;
-                font-size: 16px;
-            }
-
-            .transfer-form-container p:inputText,
-            .transfer-form-container p:inputTextarea,
-            .transfer-form-container p:inputNumber,
-            .transfer-form-container p:fileUpload {
-                width: 100%;
-                margin-bottom: 20px;
-                padding: 10px;
-                border-radius: 5px;
-                border: 1px solid #ddd;
-                background-color: #f9f9f9;
-            }
-
-            .transfer-form-container p:inputTextarea {
-                resize: vertical;
-            }
-
             /* Botones del formulario */
             .ui-commandbutton {
                 margin-top: 20px;
@@ -128,6 +119,7 @@
                 padding: 10px 20px;
                 transition: background-color 0.3s ease, border-color 0.3s ease;
                 font-size: 16px;
+                width: 100%;
             }
 
             .ui-commandbutton:hover {
@@ -135,7 +127,7 @@
                 border-color: #003f8a;
             }
 
-            /* Estilos para las tablas de transferencia */
+            /* Estilos para las tablas */
             .p-dataTable thead {
                 background-color: #007bff;
                 color: white;
@@ -146,30 +138,27 @@
             .p-dataTable tbody {
                 background-color: #f9f9f9;
             }
-
-            /* Estilo del diálogo */
-            .ui-dialog .ui-dialog-titlebar {
-                background-color: #007bff;
-                color: white;
-            }
-
-            .ui-dialog .ui-dialog-content {
-                padding: 20px;
-            }
         </style>
     </h:head>
 
     <ui:define name="contenido">
-        <h:form id="formConsultaPedido" enctype="multipart/form-data">
-            <h:outputLabel for="idPedido" value="ID del Pedido:" />
+        <!-- Formulario de Búsqueda -->
+        <h:form id="formConsultaPedido" enctype="multipart/form-data" class="search-form-container">
+            <h3>Consulta de Pedido</h3>
+            <p:messages id="msgs" showDetail="true" closable="true" />
+
+            <!-- Campos de Búsqueda -->
+            <p:outputLabel for="idPedido" value="ID del Pedido:" />
             <h:inputText id="idPedido" value="#{miPedidoBean.idPedido}" required="true" />
 
-            <h:outputLabel for="rutCliente" value="RUT del Cliente:" />
+            <p:outputLabel for="rutCliente" value="RUT del Cliente:" />
             <h:inputText id="rutCliente" value="#{miPedidoBean.rutCliente}" required="true" />
 
+            <!-- Botón de Buscar -->
             <h:commandButton value="Ver Estado" action="#{miPedidoBean.cargarPedido}" styleClass="ui-button-success" />
 
-            <h:panelGroup rendered="#{miPedidoBean.pedido != null}">
+            <!-- Panel de Detalles del Pedido -->
+            <h:panelGroup rendered="#{miPedidoBean.pedido != null}" class="order-details">
                 <h3>Detalles del Pedido</h3>
 
                 <div style="display: flex; flex-wrap: wrap; margin-bottom: 10px;">
@@ -180,61 +169,14 @@
                     <div style="flex: 1;">#{miPedidoBean.pedido.fecha}</div>
 
                     <div style="width: 200px; font-weight: bold;">Total:</div>
-                    <div style="flex: 1;"> <h:outputText value="#{miPedidoBean.pedido.total}"
-                                                         rendered="#{not empty miPedidoBean.pedido.total}"
-                    >
-                        <f:convertNumber pattern="###,##0.00" currencySymbol="CLP " />
-                    </h:outputText></div>
+                    <div style="flex: 1;">
+                        <h:outputText value="#{miPedidoBean.pedido.total}">
+                            <f:convertNumber pattern="###,##0" currencySymbol="CLP " />
+                        </h:outputText>
+                    </div>
                 </div>
 
-
-                <h:panelGroup rendered="#{not empty miPedidoBean.pedido.transferencias}">
-                    <p:panel header="Formulario de Transferencia Bancaria" styleClass="transfer-form-container">
-                        <p:messages id="msgs" showDetail="true" closable="true" />
-
-                        <h:panelGrid columns="2" cellpadding="5" style="width:100%">
-                            <h:outputLabel for="monto" value="Monto transferido (CLP):" />
-                            <p:inputNumber id="monto" value="#{transferenciaBean.transferencia.monto}" required="true" decimalPlaces="0" thousandSeparator="." />
-
-                            <h:outputLabel for="comentario" value="Comentario adicional:" />
-                            <p:inputTextarea id="comentario" value="#{transferenciaBean.transferencia.comentario}" rows="3" maxlength="255" counter="charCount" />
-
-                            <f:facet name="footer">
-                                <h:outputText id="charCount" />
-                            </f:facet>
-
-                            <h:outputLabel for="comprobante" value="Comprobante de transferencia (PDF/JPG/PNG):" />
-                            <p:fileUpload id="comprobante" mode="simple" skinSimple="true" value="#{transferenciaBean.file}" allowTypes="/(\.|\/)(pdf|jpg|jpeg|png)$/"
-                                          label="Subir archivo" required="true" />
-                        </h:panelGrid>
-
-                        <p:commandButton value="Enviar Transferencia" action="#{transferenciaBean.guardarTransferencia(miPedidoBean.pedido)}"
-                                         icon="pi pi-save" update="msgs, formConsultaPedido, tablaTransferencias" process="@form"
-                                         styleClass="ui-commandbutton" ajax="true" onstart="PF('spinner').show();" oncomplete="PF('spinner').hide();" />
-                    </p:panel>
-                </h:panelGroup>
-
-                <h:panelGroup rendered="#{not empty miPedidoBean.pedido.transferencias}">
-                    <h3>Transferencias Asociadas</h3>
-                    <p:dataTable value="#{miPedidoBean.pedido.transferencias}" var="transferencia" id="tablaTransferencias" widgetVar="transfeTable">
-                        <p:column headerText="Comentario">
-                            <h:outputText value="#{transferencia.comentario}" />
-                        </p:column>
-                        <p:column headerText="Monto (CLP)">
-                            <h:outputText value="#{transferencia.monto}" />
-                        </p:column>
-                        <p:column headerText="Fecha">
-                            <h:outputText value="#{transferencia.fecha}" />
-                        </p:column>
-                        <p:column headerText="Estado de Transferencia">
-                            <h:outputText value="#{transferencia.estadotransferencia.nombre}" />
-                        </p:column>
-                        <p:column headerText="Comprobante">
-                            <h:outputText value="#{transferencia.comprobante}" />
-                        </p:column>
-                    </p:dataTable>
-                </h:panelGroup>
-
+                <!-- Detalles del Pedido -->
                 <h:outputLabel value="Detalles del Pedido:" />
                 <p:dataTable value="#{miPedidoBean.pedido.detallepedidos}" var="detalle">
                     <p:column headerText="Producto">
@@ -252,18 +194,11 @@
                 </p:dataTable>
             </h:panelGroup>
 
+            <!-- Error en la búsqueda -->
             <h:panelGroup rendered="#{miPedidoBean.pedido == null}">
                 <h:outputText value="No se encontró el pedido. Verifique el ID y el RUT." styleClass="panel-error" />
             </h:panelGroup>
         </h:form>
-
-        <!-- Diálogo para ver comprobante -->
-        <p:dialog id="comprobanteDialog" widgetVar="comprobanteDialogWidget" modal="true" header="Comprobante" closable="true">
-            <h:panelGroup rendered="#{not empty transferenciasBean.transferenciaSeleccionada}">
-                <p:graphicImage url="/resources/images/transa/#{transferenciasBean.transferenciaSeleccionada.comprobante}"
-                                style="max-width: 100%; max-height: 80vh; object-fit: contain;" alt="Comprobante" />
-            </h:panelGroup>
-        </p:dialog>
     </ui:define>
 
 </ui:composition>

@@ -13,7 +13,7 @@ BEGIN
     ) THEN
         -- Si existe, actualiza el stock
         UPDATE inventario
-        SET stock = p_stock,set id_producto=p_id_producto
+        SET stock = p_stock
         WHERE id_producto = p_id_producto AND id_sucursal = p_id_sucursal;
     ELSE
         -- Si no existe, inserta un nuevo registro
@@ -23,6 +23,22 @@ BEGIN
 END;
 $$;
 
+
+
+CREATE OR REPLACE PROCEDURE sp_eliminarInv(
+    IN p_id_producto INTEGER,
+    IN p_id_sucursal INTEGER
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+	delete from inventario
+	where id_producto=p_id_producto and id_sucursal=p_id_sucursal;
+
+
+END;
+$$;
 
 
 --funcion que obtine las transferencias seegun la sucursal

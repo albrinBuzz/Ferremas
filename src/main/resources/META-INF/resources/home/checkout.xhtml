@@ -24,25 +24,29 @@
 
                                 <div class="mb-3">
                                     <h:outputLabel for="nombre" value="Nombre completo"/>
-                                    <h:inputText id="nombre" value="#{checkoutBean.clienteInvitado.nombre}"
+                                    <h:inputText id="nombre" value="#{checkoutBean.clienteInvitado.nombre}" required="true"
+                                                 requiredMessage="El nombre es Obligatorio"
                                                  styleClass="form-control"/>
                                 </div>
 
                                 <div class="mb-3">
                                     <h:outputLabel for="rut" value="Rut"/>
-                                    <h:inputText id="rut" value="#{checkoutBean.clienteInvitado.rutcliente}"
+                                    <h:inputText id="rut" value="#{checkoutBean.clienteInvitado.rutcliente}" required="true"
+                                                 requiredMessage="El Rut es Obligatorio"
                                                  styleClass="form-control"/>
                                 </div>
 
                                 <div class="mb-3">
                                     <h:outputLabel for="correo" value="Correo electrónico"/>
-                                    <h:inputText id="correo" value="#{checkoutBean.clienteInvitado.correo}"
+                                    <h:inputText id="correo" value="#{checkoutBean.clienteInvitado.correo}" required="true"
+                                                 requiredMessage="El Correo electrónico es Obligatorio"
                                                  styleClass="form-control"/>
                                 </div>
 
                                 <div class="mb-3">
                                     <h:outputLabel for="telefono" value="Teléfono"/>
-                                    <h:inputText id="telefono" value="#{checkoutBean.clienteInvitado.telefono}"
+                                    <h:inputText id="telefono" value="#{checkoutBean.clienteInvitado.telefono}" required="true"
+                                                 requiredMessage="El Teléfono es Obligatorio"
                                                  styleClass="form-control"/>
                                 </div>
                             </div>
@@ -51,7 +55,7 @@
                         <div class="card p-4 shadow-sm mb-4">
                             <h4 class="mb-3 text-primary">Método de Pago</h4>
                             <div class="form-check">
-                                <h:selectOneRadio value="#{checkoutBean.metodoPago}" layout="pageDirection"
+                                <h:selectOneRadio value="#{checkoutBean.metodoPago}" layout="pageDirection" required="true"
                                                   requiredMessage="El Metodo de pago es obligatorio" >
                                     <f:selectItem itemLabel="webPay" itemValue="webPay"/>
                                     <f:selectItem itemLabel="Tarjeta de Crédito" itemValue="tarjeta"/>
@@ -91,13 +95,42 @@
                             </ui:repeat>
 
                             <hr/>
+
+
                             <div class="d-flex justify-content-between">
-                                <strong>Total:</strong>
+                                <strong>SubTotal:</strong>
                                 <strong>
-                                    <h:outputText value="#{carroBean.total}">
+                                    <h:outputText value="#{checkoutBean.subTotal}">
                                         <f:convertNumber type="currency" currencySymbol="$"/>
                                     </h:outputText>
                                 </strong>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <strong>Total:</strong>
+                                <strong>
+                                    <h:outputText value="#{checkoutBean.total}">
+                                        <f:convertNumber type="currency" currencySymbol="$"/>
+                                    </h:outputText>
+                                </strong>
+                            </div>
+
+
+                            <!-- Texto informativo sobre descuento -->
+                            <div class="alert alert-info mt-3" role="alert">
+                                <strong>¡Atención!</strong> Si compras más de <strong>$65.000</strong>, obtienes un <strong>10% de descuento</strong> en tu compra.
+                            </div>
+
+                            <!-- Mostrar descuento solo si hay descuento -->
+                            <div rendered="#{checkoutBean.descuento}">
+                                <div class="d-flex justify-content-between">
+                                    <strong>Descuento (10%):</strong>
+                                    <strong style="color: green;">
+                                        <h:outputText value="#{checkoutBean.descuentoVal}">
+                                            <f:convertNumber type="currency" currencySymbol="$"/>
+                                        </h:outputText>
+                                    </strong>
+                                </div>
                             </div>
 
                             <div class="mt-2">

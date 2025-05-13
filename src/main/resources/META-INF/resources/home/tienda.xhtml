@@ -8,6 +8,9 @@
 
     <h:head>
         <title>Tienda - Ferremas</title>
+
+
+
     </h:head>
     <ui:define name="contenido">
 
@@ -38,10 +41,10 @@
                                                itemLabel="#{cat.nombre}" itemValue="#{cat.idCategoria}" />
                             </p:selectOneMenu>
 
-                            <!-- Precio mínimo y máximo -->
+                            <!-- Precio mínimo y máximo
                             <p:outputLabel value="Rango de precio" />
                             <p:spinner value="#{tiendaBean.precioMin}" min="0" max="100000" stepFactor="1000" styleClass="w-100 mb-2"/>
-                            <p:spinner value="#{tiendaBean.precioMax}" min="0" max="100000" stepFactor="1000" styleClass="w-100 mb-3"/>
+                            <p:spinner value="#{tiendaBean.precioMax}" min="0" max="100000" stepFactor="1000" styleClass="w-100 mb-3"/>-->
 
                             <!-- Stock disponible
                             <p:selectBooleanCheckbox value="#{shopBean.soloDisponibles}" itemLabel="Solo productos en stock" styleClass="mb-3"/>-->
@@ -53,6 +56,12 @@
                                              styleClass="btn btn-primary w-100" />
                         </div>
                     </h:form>
+
+                    <div id="DolarO" class="alert alert-info d-flex justify-content-between align-items-center mb-4">
+                        <span><i class="pi pi-money-bill text-success"></i> <strong>Precio del Dólar</strong></span>
+                        <span id="dolarValue">Cargando...</span>
+                    </div>
+
                 </div>
 
                 <!-- 🛒 Productos -->
@@ -94,6 +103,21 @@
 
     </ui:define>
 
+
+    <h:outputScript>
+        // Script para obtener el valor del dólar y actualizar el div "DolarO"
+        fetch('https://mindicador.cl/api').then(function(response) {
+        return response.json();
+        }).then(function(dailyIndicators) {
+        // Formato bonito para el valor del dólar
+        let dolarValue = dailyIndicators.dolar.valor.toFixed(2);
+        document.getElementById("dolarValue").innerHTML = '$' + dolarValue;
+        }).catch(function(error) {
+        console.log('Request failed', error);
+        // Si falla, mostrar un mensaje de error
+        document.getElementById("dolarValue").innerHTML = 'No se pudo obtener el precio del dólar';
+        });
+    </h:outputScript>
 
 
 </ui:composition>

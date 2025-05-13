@@ -131,16 +131,16 @@ VALUES
 -- Insertar los productos en la tabla PRODUCTO
 INSERT INTO PRODUCTO (nombre, descripcion, precio, marca, id_categoria, imagen)
 VALUES
-    ('Cinta Métrica Stanley 30-615', 'Cinta métrica de 5 metros y 25mm de ancho, con carcasa resistente y gancho para mediciones precisas', 1, 'Stanley', 1, 'Cinta_Métrica_Stanley_30-615.jpeg'),
-    ('Juego de Alicates Ingco HKPS28318', 'Conjunto de 3 alicates: de corte, punta y combinación, con mangos antideslizantes', 2, 'Ingco', 2, 'Juego_de_Alicates_Ingco_HKPS28318.jpeg'),
-    ('Llave Inglesa Bahco 9031', 'Llave ajustable fabricada en acero al cromo-vanadio, con diseño ergonómico', 3, 'Bahco', 3, 'Llave_Inglesa_Bahco_9031.jpeg'),
-    ('Nivel de Burbuja Truper NT-9', 'Nivel magnético de 9 pulgadas con dos burbujas horizontales y una vertical, fabricado en ABS', 1, 'Truper', 4, 'Nivel_de_Burbuja_Truper_NT-9.jpeg'),
-    ('Sierra de Mano Lidl Parkside PSBS 85 A1', 'Sierra de mano 3 en 1 para cortar madera, metal y plástico', 4, 'Lidl Parkside', 5, 'Sierra_de_Mano_Lidl_Parkside_PSBS_85_A1.jpeg'),
-    ('Esmeril Angular Total Tools 750W', 'Esmeril angular de 4.1/2 pulgadas con 750W de potencia, ideal para cortar y pulir materiales', 5, 'Total Tools', 6, 'Esmeril_Angular_Total_Tools_750W.jpeg'),
-    ('Lijadora DeWalt DWE6411-B3', 'Lijadora de acabado fino de 225W para superficies de madera y metal', 7, 'DeWalt', 7, 'Lijadora_DeWalt_DWE6411-B3.jpeg'),
-    ('Martillo Stanley 51-162', 'Martillo de carpintero con mango de fibra de vidrio y cabeza de acero forjado', 1, 'Stanley', 8, 'MartilloStanley51-162.jpeg'),
-    ('Pistola de Calor Parkside PHG 2000 A1', 'Pistola de calor con dos niveles de temperatura y diseño ergonómico', 3, 'Parkside', 9, 'Pistola_de_Calor_Parkside_PHG_2000_A1.jpeg'),
-    ('Taladro Eléctrico Black & Decker KR504CRES', 'Taladro de percusión de 500W con dos velocidades y diseño compacto', 4, 'Black & Decker', 2, 'taladroMakinaPercutor.jpeg');
+    ('Cinta Métrica Stanley 30-615', 'Cinta métrica de 5 metros y 25mm de ancho, con carcasa resistente y gancho para mediciones precisas', 8000, 'Stanley', 1, 'Cinta_Métrica_Stanley_30-615.jpeg'),
+    ('Juego de Alicates Ingco HKPS28318', 'Conjunto de 3 alicates: de corte, punta y combinación, con mangos antideslizantes', 8600, 'Ingco', 2, 'Juego_de_Alicates_Ingco_HKPS28318.jpeg'),
+    ('Llave Inglesa Bahco 9031', 'Llave ajustable fabricada en acero al cromo-vanadio, con diseño ergonómico', 12300, 'Bahco', 3, 'Llave_Inglesa_Bahco_9031.jpeg'),
+    ('Nivel de Burbuja Truper NT-9', 'Nivel magnético de 9 pulgadas con dos burbujas horizontales y una vertical, fabricado en ABS', 4200, 'Truper', 4, 'Nivel_de_Burbuja_Truper_NT-9.jpeg'),
+    ('Sierra de Mano Lidl Parkside PSBS 85 A1', 'Sierra de mano 3 en 1 para cortar madera, metal y plástico', 42000, 'Lidl Parkside', 2, 'Sierra_de_Mano_Lidl_Parkside_PSBS_85_A1.jpeg'),
+    ('Esmeril Angular Total Tools 750W', 'Esmeril angular de 4.1/2 pulgadas con 750W de potencia, ideal para cortar y pulir materiales', 55000, 'Total Tools', 6, 'Esmeril_Angular_Total_Tools_750W.jpeg'),
+    ('Lijadora DeWalt DWE6411-B3', 'Lijadora de acabado fino de 225W para superficies de madera y metal', 27899, 'DeWalt', 7, 'Lijadora_DeWalt_DWE6411-B3.jpeg'),
+    ('Martillo Stanley 51-162', 'Martillo de carpintero con mango de fibra de vidrio y cabeza de acero forjado', 18880, 'Stanley', 8, 'MartilloStanley51-162.jpeg'),
+    ('Pistola de Calor Parkside PHG 2000 A1', 'Pistola de calor con dos niveles de temperatura y diseño ergonómico', 23200, 'Parkside', 9, 'Pistola_de_Calor_Parkside_PHG_2000_A1.jpeg'),
+    ('Taladro Eléctrico Black & Decker KR504CRES', 'Taladro de percusión de 500W con dos velocidades y diseño compacto',43600, 'Black & Decker', 2, 'taladroMakinaPercutor.jpeg');
 
 
 -- Insertar inventarios para productos en sucursales

@@ -1,9 +1,7 @@
 package com.ferremas.views;
 
 import com.ferremas.model.*;
-import com.ferremas.service.EmpleadoService;
-import com.ferremas.service.EstadopedidoService;
-import com.ferremas.service.PedidoService;
+import com.ferremas.service.*;
 import com.ferremas.util.Logger;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.RequestScoped;
@@ -13,17 +11,22 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.Serializable;
+import java.time.temporal.ValueRange;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Named("pedidoBean")
 @ViewScoped
 public class PedidoBean implements Serializable {
 
     private List<Pedido> pedidos;
+    private List<Pedido>pedidosHist;
     private List<Pedido> filteredPedidos;
     private Pedido pedidoSeleccionado;
     private List<Detallepedido> detallesPedido;
@@ -36,6 +39,10 @@ public class PedidoBean implements Serializable {
 
     @Autowired
     private PedidoService pedidoService;
+    @Autowired
+    private ClienteinvitadoService clienteinvitadoService;
+    @Autowired
+    private UsuarioService usuarioService;
 
     @Autowired
     private EmpleadoService empleadoService;
@@ -47,22 +54,28 @@ public class PedidoBean implements Serializable {
     @PostConstruct
     public void init() {
         // Obtener usuario desde la sesión
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
-        if (usuario != null) {
+        Optional<Usuario> usuarioOpt = Optional.ofNullable((Usuario) session.getAttribute("usuario"));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        var roles = authentication.getAuthorities().stream().toList();
+
+        usuarioOpt.ifPresent(usuario -> {
             var empleado = empleadoService.findById(usuario.getRutUsuario()).orElse(null);
             if (empleado != null) {
                 sucursal = empleado.getSucursal();
             }
-        }
+            pedidosHist = pedidoService.obtenerPorCliente(usuario.getRutUsuario());
+        });
 
         if (sucursal != null) {
             pedidos = pedidoService.obtenerPedidosPorSucursal(sucursal.getIdSucursal());
         } else {
-            pedidos = new ArrayList<>();
+            usuarioOpt.ifPresent(usuario -> pedidosHist = pedidoService.obtenerPorCliente(usuario.getRutUsuario()));
         }
 
         estados = estadopedidoService.findAll();
     }
+
 
     // === ACCIONES ===
 
@@ -77,6 +90,28 @@ public class PedidoBean implements Serializable {
         this.pedidoSeleccionado = pedido;
         //this.detallesPedido = pedidoService.obtenerDetallesPorPedido(pedido.getIdPedido()); // Debes tener este método en PedidoService
         this.detallesPedido = pedido.getDetallepedidos();
+    }
+
+    public void eliminarPedido(Pedido pedido){
+        pedidoService.eliminar(pedido.getIdPedido());
+    }
+
+
+    public String getCorreoCliente(String rut) {
+
+        // Variable para almacenar los correos
+        StringBuilder correos = new StringBuilder();
+
+        // Buscar cliente por RUT (Usuario)
+        var cliente = usuarioService.findByRut(rut);
+        cliente.ifPresent(usuario -> correos.append(usuario.getCorreo()));
+
+        // Buscar cliente invitado por RUT
+        var clienteInvitado = clienteinvitadoService.obtenerClientePorRut(rut);
+        clienteInvitado.ifPresent(invitado -> correos.append(invitado.getCorreo()));
+
+        // Retornar los correos concatenados
+        return correos.toString();
     }
 
 
@@ -192,5 +227,7 @@ public class PedidoBean implements Serializable {
     }
 
 
-
+    public List<Pedido> getPedidosHist() {
+        return pedidosHist;
+    }
 }

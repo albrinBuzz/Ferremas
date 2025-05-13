@@ -42,6 +42,11 @@ public class CheckoutBean {
     private String metodoPago;
     private Sucursal sucursal;
     private Pedido pedido;
+    private Boolean descuento;
+    private int descuentoVal;
+    private int subTotal;
+    private int total;
+
     @Autowired
     private PedidoService pedidoService;
     @Autowired
@@ -51,6 +56,9 @@ public class CheckoutBean {
 
     @Autowired
     private EstadopedidoService estadopedidoService;
+
+    @Autowired
+    private ClienteinvitadoService clienteinvitadoService;
 
     @Autowired
     private PaypalService paypalService;
@@ -65,6 +73,32 @@ public class CheckoutBean {
 
         pedido=carritoBean.getPedido();
         detallepedidos=pedido.getDetallepedidos();
+
+
+
+        /*var cant= pedido.getDetallepedidos().stream()
+                        .map(Detallepedido::getProducto)
+                                .count();*/
+        var cant= pedido.getDetallepedidos().stream()
+                        .map(Detallepedido::getCantidad)
+                                .mapToInt(Integer::intValue).sum();
+
+
+
+        Logger.logInfo(String.valueOf(cant));
+
+        if(pedido.getTotal()>65000){
+            descuento=true;
+            descuentoVal= (int) (pedido.getTotal()*0.10);
+            Logger.logInfo(String.valueOf(descuentoVal));
+            total=pedido.getTotal()-descuentoVal;
+            subTotal=pedido.getTotal();
+        }else {
+            total=pedido.getTotal();
+            subTotal=total;
+            descuento=false;
+        }
+
         initSucursales();
 
 
@@ -109,10 +143,16 @@ public class CheckoutBean {
         if (usurio!=null){
             pedido.setRutcliente(usurio.getRutUsuario());
         }else {
+
             pedido.setRutcliente(clienteInvitado.getRutcliente());
+            clienteinvitadoService.crearClienteinvitado(clienteInvitado);
 
         }
 
+
+        if (descuento) {
+            carritoBean.getPedido().setTotal(carritoBean.getPedido().getTotal() - descuentoVal);
+        }
 
         pedido.setSucursal(sucursal);
 
@@ -267,6 +307,30 @@ public class CheckoutBean {
 
     public void setMetodoPago(String metodoPago) {
         this.metodoPago = metodoPago;
+    }
+
+    public Boolean getDescuento() {
+        return descuento;
+    }
+
+    public void setDescuento(Boolean descuento) {
+        this.descuento = descuento;
+    }
+
+    public int getDescuentoVal() {
+        return descuentoVal;
+    }
+
+    public void setDescuentoVal(int descuentoVal) {
+        this.descuentoVal = descuentoVal;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public int getSubTotal() {
+        return subTotal;
     }
 }
 

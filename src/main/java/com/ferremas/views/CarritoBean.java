@@ -55,15 +55,16 @@ public class CarritoBean implements Serializable {
 
     // Método para agregar un producto al carrito
     public void agregarItem(Producto product) {
-        Logger.logInfo("Producto a agregar: "+product);
+
         Detallepedido dt=new Detallepedido(1, product.getPrecio(), product);
         pedido.addDetallepedido(dt,1, product.getIdProducto());
 
     }
 
     // Método para eliminar un producto del carrito
-    public void removeItemFromCart(Producto product) {
+    public void removeItemFromCart(Detallepedido detallepedido) {
         //cartItems.remove(product);
+        pedido.eliminarProducto(detallepedido);
         //this.pedido.e
         //session.setAttribute("listaProductos", cartItems);
     }
