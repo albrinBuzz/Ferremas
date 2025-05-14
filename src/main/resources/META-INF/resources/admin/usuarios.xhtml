@@ -107,9 +107,13 @@
                     <p:outputPanel id="manage-usuario-content" class="ui-fluid">
                         <p:outputPanel rendered="#{not empty adminBean.usuarioSeleccionado}">
 
+
                             <div class="field">
-                                <p:outputLabel for="rut">RUT</p:outputLabel>
-                                <p:inputText id="rut" value="#{adminBean.usuarioSeleccionado.rutUsuario}" required="true" />
+                                <p:outputLabel for="rut" value="RUT" />
+                                <p:inputText id="rut" value="#{adminBean.usuarioSeleccionado.rutUsuario}" required="true"
+                                             requiredMessage="El RUT es obligatorio">
+                                    <f:validator validatorId="rutValidator" />
+                                </p:inputText>
                             </div>
 
                             <div class="field">
@@ -118,8 +122,11 @@
                             </div>
 
                             <div class="field">
-                                <p:outputLabel for="correo">Correo</p:outputLabel>
-                                <p:inputText id="correo" value="#{adminBean.usuarioSeleccionado.correo}" required="true" />
+                                <p:outputLabel for="correo" value="Correo Electrónico" />
+                                <p:inputText id="correo" value="#{adminBean.usuarioSeleccionado.correo}" required="true"
+                                             requiredMessage="El correo es obligatorio">
+                                    <f:validator validatorId="correoValidator" />
+                                </p:inputText>
                             </div>
 
                             <div class="field">
@@ -140,21 +147,25 @@
                             </div>
 
 
-                         <div class="field">
-                             <p:outputLabel for="contrasena">Contraseña</p:outputLabel>
-                             <p:password id="contrasena" value="#{adminBean.contrasenaInput}" feedback="true" />
-                         </div>
+                            <div class="field">
+                                <p:outputLabel for="contrasena" value="Contraseña" />
+                                <p:password id="contrasena" value="#{adminBean.contrasenaInput}" required="true"
+                                            feedback="true" toggleMask="true" promptLabel="Ingrese una contraseña segura"
+                                            weakLabel="Débil" goodLabel="Buena" strongLabel="Fuerte">
+                                    <f:validator validatorId="contrasenaValidator" />
+                                </p:password>
+                            </div>
 
- </p:outputPanel>
-</p:outputPanel>
+                 </p:outputPanel>
+                </p:outputPanel>
 
-<f:facet name="footer">
- <p:commandButton value="Guardar" icon="pi pi-check" actionListener="#{adminBean.saveUsuario}"
-                  update="manage-usuario-content" process="manage-usuario-content @this" />
- <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('manageUsuarioDialog').hide()"
-                  class="ui-button-secondary" type="button" />
-</f:facet>
-</p:dialog>
+            <f:facet name="footer">
+             <p:commandButton value="Guardar" icon="pi pi-check" actionListener="#{adminBean.saveUsuario}"
+                              update="manage-usuario-content" process="manage-usuario-content @this" />
+             <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('manageUsuarioDialog').hide()"
+                              class="ui-button-secondary" type="button" />
+            </f:facet>
+            </p:dialog>
 
 <!-- Confirmar eliminación -->
                 <p:confirmDialog widgetVar="deleteUsuarioDialog" showEffect="fade" width="300"

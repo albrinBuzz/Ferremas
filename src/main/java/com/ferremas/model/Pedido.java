@@ -184,8 +184,8 @@ public class Pedido implements Serializable {
 		Iterator<Detallepedido> detalles=detallepedidos.iterator();
 		while(detalles.hasNext()) {
 			Detallepedido detalle=detalles.next();
-			total -= detalle.getCantidad()*detalle.getProducto().getPrecio();
 			if (Objects.equals(detalle,detallepedido)) {
+				total -= detalle.getCantidad()*detalle.getProducto().getPrecio();
 				detalles.remove();
 				break;
 			}

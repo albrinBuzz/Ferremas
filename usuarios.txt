@@ -1,0 +1,49 @@
+Usuario 1: Cliente Particular
+------------------------------
+RUT: 16958120-7
+Correo Electrónico: juan.perez@gmail.com
+Contraseña: Pass@1234
+Nombre de Usuario: juanperez
+Nombre del Cliente: Juan Pérez
+Teléfono: +56912345678
+Dirección: Av. Providencia 1234, Santiago, Chile
+
+Usuario 2: Cliente Comercial
+-----------------------------
+RUT: 19817878-0
+Correo Electrónico: contacto@ferreteriaexito.cl
+Contraseña: Ferro@2024!
+Nombre de Usuario: ferreteriaexito
+Nombre del Cliente: Ferretería Éxito
+Teléfono: +56223456789
+Dirección: Calle Las Torres 5678, Santiago, Chile
+
+Usuario 3: Cliente Particular con caracteres especiales en la contraseña
+------------------------------------------------------------------------
+RUT: 20595871-1
+Correo Electrónico: maria.lopez@hotmail.com
+Contraseña: !MaríaLopez2024
+Nombre de Usuario: marialopez
+Nombre del Cliente: María López
+Teléfono: +56987654321
+Dirección: Calle Los Naranjos 987, Viña del Mar, Chile
+
+Usuario 4: Cliente con dirección y teléfono detallados
+------------------------------------------------------
+RUT: 15405938-5
+Correo Electrónico: pedro.gonzalez@empresa.cl
+Contraseña: S3gur@Pedro!
+Nombre de Usuario: pedrogonzalez
+Nombre del Cliente: Pedro González
+Teléfono: +56923456789
+Dirección: Calle La Paz 2345, Temuco, Chile
+
+Usuario 5: Cliente con solo números en el teléfono
+--------------------------------------------------
+RUT: 19817878-0
+Correo Electrónico: juanito123@outlook.com
+Contraseña: Contraseñ@123
+Nombre de Usuario: juanito123
+Nombre del Cliente: Juanito Pérez
+Teléfono: 12345678
+Dirección: Calle Falsa 123, Santiago, Chile

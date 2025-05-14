@@ -27,26 +27,30 @@
                         <div class="field">
                             <p:outputLabel for="rut" value="RUT" />
                             <p:inputText id="rut" value="#{userBean.usuarioRegistro.rutUsuario}" required="true"
-                                         requiredMessage="El RUT es obligatorio" />
+                                         requiredMessage="El RUT es obligatorio">
+                                <f:validator validatorId="rutValidator" />
+                            </p:inputText>
                         </div>
 
                         <div class="field">
                             <p:outputLabel for="correo" value="Correo Electrónico" />
                             <p:inputText id="correo" value="#{userBean.usuarioRegistro.correo}" required="true"
                                          requiredMessage="El correo es obligatorio">
-                            <!--  <f:validateRegex pattern="^[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,4}$" /> -->
-                          </p:inputText>
-                      </div>
+                                <f:validator validatorId="correoValidator" />
+                            </p:inputText>
+                        </div>
 
-                      <div class="field">
-                          <p:outputLabel for="contrasena" value="Contraseña" />
-                          <p:password id="contrasena" value="#{userBean.contrasenaInput}" required="true"
-                                      feedback="true" toggleMask="true" promptLabel="Ingrese una contraseña segura"
-                                      weakLabel="Débil" goodLabel="Buena" strongLabel="Fuerte" />
-                      </div>
-                  </div>
+                        <div class="field">
+                            <p:outputLabel for="contrasena" value="Contraseña" />
+                            <p:password id="contrasena" value="#{userBean.contrasenaInput}" required="true"
+                                        feedback="true" toggleMask="true" promptLabel="Ingrese una contraseña segura"
+                                        weakLabel="Débil" goodLabel="Buena" strongLabel="Fuerte">
+                                <f:validator validatorId="contrasenaValidator" />
+                            </p:password>
+                        </div>
+                    </div>
 
-                  <!-- Columna derecha -->
+                    <!-- Columna derecha -->
                     <div class="col-12 md:col-6">
                         <div class="field">
                             <p:outputLabel for="nombreUsuario" value="Nombre de Usuario" />

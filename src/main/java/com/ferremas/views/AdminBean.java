@@ -178,7 +178,24 @@ public class AdminBean {
 
     public void saveUsuario(){
 
+        if (usuarioService.findByRut(usuarioSeleccionado.getRutUsuario()).isPresent()){
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Rut en uso"));
+            return;
+        }
+
+        if (usuarioService.findByCorreo(usuarioSeleccionado.getCorreo())!=null){
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Correo en uso"));
+            return;
+        }
+
+
+
         usuarioSeleccionado.setRoles(rolesSeleccionados);
+
+
+
 
         if (sucursalId!=0){
             var sucursal=sucursalService.findById(sucursalId).get();

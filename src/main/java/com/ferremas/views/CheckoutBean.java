@@ -65,6 +65,8 @@ public class CheckoutBean {
 
     @Autowired
     private WebPayService webPayService;
+    private String descuentoTipo;  // Nueva propiedad para el tipo de descuento
+
 
     @PostConstruct
     public void init(){
@@ -87,16 +89,30 @@ public class CheckoutBean {
 
         Logger.logInfo(String.valueOf(cant));
 
-        if(pedido.getTotal()>65000){
-            descuento=true;
-            descuentoVal= (int) (pedido.getTotal()*0.10);
-            Logger.logInfo(String.valueOf(descuentoVal));
-            total=pedido.getTotal()-descuentoVal;
-            subTotal=pedido.getTotal();
-        }else {
-            total=pedido.getTotal();
-            subTotal=total;
-            descuento=false;
+        if (pedido.getTotal() > 100000 && cant > 4) {
+            descuento = true;
+            descuentoVal = (int) (pedido.getTotal() * 0.12);  // 15% de descuento
+            descuentoTipo = "12% por compra mayor a $100.000 y más de 4 productos";
+            total = pedido.getTotal() - descuentoVal;
+            subTotal = pedido.getTotal();
+        } else if (pedido.getTotal() > 100000) {
+            descuento = true;
+            descuentoVal = (int) (pedido.getTotal() * 0.10);  // 10% de descuento
+            descuentoTipo = "10% por compras superiores a $100.000";
+            total = pedido.getTotal() - descuentoVal;
+            subTotal = pedido.getTotal();
+        } else if (cant > 4) {
+            descuento = true;
+            descuentoVal = (int) (pedido.getTotal() * 0.05);  // 5% de descuento
+            descuentoTipo = "2% por comprar más de 4 productos";
+            total = pedido.getTotal() - descuentoVal;
+            subTotal = pedido.getTotal();
+        } else {
+            descuento = false;
+            descuentoVal = 0;
+            descuentoTipo = "Sin descuento";
+            total = pedido.getTotal();
+            subTotal = total;
         }
 
         initSucursales();
@@ -315,6 +331,10 @@ public class CheckoutBean {
 
     public void setDescuento(Boolean descuento) {
         this.descuento = descuento;
+    }
+
+    public String getDescuentoTipo() {
+        return descuentoTipo;
     }
 
     public int getDescuentoVal() {

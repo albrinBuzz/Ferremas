@@ -98,10 +98,14 @@
                                         </h:outputText>
                                     </td>
                                     <td>
+
                                         <p:commandButton icon="pi pi-trash"
-                                                         styleClass="btn btn-danger btn-sm"
-                                                         action="#{carroBean.removeItemFromCart(item)}"
-                                                         update=":formCarrito:cartPanel" />
+                                                         styleClass="rounded-button ui-button-primary"
+                                                         process="@form"
+                                                         update=":formCarrito:cartPanel"
+                                                         actionListener="#{carroBean.removeItemFromCart(item)}"
+                                                         title="Aumentar cantidad" />
+
                                     </td>
                                 </tr>
                             </ui:repeat>

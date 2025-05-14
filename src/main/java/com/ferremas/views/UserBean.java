@@ -76,6 +76,18 @@ public class UserBean implements Serializable {
             usuarioRegistro.setContrasena(contrasenaInput);
         }
 
+        if (usuarioService.findByRut(usuarioRegistro.getRutUsuario()).isPresent()){
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Rut en uso"));
+            return;
+        }
+
+        if (usuarioService.findByCorreo(usuarioRegistro.getCorreo())!=null){
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Correo en uso"));
+            return;
+        }
+
         var rol=rolService.findById(2).get();
         cliente.setRutUsuario(usuarioRegistro.getRutUsuario());
         cliente.setUsuario(usuarioRegistro);
