@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 import  apiRest as usuarios
 from fastapi.middleware.cors import CORSMiddleware
+from productosController import router as productos_router  # Asegúrate de importar el archivo de rutas de productos
+from categoriasController import router as categorias_router  # Asegúrate de importar el archivo de rutas de categorías
 
 app = FastAPI(
     title="API de Gestión de Usuarios",
@@ -24,3 +26,5 @@ app.add_middleware(
 
 #Traeremos lo de las rutas(routers):
 app.include_router(usuarios.app)
+app.include_router(productos_router)
+app.include_router(categorias_router)
