@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-import crudCategorias as crud
+
+from service import crudCategorias as crud  # ✅ importación absoluta desde el proyecto raíz
 from database import SessionLocal
 from schemas import CategoriaCreate, CategoriaOut, CategoriaUpdate
 

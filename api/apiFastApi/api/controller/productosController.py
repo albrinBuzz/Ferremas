@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-import crudProductos as crud
+from service import crudProductos as crud  # ✅ importación absoluta desde el proyecto raíz
+
 from database import SessionLocal
 from schemas import ProductoCreate, ProductoOut, ProductoUpdate
 
@@ -25,8 +26,8 @@ def crear_producto_view(producto: ProductoCreate, db: Session = Depends(get_db))
 
 # Obtener todos los productos
 @router.get("/", response_model=list[ProductoOut])
-def listar_productos(db: Session = Depends(get_db), skip: int = 0, limit: int = 100):
-    return crud.get_productos(db, skip=skip, limit=limit)
+def listar_productos(db: Session = Depends(get_db)):
+    return crud.get_productos(db)
 
 # Obtener un producto por ID
 @router.get("/{id_producto}", response_model=ProductoOut)

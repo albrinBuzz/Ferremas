@@ -18,8 +18,8 @@ def crear_producto(db: Session, producto: ProductoCreate):
     return db_producto
 
 # Obtener todos los productos
-def get_productos(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(Producto).offset(skip).limit(limit).all()
+def get_productos(db: Session):
+    return db.query(Producto).all()
 
 # Obtener un producto por ID
 def get_producto(db: Session, id_producto: int):

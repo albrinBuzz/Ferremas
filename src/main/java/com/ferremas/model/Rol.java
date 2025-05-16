@@ -1,6 +1,8 @@
 package com.ferremas.model;
 
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +28,7 @@ public class Rol implements Serializable {
 	private String nombre;
 
 	//bi-directional many-to-many association to Usuario
+	@JsonIgnore
 	@ManyToMany(mappedBy = "roles",fetch = FetchType.EAGER)
 	private Set<Usuario> usuarios;
 
