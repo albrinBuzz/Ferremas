@@ -9,7 +9,7 @@
 
     <ui:define name="contenido">
 
-        <h:form>
+        <h:form id="formUsuario">
             <p:card header="Perfil de Usuario" styleClass="ui-card-shadow">
 
                 <!-- Información de Usuario -->
@@ -60,8 +60,65 @@
                                    icon="pi pi-pencil"
                                    action="#{perfilUsuarioBean.irAEditarPerfil}"
                                    styleClass="p-button-rounded p-button-info" />-->
-              </p:card>
+
+                <p:commandButton value="Crear Cuenta de Cliente"
+                                 icon="pi pi-plus-circle"
+                                 rendered="#{userBean.usuario.empleado != null and userBean.usuario.cliente == null}"
+                                 action="#{userBean.mostrarFormularioCrearCliente}"
+                                 update="@form clienteForm"
+                                 oncomplete="PF('manageUsuarioDialog').show()"
+                                 styleClass="p-button-rounded p-button-success"
+                                 style="margin-top: 20px;" />
+
+
+
+            </p:card>
           </h:form>
 
-      </ui:define>
+
+        <p:dialog header="Formulario de Cliente"
+                  widgetVar="manageUsuarioDialog"
+                  modal="true"
+                  closable="false"
+                  resizable="false"
+                  draggable="false"
+                  showEffect="fade"
+                  hideEffect="fade"
+                  visible="#{userBean.mostrarFormularioCliente}"
+                  responsive="true">
+
+            <h:form id="clienteForm">
+                <p:messages id="msgs" showDetail="true" closable="true" />
+
+                <p:panelGrid columns="2" columnClasses="label,value" style="width:100%; margin-bottom: 20px;">
+                    <h:outputLabel for="nombre" value="Nombre del Cliente:" />
+                    <p:inputText id="nombre" value="#{userBean.nuevoCliente.nombre}" required="true" label="Nombre" />
+
+                    <h:outputLabel for="direccion" value="Dirección:" />
+                    <p:inputText id="direccion" value="#{userBean.nuevoCliente.direccion}" required="true" label="Dirección" />
+
+                    <h:outputLabel for="telefono" value="Teléfono:" />
+                    <p:inputText id="telefono" value="#{userBean.nuevoCliente.telefono}" required="true" label="Teléfono" />
+                </p:panelGrid>
+
+                <p:commandButton value="Guardar Cliente"
+                                 icon="pi pi-save"
+                                 action="#{userBean.crearClienteParaUsuario}"
+                                 update=":formUsuario"
+                                 styleClass="p-button-success" />
+
+                <p:commandButton value="Cancelar"
+                                 icon="pi pi-times"
+                                 action="#{userBean.cancelarFormularioCliente}"
+                                 immediate="true"
+                                 update="clienteForm"
+                                 oncomplete="PF('manageUsuarioDialog').hide()"
+                                 styleClass="p-button-secondary"
+                                 style="margin-left: 10px;" />
+            </h:form>
+        </p:dialog>
+
+
+
+    </ui:define>
   </ui:composition>

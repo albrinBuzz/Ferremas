@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Crear Usuario</h2>
+        <form id="crear-usuario-form">
+            <input type="text" id="rut_usuario" placeholder="RUT de Usuario" required>
+            <input type="text" id="nombreUsuario" placeholder="Nombre de Usuario" required>
+            <input type="password" id="contrasena" placeholder="Contraseña" required>
+            <input type="email" id="correo" placeholder="Correo" required>
+            <button type="submit">Crear Usuario</button>
+        </form>
+
+        <h2>Asignar Rol a Usuario</h2>
+        <form id="asignar-rol-form">
+            <input type="text" id="rut_asignar" placeholder="RUT de Usuario" required>
+            <input type="number" id="rol_id" placeholder="ID de Rol" required>
+            <button type="submit">Asignar Rol</button>
+        </form>
+
+        <h2>Usuarios Registrados</h2>
+        <table border="1" id="usuarios-table">
+            <thead>
+                <tr>
+                    <th>RUT</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Roles</th>
+                </tr>
+            </thead>
+            <tbody id="usuarios-body">
+                <!-- Los usuarios aparecerán aquí -->
+            </tbody>
+        </table>
+
+        <h2>Roles</h2>
+        <ul id="roles-list">
+            <!-- Aquí aparecerán los roles -->
+        </ul>
+    </div>
+
+    <script>
+        const apiUrl = 'http://localhost:8000/usuarios'; // URL de la API
+
+        // Función para crear un usuario
+        async function crearUsuario(event) {
+            event.preventDefault();
+            const rut_usuario = document.getElementById('rut_usuario').value;
+            const nombreUsuario = document.getElementById('nombreUsuario').value;
+            const contrasena = document.getElementById('contrasena').value;
+            const correo = document.getElementById('correo').value;
+
+            const usuario = {
+                rut_usuario,
+                nombreUsuario,
+                contrasena,
+                correo
+            };
+
+            const response = await fetch(`${apiUrl}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(usuario)
+            });
+
+            const data = await response.json();
+            console.log(data);
+            alert('Usuario creado exitosamente!');
+            listarUsuarios();
+        }
+
+        // Función para asignar un rol a un usuario
+        async function asignarRol(event) {
+            event.preventDefault();
+            const rut_usuario = document.getElementById('rut_asignar').value;
+            const id_rol = document.getElementById('rol_id').value;
+
+            const response = await fetch(`${apiUrl}/${rut_usuario}/roles/${id_rol}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            console.log(data);
+            alert('Rol asignado exitosamente!');
+            listarUsuarios();
+        }
+
+        // Función para listar los usuarios
+        async function listarUsuarios() {
+            const response = await fetch(`${apiUrl}/usuarios`);
+            const usuarios = await response.json();
+            const tbody = document.getElementById('usuarios-body');
+            tbody.innerHTML = ''; // Limpiar el contenido previo
+
+            usuarios.forEach(usuario => {
+                const tr = document.createElement('tr');
+
+                const tdRut = document.createElement('td');
+                tdRut.textContent = usuario.rut_usuario;
+
+                const tdNombre = document.createElement('td');
+                tdNombre.textContent = usuario.nombreUsuario;
+
+                const tdCorreo = document.createElement('td');
+                tdCorreo.textContent = usuario.correo;
+
+                const tdRoles = document.createElement('td');
+                tdRoles.textContent = usuario.roles.join(', '); // Convertir los roles a texto
+
+                tr.appendChild(tdRut);
+                tr.appendChild(tdNombre);
+                tr.appendChild(tdCorreo);
+                tr.appendChild(tdRoles);
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Función para listar los roles
+        async function listarRoles() {
+            const response = await fetch('http://localhost:8000/usuarios/roles/');
+            const roles = await response.json();
+            const rolesList = document.getElementById('roles-list');
+            rolesList.innerHTML = ''; // Limpiar los roles previos
+
+            roles.forEach(rol => {
+                const li = document.createElement('li');
+                li.textContent = `${rol.id_rol} - ${rol.nombre}`;
+                rolesList.appendChild(li);
+            });
+        }
+
+        // Al cargar la página, listar usuarios y roles
+        document.addEventListener('DOMContentLoaded', () => {
+            listarUsuarios();
+            listarRoles();
+        });
+
+        // Eventos de formulario
+        document.getElementById('crear-usuario-form').addEventListener('submit', crearUsuario);
+        document.getElementById('asignar-rol-form').addEventListener('submit', asignarRol);
+    </script>
+
+</body>
+</html>

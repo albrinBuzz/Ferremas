@@ -148,20 +148,17 @@
 
 
                             <div class="field">
-                                <p:outputLabel for="contrasena" value="Contraseña" />
-                                <p:password id="contrasena" value="#{adminBean.contrasenaInput}" required="true"
-                                            feedback="true" toggleMask="true" promptLabel="Ingrese una contraseña segura"
-                                            weakLabel="Débil" goodLabel="Buena" strongLabel="Fuerte">
-                                    <f:validator validatorId="contrasenaValidator" />
-                                </p:password>
+                                <p:outputLabel for="contrasena">Contraseña</p:outputLabel>
+                                <p:password id="contrasena" value="#{adminBean.contrasenaInput}" feedback="true" />
                             </div>
 
-                 </p:outputPanel>
+
+                        </p:outputPanel>
                 </p:outputPanel>
 
             <f:facet name="footer">
              <p:commandButton value="Guardar" icon="pi pi-check" actionListener="#{adminBean.saveUsuario}"
-                              update="manage-usuario-content" process="manage-usuario-content @this" />
+                              update=":formUsuarios:dt-usuarios :formUsuarios:messagesUsuario" process="manage-usuario-content @this" />
              <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('manageUsuarioDialog').hide()"
                               class="ui-button-secondary" type="button" />
             </f:facet>
@@ -171,7 +168,7 @@
                 <p:confirmDialog widgetVar="deleteUsuarioDialog" showEffect="fade" width="300"
                                  message="¿Eliminar este usuario?" header="Confirmar" severity="warn">
                     <p:commandButton value="Sí" icon="pi pi-check" actionListener="#{adminBean.deleteUsuario}"
-                                     process="@this" update=":formUsuarios:delete-usuarios-button"
+                                     process="@this" update=":formUsuarios:dt-usuarios :formUsuarios:messagesUsuario"
                                      oncomplete="PF('deleteUsuarioDialog').hide()" />
                     <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
                                      onclick="PF('deleteUsuarioDialog').hide()" />

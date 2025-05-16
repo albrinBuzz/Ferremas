@@ -5,6 +5,7 @@ import com.ferremas.model.Cliente;
 import com.ferremas.model.Usuario;
 import com.ferremas.service.RolService;
 import com.ferremas.service.UsuarioService;
+import com.ferremas.util.Logger;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.application.FacesMessage;
@@ -40,6 +41,11 @@ public class UserBean implements Serializable {
     private UsuarioService usuarioService;
     @Autowired
     private RolService rolService;
+
+
+    private boolean mostrarFormularioCliente = false;
+    private Cliente nuevoCliente = new Cliente();
+
     // Constructor
     public UserBean(HttpSession session) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -186,6 +192,56 @@ public class UserBean implements Serializable {
         this.usuario = usuario;
     }
 
+
+    public boolean isMostrarFormularioCliente() {
+        return mostrarFormularioCliente;
+    }
+
+    public void setMostrarFormularioCliente(boolean mostrarFormularioCliente) {
+        this.mostrarFormularioCliente = mostrarFormularioCliente;
+    }
+
+    public Cliente getNuevoCliente() {
+        return nuevoCliente;
+    }
+
+    public void setNuevoCliente(Cliente nuevoCliente) {
+        this.nuevoCliente = nuevoCliente;
+    }
+
+    public void mostrarFormularioCrearCliente() {
+        this.mostrarFormularioCliente = true;
+    }
+
+    public void cancelarFormularioCliente() {
+        this.mostrarFormularioCliente = false;
+        this.nuevoCliente = new Cliente(); // Limpia el formulario
+    }
+
+    public void crearClienteParaUsuario() {
+        try {
+
+            var rol=rolService.findById(2).get();
+            usuario.getRoles().add(rol);
+            nuevoCliente.setUsuario(usuario);
+            nuevoCliente.setRutUsuario(usuario.getRutUsuario());
+            //clienteService.guardar(nuevoCliente);
+
+            usuario.setCliente(nuevoCliente); // Actualiza en memoria
+            usuarioService.save(usuario);
+
+            this.mostrarFormularioCliente = false;
+            this.nuevoCliente = new Cliente();
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Cliente creado correctamente."));
+        } catch (Exception e) {
+            Logger.logInfo(e.getMessage());
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo crear el cliente."));
+        }
+    }
 
     // Método para cerrar sesión
     public String logout() {

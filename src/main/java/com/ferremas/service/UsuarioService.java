@@ -14,7 +14,7 @@ public interface UsuarioService{
 	
 	public void update(Usuario us);
 
-	public void delete(Integer id);
+	public void delete(String id);
 	
 	public List<Usuario> findAll();
 

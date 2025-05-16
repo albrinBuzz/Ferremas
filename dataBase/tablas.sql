@@ -69,12 +69,28 @@ CREATE TABLE Ciudad (
     nombre VARCHAR(50)
 );
 
+CREATE TABLE Rol (
+    id_rol INTEGER PRIMARY KEY DEFAULT nextval('rol_seq'),
+    nombre VARCHAR(50),
+    descripcion VARCHAR(120)
+);
+
+
 CREATE TABLE USUARIO (
     rut_usuario VARCHAR(15) PRIMARY KEY,
     nombreUsuario VARCHAR(50) NOT NULL,
     contrasena VARCHAR(128) NOT NULL,
     correo VARCHAR(50) NOT NULL UNIQUE
 );
+
+CREATE TABLE RolUsuario (
+    id_rol INTEGER NOT NULL,
+    rut_usuario VARCHAR(15) NOT NULL,
+    PRIMARY KEY (rut_usuario, id_rol),
+    FOREIGN KEY (id_rol) REFERENCES Rol (id_rol),
+    FOREIGN KEY (rut_usuario) REFERENCES USUARIO (rut_usuario)
+);
+
 
 CREATE TABLE CLIENTE (
     rut_usuario VARCHAR(15) PRIMARY KEY,
@@ -188,16 +204,3 @@ CREATE TABLE Transferencia (
     FOREIGN KEY (idEstadoTrnsf) REFERENCES EstadoTransferencia (idEstadoTrnsf)
 );
 
-CREATE TABLE Rol (
-    id_rol INTEGER PRIMARY KEY DEFAULT nextval('rol_seq'),
-    nombre VARCHAR(50),
-    descripcion VARCHAR(120)
-);
-
-CREATE TABLE RolUsuario (
-    id_rol INTEGER NOT NULL,
-    rut_usuario VARCHAR(15) NOT NULL,
-    PRIMARY KEY (rut_usuario, id_rol),
-    FOREIGN KEY (id_rol) REFERENCES Rol (id_rol),
-    FOREIGN KEY (rut_usuario) REFERENCES USUARIO (rut_usuario)
-);

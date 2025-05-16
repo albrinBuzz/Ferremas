@@ -107,6 +107,7 @@ public class AdminBean {
         this.productoSeleccionado = new Producto();
     }
     public void openNewUsuario(){
+        esUpdate=false;
         this.usuarioSeleccionado=new Usuario();
     }
 
@@ -178,17 +179,21 @@ public class AdminBean {
 
     public void saveUsuario(){
 
-        if (usuarioService.findByRut(usuarioSeleccionado.getRutUsuario()).isPresent()){
+        if (!esUpdate){
+            if (usuarioService.findByRut(usuarioSeleccionado.getRutUsuario()).isPresent()){
+                Logger.logInfo("rut en  uso");
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Rut en uso"));
+                return;
+            }
 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Rut en uso"));
-            return;
+            if (usuarioService.findByCorreo(usuarioSeleccionado.getCorreo())!=null){
+                Logger.logInfo("correo en  uso");
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Correo en uso"));
+                return;
+            }
+
         }
 
-        if (usuarioService.findByCorreo(usuarioSeleccionado.getCorreo())!=null){
-
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Correo en uso"));
-            return;
-        }
 
 
 
@@ -214,11 +219,24 @@ public class AdminBean {
 
         Logger.logInfo("Usuario después de guardar: " + usuarioSeleccionado.toString());
 
+
         usuarioService.save(usuarioSeleccionado);
 
-
+        if (isEsUpdate()){
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Editado", "Usuario editado correctamente"));
+        }else{
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Agregado", "Usuario agregado correctamente"));
+        }
         //empleadoService.save(emp);
 
+    }
+
+    public void deleteUsuario(){
+        usuarioService.delete(usuarioSeleccionado.getRutUsuario());
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Eliminado", "Usuario Eliminado correctamente"));
     }
 
     public void setCategoria(String categoria) {

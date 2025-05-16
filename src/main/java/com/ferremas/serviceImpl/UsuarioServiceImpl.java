@@ -65,8 +65,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
-	public void delete(Integer id) {
+	public void delete(String  id) {
 		// TODO Auto-generated method stub
+		usuarioRepository.deleteById(id);
 		
 	}
 
