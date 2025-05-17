@@ -36,7 +36,7 @@
 
                         <h:outputLabel for="monto" value="Monto transferido (CLP):" />
                         <p:inputNumber id="monto" value="#{transferenciaBean.transferencia.monto}" required="true"
-                                       decimalPlaces="0" thousandSeparator="." />
+                                       decimalPlaces="0" minValue="0" thousandSeparator="." />
 
 
                         <h:outputLabel for="comentario" value="Comentario adicional:" />

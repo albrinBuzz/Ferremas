@@ -76,14 +76,27 @@
 
                 </p:column>
 
-                <p:column headerText="Cliente" filterBy="#{pedido.rutcliente}">
-                    <h:outputText value="#{pedidoBean.getCorreoCliente(pedido.rutcliente)}"
-                                  rendered="#{not empty pedidoBean.getCorreoCliente(pedido.rutcliente)}"
-                                  escape="true" />
-                    <!-- Agregar una validación en caso de que el correo sea nulo -->
+                <p:column headerText="Correo" filterBy="#{pedido.rutcliente}">
+                    <ui:repeat value="#{pedidoBean.getCorreosCliente(pedido.rutcliente)}" var="correo">
+                        <h:outputText value="#{correo}" /><br/>
+                    </ui:repeat>
+
+                    <!-- Mostrar mensaje si no hay correos -->
                     <h:outputText value="Correo no disponible"
-                                  rendered="#{empty pedidoBean.getCorreoCliente(pedido.rutcliente)}" />
+                                  rendered="#{empty pedidoBean.getCorreosCliente(pedido.rutcliente)}" />
                 </p:column>
+
+                <p:column headerText="Cliente telefono" filterBy="#{pedido.rutcliente}">
+                    <ui:repeat value="#{pedidoBean.getTelefonosCliente(pedido.rutcliente)}" var="correo">
+                        <h:outputText value="#{correo}" /><br/>
+                    </ui:repeat>
+
+                    <!-- Mostrar mensaje si no hay correos -->
+                    <h:outputText value="telefono no disponible"
+                                  rendered="#{empty pedidoBean.getCorreosCliente(pedido.rutcliente)}" />
+                </p:column>
+
+
 
 
                 <p:column headerText="Total" filterBy="#{pedido.total}" >

@@ -6,6 +6,14 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/template/main.xhtml">
 
+    <h:head>
+        <title>Tienda - Ferremas</title>
+
+        <!-- Agregar PrimeIcons CSS en el head -->
+
+        <link rel="stylesheet" href="/META-INF/resources/resources/css/primeicons.css"/>
+    </h:head>
+
     <ui:define name="contenido">
         <div class="container py-5">
             <h2 class="text-center text-primary mb-4">Finalizar Compra</h2>
@@ -52,16 +60,20 @@
                             </div>
                         </ui:fragment>
 
+                        <!-- Método de Pago con Iconos -->
                         <div class="card p-4 shadow-sm mb-4">
                             <h4 class="mb-3 text-primary">Método de Pago</h4>
-                            <div class="form-check">
-                                <h:selectOneRadio value="#{checkoutBean.metodoPago}" layout="pageDirection" required="true"
-                                                  requiredMessage="El Metodo de pago es obligatorio" >
-                                    <f:selectItem itemLabel="webPay" itemValue="webPay"/>
-                                    <f:selectItem itemLabel="Tarjeta de Crédito" itemValue="tarjeta"/>
-                                    <f:selectItem itemLabel="Paypal" itemValue="paypal"/>
-                                    <f:selectItem itemLabel="Transferencia Bancaria" itemValue="transferencia"/>
-                                </h:selectOneRadio>
+
+                            <div class="mt-3 d-flex justify-content-between">
+                                <!-- Iconos de Métodos de Pago -->
+                                <p:selectOneRadio value="#{checkoutBean.metodoPago}" layout="grid" required="true"
+                                                  requiredMessage="El método de pago es obligatorio">
+                                    <f:selectItem itemLabel="webPay" itemValue="webPay" itemIcon="pi pi-credit-card" />
+                                    <f:selectItem itemLabel="Tarjeta de Crédito" itemValue="tarjeta" itemIcon="pi pi-credit-card" />
+
+                                    <f:selectItem itemLabel="Paypal" itemValue="paypal" itemIcon="pi pi-paypal" />
+                                    <f:selectItem itemLabel="Transferencia Bancaria" itemValue="transferencia" itemIcon="pi pi-bank" />
+                                </p:selectOneRadio>
                             </div>
                         </div>
 

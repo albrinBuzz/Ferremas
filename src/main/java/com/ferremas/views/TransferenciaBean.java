@@ -100,6 +100,8 @@ public class TransferenciaBean implements Serializable {
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Transferencia registrada exitosamente, Recibira un notificacion al correo de confirmacion"));
 
             transferencia = new Transferencia(); // Reset para nuevo ingreso
+            carritoBean.resetCart();
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/home/pagoExitoso.xhtml?idPedido="+pedidoGuardado.getIdPedido());
         } catch (Exception e) {
             Logger.logInfo(e.getMessage());
             FacesContext.getCurrentInstance().addMessage(null,
@@ -150,7 +152,7 @@ public class TransferenciaBean implements Serializable {
             pedido.addTransferencia(transferencia); // Añadir la transferencia al pedido
 
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Transferencia registrada exitosamente, Recibira un notificacion al correo de confirmacion"));
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Transferencia registrada exitosamente, se debe esperar la confirmacion de transferncia, por correo"));
 
             transferencia = new Transferencia(); // Reset para nuevo ingreso
         } catch (Exception e) {

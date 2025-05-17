@@ -9,6 +9,12 @@
     <h:head>
         <title>Tienda - Ferremas</title>
 
+        <h:outputScript>
+            // Ejecutar al cargar la página
+            window.onload = function() {
+            cargarValorDolar(); // Llama al método remoto
+            }
+        </h:outputScript>
 
 
     </h:head>
@@ -57,10 +63,30 @@
                         </div>
                     </h:form>
 
-                    <div id="DolarO" class="alert alert-info d-flex justify-content-between align-items-center mb-4">
-                        <span><i class="pi pi-money-bill text-success"></i> <strong>Precio del Dólar</strong></span>
-                        <span id="dolarValue">Cargando...</span>
-                    </div>
+                    <h:form id="dolarForm">
+                        <p:outputPanel id="dolarPanel" styleClass="alert alert-info d-flex justify-content-between align-items-center shadow-sm mb-3">
+                            <span>
+                                <i class="pi pi-money-bill text-success me-2"></i>
+                                <strong>Precio del Dólar:</strong>
+                            </span>
+
+                                                <span class="fw-bold text-end">
+                                <h:outputText
+                                        value="#{tiendaBean.valorDolar gt 0
+                                              ? tiendaBean.valorDolar
+                                              : 'Cargando...'}">
+                                    <f:convertNumber type="currency" currencySymbol="$" locale="es_CL"/>
+                                </h:outputText>
+                            </span>
+                        </p:outputPanel>
+
+                        <p:poll interval="1"
+                                update="dolarPanel"
+                                listener="#{tiendaBean.checkValorDolar}"
+                                stop="#{tiendaBean.valorDolar gt 0}" />
+                    </h:form>
+
+
 
                 </div>
 

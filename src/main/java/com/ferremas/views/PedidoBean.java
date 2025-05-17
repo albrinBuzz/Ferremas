@@ -4,7 +4,6 @@ import com.ferremas.model.*;
 import com.ferremas.service.*;
 import com.ferremas.util.Logger;
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
@@ -15,9 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.Serializable;
-import java.time.temporal.ValueRange;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,21 +94,52 @@ public class PedidoBean implements Serializable {
     }
 
 
-    public String getCorreoCliente(String rut) {
+    public ArrayList<String> getCorreosCliente(String rut) {
 
         // Variable para almacenar los correos
-        StringBuilder correos = new StringBuilder();
+        //StringBuilder correos = new StringBuilder();
+        var correos=new ArrayList<String>(2);
+
 
         // Buscar cliente por RUT (Usuario)
         var cliente = usuarioService.findByRut(rut);
-        cliente.ifPresent(usuario -> correos.append(usuario.getCorreo()));
+        //cliente.ifPresent(usuario -> correos.append(usuario.getCorreo()).append("-"));
+        cliente.ifPresent(usuario -> correos.add(usuario.getCorreo()));
+
 
         // Buscar cliente invitado por RUT
         var clienteInvitado = clienteinvitadoService.obtenerClientePorRut(rut);
-        clienteInvitado.ifPresent(invitado -> correos.append(invitado.getCorreo()));
+        //clienteInvitado.ifPresent(invitado -> correos.append(invitado.getCorreo()));
+        clienteInvitado.ifPresent(invitado -> correos.add(invitado.getCorreo()));
+
 
         // Retornar los correos concatenados
-        return correos.toString();
+        //return correos.toString().split("-");
+        return correos;
+
+    }
+
+    public List<String>getTelefonosCliente(String rut){
+        // Variable para almacenar los correos
+        //StringBuilder correos = new StringBuilder();
+        var correos=new ArrayList<String>(2);
+
+
+        // Buscar cliente por RUT (Usuario)
+        var cliente = usuarioService.findByRut(rut);
+        //cliente.ifPresent(usuario -> correos.append(usuario.getCorreo()).append("-"));
+        cliente.ifPresent(usuario -> correos.add(usuario.getCliente().getTelefono()));
+
+
+        // Buscar cliente invitado por RUT
+        var clienteInvitado = clienteinvitadoService.obtenerClientePorRut(rut);
+        //clienteInvitado.ifPresent(invitado -> correos.append(invitado.getCorreo()));
+        clienteInvitado.ifPresent(invitado -> correos.add(invitado.getTelefono()));
+
+
+        // Retornar los correos concatenados
+        //return correos.toString().split("-");
+        return correos;
     }
 
 
