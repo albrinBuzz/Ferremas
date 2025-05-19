@@ -1,0 +1,13 @@
+npm i -g @nestjs/cli
+nest new api-producto
+cd api-producto
+nest g module categoria
+nest g service categoria
+nest g controller categoria
+
+nest g module producto
+nest g service producto
+nest g controller producto
+
+npm install @nestjs/typeorm typeorm pg
+npm run start
