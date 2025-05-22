@@ -33,32 +33,35 @@
                                 <div class="mb-3">
                                     <h:outputLabel for="nombre" value="Nombre completo"/>
                                     <h:inputText id="nombre" value="#{checkoutBean.clienteInvitado.nombre}" required="true"
-                                                 requiredMessage="El nombre es Obligatorio"
+                                                 requiredMessage="El nombre es obligatorio"
                                                  styleClass="form-control"/>
                                 </div>
 
                                 <div class="mb-3">
-                                    <h:outputLabel for="rut" value="Rut"/>
+                                    <h:outputLabel for="rut" value="RUT"/>
                                     <h:inputText id="rut" value="#{checkoutBean.clienteInvitado.rutcliente}" required="true"
-                                                 requiredMessage="El Rut es Obligatorio"
-                                                 styleClass="form-control"/>
+                                                 requiredMessage="El RUT es obligatorio"
+                                                 styleClass="form-control"
+                                                 validator="rutValidator" />
                                 </div>
 
                                 <div class="mb-3">
                                     <h:outputLabel for="correo" value="Correo electrónico"/>
                                     <h:inputText id="correo" value="#{checkoutBean.clienteInvitado.correo}" required="true"
-                                                 requiredMessage="El Correo electrónico es Obligatorio"
-                                                 styleClass="form-control"/>
+                                                 requiredMessage="El correo es obligatorio"
+                                                 styleClass="form-control"
+                                                 validator="correoValidator" />
                                 </div>
 
                                 <div class="mb-3">
                                     <h:outputLabel for="telefono" value="Teléfono"/>
                                     <h:inputText id="telefono" value="#{checkoutBean.clienteInvitado.telefono}" required="true"
-                                                 requiredMessage="El Teléfono es Obligatorio"
+                                                 requiredMessage="El teléfono es obligatorio"
                                                  styleClass="form-control"/>
                                 </div>
                             </div>
                         </ui:fragment>
+
 
                         <!-- Método de Pago con Iconos -->
                         <div class="card p-4 shadow-sm mb-4">

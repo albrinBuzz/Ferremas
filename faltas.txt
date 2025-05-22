@@ -1,5 +1,4 @@
 1-perfil de usuario -+
 12-crear Pagina de contacto
-13-validacion en datos de envio, en la parte de checkuit
 16-corregir la eliminacion de un prooducto, errores referenciales
 

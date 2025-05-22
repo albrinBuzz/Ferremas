@@ -194,11 +194,95 @@
                 </p:dataTable>
             </h:panelGroup>
 
-            <!-- Error en la búsqueda -->
+
+            <h:panelGroup rendered="#{not empty miPedidoBean.pedido.transferencias}">
+                <p:panel header="Formulario de Transferencia Bancaria" styleClass="transfer-form-container">
+
+
+                    <h:panelGrid columns="2" cellpadding="5" style="width:100%">
+                        <h:outputLabel for="monto" value="Monto transferido (CLP):" />
+                        <p:inputNumber id="monto" value="#{transferenciaBean.transferencia.monto}" required="true" decimalPlaces="0" thousandSeparator="." />
+
+                        <h:outputLabel for="comentario" value="Comentario adicional:" />
+                        <p:inputTextarea id="comentario" value="#{transferenciaBean.transferencia.comentario}" rows="3" maxlength="255" counter="charCount" />
+
+                        <f:facet name="footer">
+                            <h:outputText id="charCount" />
+                        </f:facet>
+
+                        <h:outputLabel for="comprobante" value="Comprobante de transferencia (PDF/JPG/PNG):" />
+                        <p:fileUpload id="comprobante" mode="simple" skinSimple="true" value="#{transferenciaBean.file}" allowTypes="/(\.|\/)(pdf|jpg|jpeg|png)$/"
+                                      label="Subir archivo" required="true" />
+                    </h:panelGrid>
+
+                    <p:commandButton value="Enviar Transferencia" action="#{transferenciaBean.guardarTransferencia(miPedidoBean.pedido)}"
+                                     icon="pi pi-save" update="msgs, formConsultaPedido, tablaTransferencias" process="@form"
+                                     styleClass="ui-commandbutton" ajax="true" onstart="PF('spinner').show();" oncomplete="PF('spinner').hide();" />
+
+
+                </p:panel>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{not empty miPedidoBean.pedido.transferencias}">
+                <h3>Transferencias Asociadas</h3>
+                <p:dataTable value="#{miPedidoBean.pedido.transferencias}" var="transferencia" id="tablaTransferencias" widgetVar="transfeTable">
+                    <p:column headerText="Comentario">
+                        <h:outputText value="#{transferencia.comentario}" />
+                    </p:column>
+                    <p:column headerText="Monto (CLP)">
+                        <h:outputText value="#{transferencia.monto}" />
+                    </p:column>
+                    <p:column headerText="Fecha">
+                        <h:outputText value="#{transferencia.fecha}" />
+                    </p:column>
+                    <p:column headerText="Estado de Transferencia">
+                        <h:outputText value="#{transferencia.estadotransferencia.nombre}" />
+                    </p:column>
+                    <!--<p:column headerText="Comprobante">
+                        <h:outputText value="#{transferencia.comprobante}" />
+                    </p:column>
+
+
+                    <p:column headerText="Comprobante">
+                        <p:commandButton icon="pi pi-eye" title="Ver Comprobante"
+                                         actionListener="#{miPedidoBean.verComprobante(transferencia)}"
+                                         update=":comprobanteDialog"
+                                         oncomplete="PF('comprobanteDialogWidget').show()">
+                    </p:commandButton>
+
+                    </p:column>-->
+
+
+                </p:dataTable>
+            </h:panelGroup>
+
+
+    <!-- Error en la búsqueda -->
             <h:panelGroup rendered="#{miPedidoBean.pedido == null}">
                 <h:outputText value="No se encontró el pedido. Verifique el ID y el RUT." styleClass="panel-error" />
             </h:panelGroup>
         </h:form>
+
+
+        <p:dialog id="comprobanteDialog"
+                  widgetVar="comprobanteDialogWidget"
+                  modal="true"
+                  header="Comprobante"
+                  closable="true"
+                  maximizable="true"
+                  resizable="true"
+                  draggable="true"
+                  width="500"
+                  height="auto">
+
+            <h:panelGroup rendered="#{not empty miPedidoBean.transferencia}">
+                <p:graphicImage url="/resources/images/transa/#{miPedidoBean.transferencia.comprobante}"
+                                style="max-width: 100%; max-height: 80vh; object-fit: contain;"
+                                alt="Comprobante" />
+            </h:panelGroup>
+
+        </p:dialog>
+
     </ui:define>
 
 </ui:composition>

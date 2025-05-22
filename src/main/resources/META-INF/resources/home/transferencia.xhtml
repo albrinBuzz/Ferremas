@@ -34,7 +34,14 @@
                 <p:panel header="Formulario de Transferencia Bancaria" style="max-width:600px; margin:auto;">
                     <h:panelGrid columns="2" cellpadding="5" style="width:100%">
 
-                        <h:outputLabel for="monto" value="Monto transferido (CLP):" />
+
+                        <!-- Mostrar total esperado encima o debajo -->
+                        <h:outputText value="Total a transferir: $#{transferenciaBean.carritoBean.pedido.total} CLP"
+                                      styleClass="text-info font-weight-bold" />
+
+
+
+                        <h:outputLabel for="monto" value="Monto (CLP):" />
                         <p:inputNumber id="monto" value="#{transferenciaBean.transferencia.monto}" required="true"
                                        decimalPlaces="0" minValue="0" thousandSeparator="." />
 

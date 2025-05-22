@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Named("transferenciaBean")
 @ViewScoped
@@ -54,10 +55,13 @@ public class TransferenciaBean implements Serializable {
     public void init(){
         Usuario usuario = (Usuario) session.getAttribute("usuario");
         if (usuario != null) {
-            var empleado = empleadoService.findById(usuario.getRutUsuario()).orElse(null);
 
-            assert empleado != null;
-            transferencias=transferenciaService.findBySucursal(empleado.getSucursal().getIdSucursal());
+            var empleado = empleadoService.findById(usuario.getRutUsuario());
+
+
+            empleado.ifPresent(value -> transferencias = transferenciaService.findBySucursal(value.getSucursal().getIdSucursal()));
+
+
         }
 
         HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
@@ -101,7 +105,7 @@ public class TransferenciaBean implements Serializable {
 
             transferencia = new Transferencia(); // Reset para nuevo ingreso
             carritoBean.resetCart();
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/home/pagoExitoso.xhtml?idPedido="+pedidoGuardado.getIdPedido());
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/home/transferenciaExitosa.xhtml?idPedido="+pedidoGuardado.getIdPedido());
         } catch (Exception e) {
             Logger.logInfo(e.getMessage());
             FacesContext.getCurrentInstance().addMessage(null,
@@ -241,4 +245,9 @@ public class TransferenciaBean implements Serializable {
     public void setTransferencias(List<Transferencia> transferencias) {
         this.transferencias = transferencias;
     }
+
+    public CarritoBean getCarritoBean() {
+        return carritoBean;
+    }
+
 }

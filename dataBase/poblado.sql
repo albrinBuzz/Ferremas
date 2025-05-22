@@ -143,10 +143,53 @@ VALUES
     ('Taladro Eléctrico Black & Decker KR504CRES', 'Taladro de percusión de 500W con dos velocidades y diseño compacto',43600, 'Black & Decker', 2, 'taladroMakinaPercutor.jpeg');
 
 
--- Insertar inventarios para productos en sucursales
-INSERT INTO inventario (id_producto, id_sucursal, stock) VALUES
-(1, 1, 100),(1, 2, 17),(1, 3, 7),
-(2, 2, 150), (3, 3, 120), (4, 3, 80), (5, 1, 200),
-(6, 3, 90), (7, 1, 50), (8, 2, 30), (9, 2, 160), (10, 3, 140);
+
+-- Insertar productos en distintas combinaciones de sucursales
+-- Producto 1: Solo en FERREMAS Santiago
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(1, 1, 100);
+
+-- Producto 2: Solo en FERREMAS Santiago Centro
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(2, 2, 75);
+
+-- Producto 3: Solo en FERREMAS Santiago Norte
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(3, 3, 90);
+
+-- Producto 4: En Santiago + Santiago Centro
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(4, 1, 60),
+(4, 2, 50);
+
+-- Producto 5: En Santiago + Santiago Norte
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(5, 1, 70),
+(5, 3, 65);
+
+-- Producto 6: En Santiago Centro + Santiago Norte
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(6, 2, 55),
+(6, 3, 40);
+
+-- Producto 7: En las tres sucursales
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(7, 1, 30),
+(7, 2, 20),
+(7, 3, 50);
+
+-- Producto 8: Solo en Santiago
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(8, 1, 80);
+
+-- Producto 9: En Santiago Centro y Santiago Norte
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(9, 2, 45),
+(9, 3, 35);
+
+-- Producto 10: Solo en Santiago Norte
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(10, 3, 90);
+
 
 
