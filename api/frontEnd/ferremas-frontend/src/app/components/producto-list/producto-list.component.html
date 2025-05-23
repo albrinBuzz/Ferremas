@@ -6,30 +6,36 @@
 
 <table class="tabla">
   <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Descripción</th>
-      <th>Marca</th>
-      <th>Precio</th>
-      <th>Categoría</th>
-      <th>Acciones</th>
-    </tr>
+  <tr>
+    <th>Imagen</th>
+    <th>Nombre</th>
+    <th>Descripción</th>
+    <th>Marca</th>
+    <th>Precio</th>
+    <th>Categoría</th>
+    <th>Acciones</th>
+  </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let producto of productos">
-      <td>{{ producto.nombre }}</td>
-      <td>{{ producto.descripcion }}</td>
-      <td>{{ producto.marca }}</td>
-      <td>{{ producto.precio | currency: 'USD' }}</td>
-      <td>{{ producto.categoria?.nombre }}</td>
-      <td>
-        <button class="btn editar" *ngIf="producto.idProducto" (click)="editarProducto(producto.idProducto)">
-          ✏️ Editar
-        </button>
-        <button class="btn eliminar" *ngIf="producto.idProducto" (click)="eliminarProducto(producto.idProducto)">
-          🗑️ Eliminar
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <tr *ngFor="let producto of productos">
+    <td>
+      <img
+        [src]="'http://localhost:8080/product/' + producto.imagen"
+        alt="Imagen de {{ producto.nombre }}"
+        width="80"
+        height="80"
+        style="object-fit: cover; border-radius: 6px;"
+      />
+    </td>
+    <td>{{ producto.nombre }}</td>
+    <td>{{ producto.descripcion }}</td>
+    <td>{{ producto.marca }}</td>
+    <td>{{ producto.precio | currency: 'USD' }}</td>
+    <td>{{ producto.categoria?.nombre }}</td>
+    <td>
+      <button class="btn editar" *ngIf="producto.idProducto" (click)="editarProducto(producto.idProducto)">
+        ✏️ Editar
+      </button>
+      <button class="btn eliminar" *ngIf="producto.idProducto" (click)="eliminarProducto(producto.idProducto)">
+        🗑️ Eliminar
+      </button>
