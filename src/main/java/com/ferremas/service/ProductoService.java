@@ -17,7 +17,5 @@ public interface ProductoService {
     Producto actualizar(Producto producto);
     void eliminarPorId(Integer id);
 
-    public Page<ProductoDTO> getAllProductosPaged(int page, int size, String sortBy, String direction);
-
     List<Producto> buscarPorNombre(String nombre);
 }
