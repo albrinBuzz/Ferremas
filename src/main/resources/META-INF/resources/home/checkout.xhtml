@@ -42,7 +42,7 @@
                                     <h:inputText id="rut" value="#{checkoutBean.clienteInvitado.rutcliente}" required="true"
                                                  requiredMessage="El RUT es obligatorio"
                                                  styleClass="form-control"
-                                                 validator="rutValidator" />
+                                                  />
                                 </div>
 
                                 <div class="mb-3">
@@ -50,7 +50,7 @@
                                     <h:inputText id="correo" value="#{checkoutBean.clienteInvitado.correo}" required="true"
                                                  requiredMessage="El correo es obligatorio"
                                                  styleClass="form-control"
-                                                 validator="correoValidator" />
+                                                  />
                                 </div>
 
                                 <div class="mb-3">
@@ -72,6 +72,7 @@
                                 <p:selectOneRadio value="#{checkoutBean.metodoPago}" layout="grid" required="true"
                                                   requiredMessage="El método de pago es obligatorio">
                                     <f:selectItem itemLabel="webPay" itemValue="webPay" itemIcon="pi pi-credit-card" />
+
                                     <f:selectItem itemLabel="Tarjeta de Crédito" itemValue="tarjeta" itemIcon="pi pi-credit-card" />
 
                                     <f:selectItem itemLabel="Paypal" itemValue="paypal" itemIcon="pi pi-paypal" />

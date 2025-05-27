@@ -65,6 +65,9 @@ public class CheckoutBean {
 
     @Autowired
     private WebPayService webPayService;
+    @Autowired
+    private MercadoPagoService mercadoPagoService;
+
     private String descuentoTipo;  // Nueva propiedad para el tipo de descuento
 
 
@@ -225,10 +228,17 @@ public class CheckoutBean {
                     throw new RuntimeException(e);
                 }
 
-            }
+            } else if (metodoPago.equals("mercadoPago")) {
+                try {
+                    String url= mercadoPagoService.crearPago();
+                    FacesContext.getCurrentInstance().getExternalContext().redirect(url);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
 
 
-            else if (metodoPago.equals("tarjeta")) {
+
+            } else if (metodoPago.equals("tarjeta")) {
                 Pedido pedidoGuardado = guardarPedidoDesdeCarrito();
                 guardarTransaccion(pedidoGuardado);
                 carritoBean.resetCart();
