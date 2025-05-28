@@ -1,5 +1,6 @@
 package com.ferremas.views;
 
+import com.ferremas.model.Usuario;
 import com.ferremas.util.Logger;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.RequestScoped;
@@ -123,11 +124,17 @@ public class LoginBean {
     private void redigir() throws IOException {
 
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        Usuario usuario= (Usuario) request.getSession().getAttribute("usuario");
 
         String redirectUrl;
+        if (usuario.getCorreo().equals("admin@ferremas.cl")){
+            if (usuario.isFirstLogin()){
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/home/cambioPass.xhtml");
+            }
+        }
+
         if (savedRequest != null) {
             redirectUrl = savedRequest.getRedirectUrl();
-
         } else {
             redirectUrl = request.getContextPath() + "/";
         }

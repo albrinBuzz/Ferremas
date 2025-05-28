@@ -66,9 +66,11 @@ INSERT INTO sucursal (nombre, direccion, telefono, id_ciudad) VALUES
 ('FERREMAS Valparaíso', 'Calle Blanco 4321, Valparaíso', '324567890', 2);
 
 -- Insertar usuarios (con RUT corregidos)
-INSERT INTO Usuario (nombreUsuario, contrasena, correo, rut_usuario) VALUES
-('adminFERREMAS', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'admin@ferremas.cl', '12345678-9'),
 
+INSERT INTO Usuario (nombreUsuario, contrasena, correo, rut_usuario,first_login) VALUES
+('adminFERREMAS', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'admin@ferremas.cl', '12345678-9',true);
+
+INSERT INTO Usuario (nombreUsuario, contrasena, correo, rut_usuario) VALUES
 ('vendedor1', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'vendedor1@ferremas.cl', '23456789-0'),
 ('bodeguero1', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'bodeguero1@ferremas.cl', '34567890-1'),
 ('contador1', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'contador1@ferremas.cl', '45678901-2'),
@@ -83,20 +85,22 @@ INSERT INTO Usuario (nombreUsuario, contrasena, correo, rut_usuario) VALUES
 
 ('cliente1', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'cliente1@ferremas.cl', '56789012-3'),
 ('cliente2', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'cliente2@ferremas.cl', '90123456-7'),
-('cliente3', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'cliente3@ferremas.cl', '01234567-8');
+('cliente3', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'cliente3@ferremas.cl', '01234567-8'),
+('cris', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'cr.romanz@duocuc.cl', '21406584-6');
 
 -- Insertar clientes
 INSERT INTO Cliente (nombre, telefono, direccion, rut_usuario) VALUES
 ('Juan Pérez', '987654321', 'Calle Falsa 123, Santiago', '56789012-3'),
 ('Carlos Gómez', '987654322', 'Calle Los Andes 2345, Santiago', '89012345-6'),
 ('Gómez Carlos ', '98224311', 'Calle Los Andes 2345, Santiago', '01234567-8'),
+('cristobal ', '98224311', 'Calle Los Andes 2345, Santiago', '21406584-6'),
 ('Ana María Pérez', '987654323', 'Calle del Sol 5678, Rancagua', '90123456-7');
 
 -- Asignar el rol 'Usuario' a los clientes utilizando su rut_usuario
 INSERT INTO RolUsuario (rut_usuario, id_rol)
 SELECT rut_usuario, (SELECT id_rol FROM Rol WHERE nombre = 'Cliente')
 FROM USUARIO
-WHERE rut_usuario IN ('56789012-3', '89012345-6', '90123456-7','01234567-8');
+WHERE rut_usuario IN ('56789012-3', '89012345-6', '90123456-7','01234567-8','21406584-6');
 
 -- Insertar empleados
 INSERT INTO Empleado (rut_usuario, id_sucursal)

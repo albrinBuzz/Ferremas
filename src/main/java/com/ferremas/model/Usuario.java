@@ -33,6 +33,9 @@ public class Usuario implements Serializable {
 
 	private String nombreusuario;
 
+	@Column(nullable = false)
+	private boolean firstLogin;
+
 	//bi-directional one-to-one association to Cliente
 	@OneToOne(mappedBy="usuario",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JsonIgnore
@@ -112,6 +115,16 @@ public class Usuario implements Serializable {
 	public void setRoles(Set<Rol> roles) {
 		this.roles = roles;
 	}
+
+
+	public boolean isFirstLogin() {
+		return firstLogin;
+	}
+
+	public void setFirstLogin(boolean firstLogin) {
+		this.firstLogin = firstLogin;
+	}
+
 
 	@Override
 	public String toString() {

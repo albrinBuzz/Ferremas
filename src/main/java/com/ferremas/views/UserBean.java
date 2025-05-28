@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,6 +38,7 @@ public class UserBean implements Serializable {
     private Usuario usuarioRegistro;
 
     private String contrasenaInput;
+    private String contrasenaConfirm;
     @Autowired
     private UsuarioService usuarioService;
     @Autowired
@@ -117,6 +119,31 @@ public class UserBean implements Serializable {
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(role));
     }
 
+    public void changePassword() throws IOException {
+
+        if (usuario==null){
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/home/index.xhtml");
+        }
+
+        if (contrasenaInput == null || !contrasenaInput.equals(contrasenaConfirm)) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Las contraseñas nuevas no coinciden", null));
+            return;
+        }
+
+        if (!contrasenaInput.isEmpty()) {
+            usuario.setContrasena(contrasenaInput);
+        }
+        if (usuario.getCorreo().equals("admin@ferremas.cl")){
+           usuario.setFirstLogin(false);
+        }
+        usuarioService.update(usuario);
+
+
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+                "Contraseña cambiada con éxito", null));
+
+    }
 
 
     // Getter y setter para 'name' y 'loggedIn'
@@ -216,6 +243,14 @@ public class UserBean implements Serializable {
     public void cancelarFormularioCliente() {
         this.mostrarFormularioCliente = false;
         this.nuevoCliente = new Cliente(); // Limpia el formulario
+    }
+
+    public void setContrasenaConfirm(String contrasenaConfirm) {
+        this.contrasenaConfirm = contrasenaConfirm;
+    }
+
+    public String getContrasenaConfirm() {
+        return contrasenaConfirm;
     }
 
     public void crearClienteParaUsuario() {

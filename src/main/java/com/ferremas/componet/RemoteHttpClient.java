@@ -53,8 +53,6 @@ public class RemoteHttpClient {
 
 
     private void maybeThrowHttpException(HttpRequestPayload request) {
-        if (latencySimulator.nextInt(100) < 3) {
-            throw new RuntimeException("Timeout connecting to " + request.uri());
-        }
+
     }
 }
