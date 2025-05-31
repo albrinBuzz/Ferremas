@@ -93,7 +93,7 @@
                 </p:column>
 
                 <!-- Acciones -->
-                <p:column headerText="EditarEstado">
+                <p:column headerText="EditarEstado" rendered="#{pedido.estadopedido.nombre != 'Pendiente'}">
                     <p:commandButton icon="pi pi-pencil" title="Editar Estado"
                                      action="#{pedidoBean.editarEstado(pedido)}"
                                      process="@this"

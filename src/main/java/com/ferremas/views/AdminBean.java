@@ -107,6 +107,7 @@ public class AdminBean {
         this.productoSeleccionado = new Producto();
     }
     public void openNewUsuario(){
+        esUpdate=false;
         this.usuarioSeleccionado=new Usuario();
     }
 
@@ -117,44 +118,61 @@ public class AdminBean {
     private List<Inventario> cargarInventario() {
         return inventarioService.buscarPorSucursal(sucursal.getIdSucursal());
     }
-
-    public void saveProduct(){
-
-        //obtener el nombre de la categoria, y setear la categoria al producto
-        var categoria=categoriaHashMap.get(this.categoria);
+    public void saveProduct() {
+        // obtener la categoria y setearla al producto
+        var categoria = categoriaHashMap.get(this.categoria);
         productoSeleccionado.setCategoria(categoria);
 
-        if (file!=null){
-
+        if (file != null) {
             try {
                 InputStream in = file.getInputStream();
                 String nombre = file.getFileName();
-                Path rutaBase = Paths.get("src", "main", "webapp", "resources", "images", "product");
-                Files.createDirectories(rutaBase); // Asegura que los directorios existen
+
+                // Ruta para JSF
+                Path rutaJSF = Paths.get("src", "main", "webapp", "resources", "images", "product");
+                Files.createDirectories(rutaJSF);
+
+                // Ruta para Angular (Spring static)
+                Path rutaStatic = Paths.get("src", "main", "resources", "static", "product");
+                Files.createDirectories(rutaStatic);
+
                 productoSeleccionado.setImagen(nombre);
-                upload(nombre, rutaBase.toString(), in); // O ajusta `upload` para recibir un Path si es posible
+
+                // Guardar archivo en ruta JSF
+                upload(nombre, rutaJSF.toString(), in);
+
+                // Para copiar a la ruta static, primero tenemos que obtener un nuevo InputStream
+                // porque el anterior ya se consumió
+                InputStream in2 = file.getInputStream();
+                upload(nombre, rutaStatic.toString(), in2);
+
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
         }
+
         productoService.guardar(productoSeleccionado);
-        productos=productoService.listarTodos();
+        productos = productoService.listarTodos();
     }
 
 
-    public void deleteProduct(){
-
-        if (productoSeleccionado.getImagen()!=null){
+    public void deleteProduct() {
+        if (productoSeleccionado.getImagen() != null) {
             String nombre = productoSeleccionado.getImagen();
-            Path rutaBase = Paths.get("src", "main", "webapp", "resources", "images", "product");
-            Path rutaCompleta = rutaBase.resolve(nombre);
-            rutaCompleta.toFile().delete();
+
+            // Borrar en ruta JSF
+            Path rutaJSF = Paths.get("src", "main", "webapp", "resources", "images", "product", nombre);
+            rutaJSF.toFile().delete();
+
+            // Borrar en ruta static
+            Path rutaStatic = Paths.get("src", "main", "resources", "static", "product", nombre);
+            rutaStatic.toFile().delete();
         }
 
         productoService.eliminarPorId(productoSeleccionado.getIdProducto());
-        productos=productoService.listarTodos();
+        productos = productoService.listarTodos();
     }
+
 
     public void upload(String fileName, String destination, InputStream in) {
         try {
@@ -178,7 +196,28 @@ public class AdminBean {
 
     public void saveUsuario(){
 
+        if (!esUpdate){
+            if (usuarioService.findByRut(usuarioSeleccionado.getRutUsuario()).isPresent()){
+                Logger.logInfo("rut en  uso");
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Rut en uso"));
+                return;
+            }
+
+            if (usuarioService.findByCorreo(usuarioSeleccionado.getCorreo())!=null){
+                Logger.logInfo("correo en  uso");
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Correo en uso"));
+                return;
+            }
+
+        }
+
+
+
+
         usuarioSeleccionado.setRoles(rolesSeleccionados);
+
+
+
 
         if (sucursalId!=0){
             var sucursal=sucursalService.findById(sucursalId).get();
@@ -197,11 +236,24 @@ public class AdminBean {
 
         Logger.logInfo("Usuario después de guardar: " + usuarioSeleccionado.toString());
 
+
         usuarioService.save(usuarioSeleccionado);
 
-
+        if (isEsUpdate()){
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Editado", "Usuario editado correctamente"));
+        }else{
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Agregado", "Usuario agregado correctamente"));
+        }
         //empleadoService.save(emp);
 
+    }
+
+    public void deleteUsuario(){
+        usuarioService.delete(usuarioSeleccionado.getRutUsuario());
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Eliminado", "Usuario Eliminado correctamente"));
     }
 
     public void setCategoria(String categoria) {

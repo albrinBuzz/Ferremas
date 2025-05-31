@@ -2,6 +2,7 @@ package com.ferremas.views;
 
 import com.ferremas.model.Detallepedido;
 import com.ferremas.model.Pedido;
+import com.ferremas.model.Transferencia;
 import com.ferremas.service.PedidoService;
 import com.ferremas.util.Logger;
 import jakarta.faces.application.FacesMessage;
@@ -19,6 +20,7 @@ public class MiPedidoBean implements Serializable {
     private Integer idPedido;
     private String rutCliente;
     private Pedido pedido;
+    private Transferencia transferencia;
     @Autowired
     private PedidoService pedidoService;
     // Constructor que inicializa el pedido (o puedes inyectarlo desde un servicio)
@@ -75,5 +77,18 @@ public class MiPedidoBean implements Serializable {
         this.pedido = pedido;
     }
 
+    public void setTransferencia(Transferencia transferencia) {
+        Logger.logInfo(transferencia.toString());
+        this.transferencia = transferencia;
+    }
 
+    public void verComprobante(Transferencia trn) {
+        this.transferencia=trn;
+        Logger.logInfo(transferencia.toString());
+    }
+
+
+    public Transferencia getTransferencia() {
+        return transferencia;
+    }
 }

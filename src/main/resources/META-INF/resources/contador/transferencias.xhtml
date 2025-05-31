@@ -76,9 +76,29 @@
 
                 </p:column>
 
-                <p:column headerText="Cliente" filterBy="#{pedido.rutcliente}">
-                    <h:outputText value="#{pedido.rutcliente}" />
+                <p:column headerText="Correo" filterBy="#{pedido.rutcliente}">
+                    <ui:repeat value="#{pedidoBean.getCorreosCliente(pedido.rutcliente)}" var="correo">
+                        <h:outputText value="#{correo}" /><br/>
+                    </ui:repeat>
+
+                    <!-- Mostrar mensaje si no hay correos -->
+                    <h:outputText value="Correo no disponible"
+                                  rendered="#{empty pedidoBean.getCorreosCliente(pedido.rutcliente)}" />
                 </p:column>
+
+                <p:column headerText="Cliente telefono" filterBy="#{pedido.rutcliente}">
+                    <ui:repeat value="#{pedidoBean.getTelefonosCliente(pedido.rutcliente)}" var="correo">
+                        <h:outputText value="#{correo}" /><br/>
+                    </ui:repeat>
+
+                    <!-- Mostrar mensaje si no hay correos -->
+                    <h:outputText value="telefono no disponible"
+                                  rendered="#{empty pedidoBean.getCorreosCliente(pedido.rutcliente)}" />
+                </p:column>
+
+
+
+
                 <p:column headerText="Total" filterBy="#{pedido.total}" >
                     <h:outputText value="#{pedido.total}" />
                 </p:column>
@@ -93,6 +113,17 @@
                                      process="@this"
                                      update=":formPedidos:dlgEstado"
                                      oncomplete="PF('dlgEstado').show()" />
+                    <p:commandButton
+                            icon="pi pi-trash"
+                            title="Eliminar Pedido"
+                            action="#{pedidoBean.eliminarPedido(pedido)}"
+                            process="@this"
+                            update=":formPedidos:tablaPedidos"
+                            styleClass="p-button-rounded p-button-danger p-button-sm"
+                            tooltip="Eliminar este pedido"
+                            aria-label="Eliminar Pedido"
+                            onclick="return confirm('¿Estás seguro de que deseas eliminar este pedido?');" />
+
                 </p:column>
 
                 <!-- Tabla anidada: Transferencias asociadas -->

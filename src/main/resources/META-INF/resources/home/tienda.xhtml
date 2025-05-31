@@ -8,6 +8,15 @@
 
     <h:head>
         <title>Tienda - Ferremas</title>
+
+        <h:outputScript>
+            // Ejecutar al cargar la página
+            window.onload = function() {
+            cargarValorDolar(); // Llama al método remoto
+            }
+        </h:outputScript>
+
+
     </h:head>
     <ui:define name="contenido">
 
@@ -38,10 +47,10 @@
                                                itemLabel="#{cat.nombre}" itemValue="#{cat.idCategoria}" />
                             </p:selectOneMenu>
 
-                            <!-- Precio mínimo y máximo -->
+                            <!-- Precio mínimo y máximo
                             <p:outputLabel value="Rango de precio" />
                             <p:spinner value="#{tiendaBean.precioMin}" min="0" max="100000" stepFactor="1000" styleClass="w-100 mb-2"/>
-                            <p:spinner value="#{tiendaBean.precioMax}" min="0" max="100000" stepFactor="1000" styleClass="w-100 mb-3"/>
+                            <p:spinner value="#{tiendaBean.precioMax}" min="0" max="100000" stepFactor="1000" styleClass="w-100 mb-3"/>-->
 
                             <!-- Stock disponible
                             <p:selectBooleanCheckbox value="#{shopBean.soloDisponibles}" itemLabel="Solo productos en stock" styleClass="mb-3"/>-->
@@ -53,6 +62,32 @@
                                              styleClass="btn btn-primary w-100" />
                         </div>
                     </h:form>
+
+                    <h:form id="dolarForm">
+                        <p:outputPanel id="dolarPanel" styleClass="alert alert-info d-flex justify-content-between align-items-center shadow-sm mb-3">
+                            <span>
+                                <i class="pi pi-money-bill text-success me-2"></i>
+                                <strong>Precio del Dólar:</strong>
+                            </span>
+
+                                                <span class="fw-bold text-end">
+                                <h:outputText
+                                        value="#{tiendaBean.valorDolar gt 0
+                                              ? tiendaBean.valorDolar
+                                              : 'Cargando...'}">
+                                    <f:convertNumber type="currency" currencySymbol="$" locale="es_CL"/>
+                                </h:outputText>
+                            </span>
+                        </p:outputPanel>
+
+                        <p:poll interval="1"
+                                update="dolarPanel"
+                                listener="#{tiendaBean.checkValorDolar}"
+                                stop="#{tiendaBean.valorDolar gt 0}" />
+                    </h:form>
+
+
+
                 </div>
 
                 <!-- 🛒 Productos -->
@@ -74,6 +109,26 @@
                                             <f:convertNumber type="currency" currencySymbol="$"/>
                                         </h:outputText>
                                     </p>
+
+                                    <p class="h5 text-success mt-2">
+                                        <p:outputPanel id="dolarPanelPrecio">
+                                            <h:outputText rendered="#{tiendaBean.valorDolar gt 0}"
+                                                          value="#{producto.precio / tiendaBean.valorDolar}">
+                                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                                            </h:outputText>
+
+                                            <h:outputText rendered="#{tiendaBean.valorDolar le 0}" value="Obteniendo valor del dólar..." />
+
+                                            <p:poll interval="2"
+                                                    update="dolarPanelPrecio"
+                                                    listener="#{tiendaBean.checkValorDolar}"
+                                                    stop="#{tiendaBean.valorDolar gt 0}" />
+                                        </p:outputPanel>
+
+                                    </p>
+
+
+
                                     <div class="mt-3 d-flex justify-content-between">
                                         <p:commandButton value="Agregar" icon="pi pi-shopping-cart"
                                                          actionListener="#{carroBean.agregarItem(producto)}"
@@ -94,6 +149,21 @@
 
     </ui:define>
 
+
+    <h:outputScript>
+        // Script para obtener el valor del dólar y actualizar el div "DolarO"
+        fetch('https://mindicador.cl/api').then(function(response) {
+        return response.json();
+        }).then(function(dailyIndicators) {
+        // Formato bonito para el valor del dólar
+        let dolarValue = dailyIndicators.dolar.valor.toFixed(2);
+        document.getElementById("dolarValue").innerHTML = '$' + dolarValue;
+        }).catch(function(error) {
+        console.log('Request failed', error);
+        // Si falla, mostrar un mensaje de error
+        document.getElementById("dolarValue").innerHTML = 'No se pudo obtener el precio del dólar';
+        });
+    </h:outputScript>
 
 
 </ui:composition>

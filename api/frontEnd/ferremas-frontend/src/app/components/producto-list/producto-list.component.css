@@ -1,0 +1,58 @@
+.titulo {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 24px;
+  color: #2c3e50;
+}
+
+.acciones-encabezado {
+  text-align: right;
+  margin: 15px 30px;
+}
+
+.acciones-encabezado button {
+  background-color: #27ae60;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.tabla {
+  width: 90%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.tabla thead {
+  background-color: #f4f4f4;
+}
+
+.tabla th, .tabla td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  margin: 0 2px;
+}
+
+.btn.editar {
+  background-color: #3498db;
+  color: white;
+}
+
+.btn.eliminar {
+  background-color: #e74c3c;
+  color: white;
+}

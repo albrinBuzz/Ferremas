@@ -48,6 +48,11 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
+    public List<Pedido> obtenerPorCliente(String rut) {
+        return pedidoRepository.obtenerPorCliente(rut);
+    }
+
+    @Override
     public Pedido buscarIdRut(String rut, Integer idPedido) {
         return pedidoRepository.buscarIdRut(rut,idPedido);
     }

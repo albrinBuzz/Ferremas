@@ -1,12 +1,4 @@
-1-perfil de usuario
-2-mostrar pedidos, en el perfil de usuario(historial)
-3-eliminar pedido en contador
-4-insertar el cliente invitado luego de una compra como invitado
-5-mostrar la información del cliente invitado en la transferencia (correo)
-6-hacer que se restaure el stock de los productos, cuando se elimine un pedido por parte del contador
-7-eliminar Inventario Bodega
-8-validaciones en el registro del usuario
-9-realizar un descuento por 4 productos vendidos (opcional "decimas")
-10-eliminar productos del carrito
-11-consumir la api del dolar
+1-perfil de usuario -+
+12-crear Pagina de contacto
+16-corregir la eliminacion de un prooducto, errores referenciales
 

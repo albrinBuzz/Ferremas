@@ -46,6 +46,8 @@ public class BodegaBean implements Serializable {
     private List<Categoria>categorias;
     private String categoria;
     private List<Producto> productosDisponibles;
+    private Inventario productoAEliminar;
+
     // Inyección de otros beans o servicios necesarios
 
     @PostConstruct
@@ -127,6 +129,22 @@ public class BodegaBean implements Serializable {
 
     }
 
+    public void deleteProduct(int idSucursal,int idProducto){
+
+        inventarioService.eliminarPorId(idSucursal,idProducto);
+    }
+
+    public void eliminarProductoSeleccionado() {
+        if (productoAEliminar != null) {
+            // Lógica para eliminar
+            inventarioService.eliminarPorId(productoAEliminar.getSucursal().getIdSucursal(), productoAEliminar.getProducto().getIdProducto());
+            inventarios.remove(productoAEliminar);
+            productoAEliminar = null;
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Eliminado", "Producto eliminado correctamente"));
+        }
+    }
+
     public void onProductChosen(SelectEvent event) {
         Producto product = (Producto) event.getObject();
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Product Selected", "Name:" + product.getNombre());
@@ -185,6 +203,14 @@ public class BodegaBean implements Serializable {
     public void setProductoSeleccionado(Producto productoSeleccionado) {
         this.productoSeleccionado = productoSeleccionado;
     }
+    public void setProductoAEliminar(Inventario productoAEliminar) {
+        this.productoAEliminar = productoAEliminar;
+    }
+
+    public Inventario getProductoAEliminar() {
+        return productoAEliminar;
+    }
+
 
     public List<Categoria> getCategorias() {
         return categorias;

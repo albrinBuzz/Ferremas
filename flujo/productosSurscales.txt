@@ -1,0 +1,20 @@
+Productos en solo una sucursal
+
+| Producto                                   | Sucursal                 |
+| ------------------------------------------ | ------------------------ |
+| Cinta Métrica Stanley 30-615               | FERREMAS Santiago        |
+| Juego de Alicates Ingco HKPS28318          | FERREMAS Santiago Centro |
+| Llave Inglesa Bahco 9031                   | FERREMAS Santiago Norte  |
+| Martillo Stanley 51-162                    | FERREMAS Santiago        |
+| Taladro Eléctrico Black & Decker KR504CRES | FERREMAS Santiago Norte  |
+
+
+
+Productos en múltiples sucursales:
+| Producto                                | Sucursales involucradas                           |
+| --------------------------------------- | ------------------------------------------------- |
+| Nivel de Burbuja Truper NT-9            | FERREMAS Santiago, FERREMAS Santiago Centro       |
+| Sierra de Mano Lidl Parkside PSBS 85 A1 | FERREMAS Santiago, FERREMAS Santiago Norte        |
+| Esmeril Angular Total Tools 750W        | FERREMAS Santiago Centro, FERREMAS Santiago Norte |
+| Lijadora DeWalt DWE6411-B3              | FERREMAS Santiago, Centro y Norte                 |
+| Pistola de Calor Parkside PHG 2000 A1   | FERREMAS Santiago Centro, FERREMAS Santiago Norte |

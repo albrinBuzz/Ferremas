@@ -5,6 +5,7 @@ import com.ferremas.model.Cliente;
 import com.ferremas.model.Usuario;
 import com.ferremas.service.RolService;
 import com.ferremas.service.UsuarioService;
+import com.ferremas.util.Logger;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.application.FacesMessage;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,10 +38,16 @@ public class UserBean implements Serializable {
     private Usuario usuarioRegistro;
 
     private String contrasenaInput;
+    private String contrasenaConfirm;
     @Autowired
     private UsuarioService usuarioService;
     @Autowired
     private RolService rolService;
+
+
+    private boolean mostrarFormularioCliente = false;
+    private Cliente nuevoCliente = new Cliente();
+
     // Constructor
     public UserBean(HttpSession session) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -76,6 +84,18 @@ public class UserBean implements Serializable {
             usuarioRegistro.setContrasena(contrasenaInput);
         }
 
+        if (usuarioService.findByRut(usuarioRegistro.getRutUsuario()).isPresent()){
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Rut en uso"));
+            return;
+        }
+
+        if (usuarioService.findByCorreo(usuarioRegistro.getCorreo())!=null){
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Correo en uso"));
+            return;
+        }
+
         var rol=rolService.findById(2).get();
         cliente.setRutUsuario(usuarioRegistro.getRutUsuario());
         cliente.setUsuario(usuarioRegistro);
@@ -99,6 +119,31 @@ public class UserBean implements Serializable {
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(role));
     }
 
+    public void changePassword() throws IOException {
+
+        if (usuario==null){
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/home/index.xhtml");
+        }
+
+        if (contrasenaInput == null || !contrasenaInput.equals(contrasenaConfirm)) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Las contraseñas nuevas no coinciden", null));
+            return;
+        }
+
+        if (!contrasenaInput.isEmpty()) {
+            usuario.setContrasena(contrasenaInput);
+        }
+        if (usuario.getCorreo().equals("admin@ferremas.cl")){
+           usuario.setFirstLogin(false);
+        }
+        usuarioService.update(usuario);
+
+
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+                "Contraseña cambiada con éxito", null));
+
+    }
 
 
     // Getter y setter para 'name' y 'loggedIn'
@@ -174,6 +219,64 @@ public class UserBean implements Serializable {
         this.usuario = usuario;
     }
 
+
+    public boolean isMostrarFormularioCliente() {
+        return mostrarFormularioCliente;
+    }
+
+    public void setMostrarFormularioCliente(boolean mostrarFormularioCliente) {
+        this.mostrarFormularioCliente = mostrarFormularioCliente;
+    }
+
+    public Cliente getNuevoCliente() {
+        return nuevoCliente;
+    }
+
+    public void setNuevoCliente(Cliente nuevoCliente) {
+        this.nuevoCliente = nuevoCliente;
+    }
+
+    public void mostrarFormularioCrearCliente() {
+        this.mostrarFormularioCliente = true;
+    }
+
+    public void cancelarFormularioCliente() {
+        this.mostrarFormularioCliente = false;
+        this.nuevoCliente = new Cliente(); // Limpia el formulario
+    }
+
+    public void setContrasenaConfirm(String contrasenaConfirm) {
+        this.contrasenaConfirm = contrasenaConfirm;
+    }
+
+    public String getContrasenaConfirm() {
+        return contrasenaConfirm;
+    }
+
+    public void crearClienteParaUsuario() {
+        try {
+
+            var rol=rolService.findById(2).get();
+            usuario.getRoles().add(rol);
+            nuevoCliente.setUsuario(usuario);
+            nuevoCliente.setRutUsuario(usuario.getRutUsuario());
+            //clienteService.guardar(nuevoCliente);
+
+            usuario.setCliente(nuevoCliente); // Actualiza en memoria
+            usuarioService.save(usuario);
+
+            this.mostrarFormularioCliente = false;
+            this.nuevoCliente = new Cliente();
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Cliente creado correctamente."));
+        } catch (Exception e) {
+            Logger.logInfo(e.getMessage());
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo crear el cliente."));
+        }
+    }
 
     // Método para cerrar sesión
     public String logout() {

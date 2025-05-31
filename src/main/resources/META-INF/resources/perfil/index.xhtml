@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <ui:composition lang="es"
                 xmlns:f="jakarta.faces.core"
                 xmlns:h="jakarta.faces.html"
@@ -8,83 +7,118 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/template/main.xhtml">
 
-    <h:head>
-        <title>Perfil de Usuario</title>
-        <style>
-            /* Estilos generales */
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f7fc;
-                margin: 0;
-                padding: 0;
-            }
-
-            h1.page-title {
-                text-align: center;
-                color: #333;
-                font-size: 2.5rem;
-                margin-top: 20px;
-            }
-
-            /* Estilos para el contenedor del perfil */
-            .profile-container {
-                max-width: 800px;
-                margin: 30px auto;
-                background-color: white;
-                padding: 20px;
-                border-radius: 8px;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            }
-
-            /* Grid para la información del perfil */
-            .profile-grid {
-                width: 100%;
-                margin-top: 20px;
-            }
-
-            .profile-label {
-                font-weight: bold;
-                color: #555;
-                padding-right: 20px;
-            }
-
-            .profile-value {
-                color: #444;
-                font-size: 1.1rem;
-            }
-
-            /* Mensajes */
-            .messages {
-                color: red;
-                text-align: center;
-                font-weight: bold;
-            }
-
-
-
-        </style>
-    </h:head>
-
     <ui:define name="contenido">
 
-        <!-- Título de la página -->
-        <h1 class="page-title">Perfil de Usuario</h1>
+        <h:form id="formUsuario">
+            <p:card header="Perfil de Usuario" styleClass="ui-card-shadow">
 
-        <!-- Mensajes de error o éxito -->
-        <h:messages globalOnly="true" styleClass="messages" />
+                <!-- Información de Usuario -->
+                <p:panelGrid columns="2" columnClasses="label,value" style="width: 100%; margin-bottom: 20px; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+                    <h:outputLabel value="RUT Usuario:" />
+                    <h:outputText value="#{userBean.usuario.rutUsuario}" />
 
-        <!-- Información del usuario con diseño mejorado -->
-        <h:panelGroup id="userInfo" styleClass="profile-container">
-            <h:panelGrid columns="2" styleClass="profile-grid">
-                <!-- Información del usuario -->
-                <h:outputLabel for="username" value="Nombre de Usuario: " styleClass="profile-label" />
-                <h:outputText id="username" value="#{userBean.name}" styleClass="profile-value" />
+                    <h:outputLabel value="Nombre de Usuario:" />
+                    <h:outputText value="#{userBean.usuario.nombreusuario}" />
 
-                <h:outputLabel for="email" value="Correo Electrónico: " styleClass="profile-label" />
-                <h:outputText id="email" value="#{userBean.usuario.correo}" styleClass="profile-value" />
-            </h:panelGrid>
-        </h:panelGroup>
+                    <h:outputLabel value="Correo Electrónico:" />
+                    <h:outputText value="#{userBean.usuario.correo}" />
+
+                    <h:outputLabel value="Roles:" />
+                    <ui:repeat value="#{userBean.usuario.roles}" var="rol">
+                        <p:chip label="#{rol.nombre}" icon="pi pi-user" style="margin-right: 5px;" />
+                    </ui:repeat>
+                </p:panelGrid>
+
+                <!-- Separador entre secciones -->
+                <p:separator style="border-top: 2px solid #ccc; margin-bottom: 20px;" />
+
+                <!-- Información de Cliente (renderiza solo si hay cliente asociado) -->
+                <p:panelGrid rendered="#{userBean.usuario.cliente != null}" columns="2" columnClasses="label,value" style="width: 100%; margin-bottom: 20px; padding: 20px; background-color: #f7f7f7; border-radius: 8px; border: 1px solid #b0b0b0;">
+                    <h:outputLabel value="Dirección Cliente:" />
+                    <h:outputText value="#{userBean.usuario.cliente.direccion}" />
+
+                    <h:outputLabel value="Nombre Cliente:" />
+                    <h:outputText value="#{userBean.usuario.cliente.nombre}" />
+
+                    <h:outputLabel value="Teléfono Cliente:" />
+                    <h:outputText value="#{userBean.usuario.cliente.telefono}" />
+                </p:panelGrid>
+
+                <!-- Separador entre Cliente y Empleado -->
+                <p:separator style="border-top: 2px solid #b0b0b0; margin-bottom: 20px;" />
+
+                <!-- Información de Empleado (renderiza solo si hay empleado asociado) -->
+                <p:panelGrid rendered="#{userBean.usuario.empleado != null}" columns="2" columnClasses="label,value" style="width: 100%; padding: 20px; background-color: #e8f0f8; border-radius: 8px; border: 1px solid #7d9db7;">
+                    <h:outputLabel value="Sucursal Empleado:" />
+                    <h:outputText value="#{userBean.usuario.empleado.sucursal.nombre}" />
+
+                </p:panelGrid>
+
+                <p:separator />
+
+                <!--   <p:commandButton value="Editar Perfil"
+                                   icon="pi pi-pencil"
+                                   action="#{perfilUsuarioBean.irAEditarPerfil}"
+                                   styleClass="p-button-rounded p-button-info" />-->
+
+                <p:commandButton value="Crear Cuenta de Cliente"
+                                 icon="pi pi-plus-circle"
+                                 rendered="#{userBean.usuario.empleado != null and userBean.usuario.cliente == null}"
+                                 action="#{userBean.mostrarFormularioCrearCliente}"
+                                 update="@form clienteForm"
+                                 oncomplete="PF('manageUsuarioDialog').show()"
+                                 styleClass="p-button-rounded p-button-success"
+                                 style="margin-top: 20px;" />
+
+
+
+            </p:card>
+          </h:form>
+
+
+        <p:dialog header="Formulario de Cliente"
+                  widgetVar="manageUsuarioDialog"
+                  modal="true"
+                  closable="false"
+                  resizable="false"
+                  draggable="false"
+                  showEffect="fade"
+                  hideEffect="fade"
+                  visible="#{userBean.mostrarFormularioCliente}"
+                  responsive="true">
+
+            <h:form id="clienteForm">
+                <p:messages id="msgs" showDetail="true" closable="true" />
+
+                <p:panelGrid columns="2" columnClasses="label,value" style="width:100%; margin-bottom: 20px;">
+                    <h:outputLabel for="nombre" value="Nombre del Cliente:" />
+                    <p:inputText id="nombre" value="#{userBean.nuevoCliente.nombre}" required="true" label="Nombre" />
+
+                    <h:outputLabel for="direccion" value="Dirección:" />
+                    <p:inputText id="direccion" value="#{userBean.nuevoCliente.direccion}" required="true" label="Dirección" />
+
+                    <h:outputLabel for="telefono" value="Teléfono:" />
+                    <p:inputText id="telefono" value="#{userBean.nuevoCliente.telefono}" required="true" label="Teléfono" />
+                </p:panelGrid>
+
+                <p:commandButton value="Guardar Cliente"
+                                 icon="pi pi-save"
+                                 action="#{userBean.crearClienteParaUsuario}"
+                                 update=":formUsuario"
+                                 styleClass="p-button-success" />
+
+                <p:commandButton value="Cancelar"
+                                 icon="pi pi-times"
+                                 action="#{userBean.cancelarFormularioCliente}"
+                                 immediate="true"
+                                 update="clienteForm"
+                                 oncomplete="PF('manageUsuarioDialog').hide()"
+                                 styleClass="p-button-secondary"
+                                 style="margin-left: 10px;" />
+            </h:form>
+        </p:dialog>
+
+
 
     </ui:define>
-
-</ui:composition>
+  </ui:composition>

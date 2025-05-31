@@ -16,7 +16,7 @@ public interface InventarioService {
     Optional<Inventario> buscarPorId(InventarioPK id);
     Inventario guardar(Inventario inventario);
     Inventario actualizar(Inventario inventario);
-    void eliminarPorId(InventarioPK id);
+    void eliminarPorId(int idSucursal,int idProducto);
 
     List<Inventario> buscarPorProducto(Integer idProducto);
     List<Inventario> buscarPorProductoIn(List<Producto> productos);

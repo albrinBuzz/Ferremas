@@ -16,4 +16,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
 
     @Query("select p from Pedido p where p.rutcliente=:rut and p.idPedido=:idPedido")
     Pedido buscarIdRut(String rut, Integer idPedido);
+
+    @Query("select p from Pedido p where p.rutcliente=:rut")
+    public List<Pedido>obtenerPorCliente(String rut);
 }

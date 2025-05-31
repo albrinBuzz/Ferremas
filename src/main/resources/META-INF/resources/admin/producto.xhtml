@@ -101,16 +101,13 @@
                     <!-- Columna de selección múltiple -->
                     <p:column selectionMode="multiple" exportable="false"></p:column>
 
-                    <!-- Columna de imagen -->
                     <p:column headerText="Imagen" exportable="false" styleClass="product-image-column">
-                        <p:graphicImage url="/resources/images/product/#{product.imagen}"
-                                        library="demo"
+                        <p:graphicImage url="/product/#{product.imagen}"
                                         styleClass="product-image"
                                         alt="Imagen del producto"
                                         rendered="#{not empty product.imagen}" />
                         <!-- Imagen por defecto en caso de no haber imagen -->
                         <p:graphicImage url="/resources/images/default-product-image.png"
-                                        library="demo"
                                         styleClass="product-image"
                                         alt="Imagen por defecto"
                                         rendered="#{empty product.imagen}" />

@@ -16,6 +16,7 @@ DROP SEQUENCE IF EXISTS usuario_seq CASCADE;
 DROP SEQUENCE IF EXISTS metodo_pago_seq CASCADE;
 DROP SEQUENCE IF EXISTS transferencia_seq CASCADE;
 DROP SEQUENCE IF EXISTS estado_trasnfe_seq CASCADE;
+DROP SEQUENCE IF EXISTS password_reset_tokens_seq CASCADE;
 
 -- 2. Crear las secuencias
 CREATE SEQUENCE categoria_seq START 1;
@@ -34,6 +35,8 @@ CREATE SEQUENCE usuario_seq START 1;
 CREATE SEQUENCE metodo_pago_seq START 1;
 CREATE SEQUENCE transferencia_seq START 1;
 CREATE SEQUENCE estado_trasnfe_seq START 1;
+
+CREATE SEQUENCE password_reset_tokens_seq START 1;
 
 
 -- 3. Eliminar las tablas si existen
@@ -56,6 +59,7 @@ DROP TABLE IF EXISTS EstadoTransferencia CASCADE;
 DROP TABLE IF EXISTS ClienteInvitado CASCADE;
 DROP TABLE IF EXISTS RolUsuario CASCADE;
 DROP TABLE IF EXISTS MetodoPago CASCADE;
+DROP TABLE IF EXISTS password_reset_tokens CASCADE;
 
 
 CREATE TABLE Categoria (
@@ -69,11 +73,38 @@ CREATE TABLE Ciudad (
     nombre VARCHAR(50)
 );
 
+CREATE TABLE Rol (
+    id_rol INTEGER PRIMARY KEY DEFAULT nextval('rol_seq'),
+    nombre VARCHAR(50),
+    descripcion VARCHAR(120)
+);
+
+
 CREATE TABLE USUARIO (
     rut_usuario VARCHAR(15) PRIMARY KEY,
     nombreUsuario VARCHAR(50) NOT NULL,
     contrasena VARCHAR(128) NOT NULL,
-    correo VARCHAR(50) NOT NULL UNIQUE
+    correo VARCHAR(50) NOT NULL UNIQUE,
+    first_login BOOLEAN DEFAULT false
+);
+
+CREATE TABLE RolUsuario (
+    id_rol INTEGER NOT NULL,
+    rut_usuario VARCHAR(15) NOT NULL,
+    PRIMARY KEY (rut_usuario, id_rol),
+    FOREIGN KEY (id_rol) REFERENCES Rol (id_rol),
+    FOREIGN KEY (rut_usuario) REFERENCES USUARIO (rut_usuario)
+);
+
+CREATE TABLE password_reset_tokens (
+    id BIGINT PRIMARY KEY DEFAULT nextval('password_reset_tokens_seq'),
+    token VARCHAR(255) NOT NULL UNIQUE,
+    rut_usuario VARCHAR(15) NOT NULL,
+    expiry_date TIMESTAMP NOT NULL,
+    CONSTRAINT fk_user
+        FOREIGN KEY (rut_usuario)
+        REFERENCES USUARIO(rut_usuario)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE CLIENTE (
@@ -188,16 +219,3 @@ CREATE TABLE Transferencia (
     FOREIGN KEY (idEstadoTrnsf) REFERENCES EstadoTransferencia (idEstadoTrnsf)
 );
 
-CREATE TABLE Rol (
-    id_rol INTEGER PRIMARY KEY DEFAULT nextval('rol_seq'),
-    nombre VARCHAR(50),
-    descripcion VARCHAR(120)
-);
-
-CREATE TABLE RolUsuario (
-    id_rol INTEGER NOT NULL,
-    rut_usuario VARCHAR(15) NOT NULL,
-    PRIMARY KEY (rut_usuario, id_rol),
-    FOREIGN KEY (id_rol) REFERENCES Rol (id_rol),
-    FOREIGN KEY (rut_usuario) REFERENCES USUARIO (rut_usuario)
-);

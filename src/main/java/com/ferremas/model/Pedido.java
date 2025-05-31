@@ -5,10 +5,7 @@ import java.io.Serializable;
 import com.ferremas.util.Logger;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 
 
@@ -51,11 +48,11 @@ public class Pedido implements Serializable {
 	private Sucursal sucursal;
 
 	//bi-directional many-to-one association to Transaccion
-	@OneToMany(mappedBy="pedido")
+	@OneToMany(mappedBy="pedido",cascade = CascadeType.ALL)
 	private List<Transaccion> transaccions;
 
 	//bi-directional many-to-one association to Transferencia
-	@OneToMany(mappedBy="pedido",fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="pedido",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
 	private List<Transferencia> transferencias;
 
 	public Pedido() {
@@ -183,6 +180,17 @@ public class Pedido implements Serializable {
 
 
 
+	public void eliminarProducto(Detallepedido detallepedido){
+		Iterator<Detallepedido> detalles=detallepedidos.iterator();
+		while(detalles.hasNext()) {
+			Detallepedido detalle=detalles.next();
+			if (Objects.equals(detalle,detallepedido)) {
+				total -= detalle.getCantidad()*detalle.getProducto().getPrecio();
+				detalles.remove();
+				break;
+			}
+		}
+	}
 
 	public Detallepedido removeDetallepedido(Detallepedido detallepedido) {
 		getDetallepedidos().remove(detallepedido);
@@ -264,7 +272,6 @@ public class Pedido implements Serializable {
 				", total=" + total +
 				", IdPedido=" + idPedido +
 
-				", Estado=" + estadopedido.toString() +
 				'}';
 	}
 }

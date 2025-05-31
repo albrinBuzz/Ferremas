@@ -42,6 +42,11 @@ public class CheckoutBean {
     private String metodoPago;
     private Sucursal sucursal;
     private Pedido pedido;
+    private Boolean descuento;
+    private int descuentoVal;
+    private int subTotal;
+    private int total;
+
     @Autowired
     private PedidoService pedidoService;
     @Autowired
@@ -53,10 +58,18 @@ public class CheckoutBean {
     private EstadopedidoService estadopedidoService;
 
     @Autowired
+    private ClienteinvitadoService clienteinvitadoService;
+
+    @Autowired
     private PaypalService paypalService;
 
     @Autowired
     private WebPayService webPayService;
+    @Autowired
+    private MercadoPagoService mercadoPagoService;
+
+    private String descuentoTipo;  // Nueva propiedad para el tipo de descuento
+
 
     @PostConstruct
     public void init(){
@@ -65,6 +78,46 @@ public class CheckoutBean {
 
         pedido=carritoBean.getPedido();
         detallepedidos=pedido.getDetallepedidos();
+
+
+
+        /*var cant= pedido.getDetallepedidos().stream()
+                        .map(Detallepedido::getProducto)
+                                .count();*/
+        var cant= pedido.getDetallepedidos().stream()
+                        .map(Detallepedido::getCantidad)
+                                .mapToInt(Integer::intValue).sum();
+
+
+
+        Logger.logInfo(String.valueOf(cant));
+
+        if (pedido.getTotal() > 100000 && cant > 4) {
+            descuento = true;
+            descuentoVal = (int) (pedido.getTotal() * 0.12);  // 15% de descuento
+            descuentoTipo = "12% por compra mayor a $100.000 y más de 4 productos";
+            total = pedido.getTotal() - descuentoVal;
+            subTotal = pedido.getTotal();
+        } else if (pedido.getTotal() > 100000) {
+            descuento = true;
+            descuentoVal = (int) (pedido.getTotal() * 0.10);  // 10% de descuento
+            descuentoTipo = "10% por compras superiores a $100.000";
+            total = pedido.getTotal() - descuentoVal;
+            subTotal = pedido.getTotal();
+        } else if (cant > 4) {
+            descuento = true;
+            descuentoVal = (int) (pedido.getTotal() * 0.05);  // 5% de descuento
+            descuentoTipo = "2% por comprar más de 4 productos";
+            total = pedido.getTotal() - descuentoVal;
+            subTotal = pedido.getTotal();
+        } else {
+            descuento = false;
+            descuentoVal = 0;
+            descuentoTipo = "Sin descuento";
+            total = pedido.getTotal();
+            subTotal = total;
+        }
+
         initSucursales();
 
 
@@ -109,10 +162,16 @@ public class CheckoutBean {
         if (usurio!=null){
             pedido.setRutcliente(usurio.getRutUsuario());
         }else {
+
             pedido.setRutcliente(clienteInvitado.getRutcliente());
+            clienteinvitadoService.crearClienteinvitado(clienteInvitado);
 
         }
 
+
+        if (descuento) {
+            carritoBean.getPedido().setTotal(carritoBean.getPedido().getTotal() - descuentoVal);
+        }
 
         pedido.setSucursal(sucursal);
 
@@ -169,10 +228,17 @@ public class CheckoutBean {
                     throw new RuntimeException(e);
                 }
 
-            }
+            } else if (metodoPago.equals("mercadoPago")) {
+                try {
+                    String url= mercadoPagoService.crearPago();
+                    FacesContext.getCurrentInstance().getExternalContext().redirect(url);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
 
 
-            else if (metodoPago.equals("tarjeta")) {
+
+            } else if (metodoPago.equals("tarjeta")) {
                 Pedido pedidoGuardado = guardarPedidoDesdeCarrito();
                 guardarTransaccion(pedidoGuardado);
                 carritoBean.resetCart();
@@ -267,6 +333,34 @@ public class CheckoutBean {
 
     public void setMetodoPago(String metodoPago) {
         this.metodoPago = metodoPago;
+    }
+
+    public Boolean getDescuento() {
+        return descuento;
+    }
+
+    public void setDescuento(Boolean descuento) {
+        this.descuento = descuento;
+    }
+
+    public String getDescuentoTipo() {
+        return descuentoTipo;
+    }
+
+    public int getDescuentoVal() {
+        return descuentoVal;
+    }
+
+    public void setDescuentoVal(int descuentoVal) {
+        this.descuentoVal = descuentoVal;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public int getSubTotal() {
+        return subTotal;
     }
 }
 

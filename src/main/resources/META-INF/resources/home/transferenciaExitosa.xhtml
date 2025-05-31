@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition lang="es"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fs="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/main.xhtml">
+
+    <h:head>
+        <title>Boleta de Pago</title>
+    </h:head>
+
+    <ui:define name="contenido">
+
+        <!-- Contenedor principal de la boleta -->
+        <h:panelGroup rendered="#{not empty pagoExitosoBean.pedido}">
+            <div class="container py-5">
+
+                <!-- Título de la boleta -->
+                <h2 class="text-center text-success font-weight-bold mb-4">¡Transferencia enviada con exito!</h2>
+
+                <!-- Imagen de confirmación de pago -->
+                <div class="text-center">
+                    <p:graphicImage url="/resources/images/imgs/pagoExitoso.png" library="images" style="max-width: 250px;" />
+                </div>
+
+                <!-- Mensaje de agradecimiento -->
+                <p class="text-center mt-3">
+                    ¡Gracias por tu compra! Hemos recibido tu pago y tu pedido será procesado en breve.
+                </p>
+                <div class="alert alert-warning text-center mt-3">
+                    Te enviaremos un correo electrónico cuando el pago sea confirmado y tu pedido esté listo para retiro.
+                </div>
+
+
+                <!-- Resaltar el ID de Pedido -->
+                <div class="alert alert-info text-center mt-4">
+                    <h4 class="font-weight-bold">ID de Pedido: <span class="text-primary">#{pagoExitosoBean.pedido.idPedido}</span></h4>
+                    <p>Guarda este número. Lo necesitarás al momento de retirar tu pedido en tienda o al Momento de ver el estado del pedido.</p>
+                </div>
+
+                <!-- Detalles del Pedido -->
+                <h4 class="text-center mt-4">Detalles del Pedido</h4>
+                <h:panelGrid columns="2" styleClass="mt-4 text-left mx-auto" columnClasses="font-weight-bold,text-muted">
+                    <h:outputText value="Número de Orden de Pedido:" />
+                    <h:outputText value="#{pagoExitosoBean.pedido.idPedido}" />
+
+                    <h:outputText value="Nombre del Comercio:" />
+                    <h:outputText value="Ferremas S.A." />
+
+
+                    <h:outputText value="Sucursal de retiro:" />
+                    <h:outputText value="#{pagoExitosoBean.pedido.sucursal.nombre} " />
+                    <h:outputText value="Direccion:" />
+                    <h:outputText value="#{pagoExitosoBean.pedido.sucursal.direccion} " />
+
+                    <h:outputText value="Monto y Moneda:" />
+                    <h:outputText value="$#{pagoExitosoBean.pedido.total} CLP" />
+
+                    <h:outputText value="Fecha de Transacción:" />
+                    <h:outputText value="#{pagoExitosoBean.pedido.fecha}"
+                                  converter="jakarta.faces.DateTime"
+                                  converterPattern="dd/MM/yyyy HH:mm" />
+                </h:panelGrid>
+
+                <!-- Detalle de los productos -->
+                <h4 class="text-center mt-4">Productos del Pedido</h4>
+                <h:panelGrid columns="3" styleClass="mt-4 text-left mx-auto" columnClasses="font-weight-bold,text-muted">
+                    <h:outputText value="Producto" />
+                    <h:outputText value="Cantidad" />
+                    <h:outputText value="Precio Unitario" />
+                </h:panelGrid>
+
+                <!-- Iterar sobre los detalles del pedido -->
+                <ui:repeat value="#{pagoExitosoBean.pedido.detallepedidos}" var="detalle">
+                    <h:panelGrid columns="3" styleClass="mt-2 text-left mx-auto" columnClasses="text-muted,text-muted,text-muted">
+                        <h:outputText value="#{detalle.producto.nombre}" />
+                        <h:outputText value="#{detalle.cantidad}" />
+                        <h:outputText value="#{detalle.producto.precio}" />
+                    </h:panelGrid>
+                </ui:repeat>
+
+                <!-- Total del pedido -->
+                <div class="text-center mt-4">
+                    <h3 class="text-primary font-weight-bold">Total: $ #{pagoExitosoBean.pedido.total}</h3>
+                </div>
+
+
+
+            </div>
+        </h:panelGroup>
+
+        <!-- Mensaje si no se encuentra el pedido -->
+        <h:outputText value="No se encontró el pedido." rendered="#{empty pagoExitosoBean.pedido}"
+                      styleClass="text-danger mt-4 font-weight-bold" />
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition lang="es"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fs="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/main.xhtml">
+
+    <h:head>
+        <title>Recuperación de Contraseña</title>
+    </h:head>
+
+    <ui:define name="contenido">
+
+        <h1>Recuperación de Contraseña</h1>
+
+
+        <!-- Formulario de "Forgot Password" (Enviar correo) -->
+        <h:form id="forgotForm" rendered="#{empty passwordResetBean.token}">
+            <h3>¿Olvidaste tu contraseña?</h3>
+
+            <h:outputLabel for="email" value="Correo electrónico:" />
+            <h:inputText id="email" value="#{passwordResetBean.email}" required="true" label="Correo" />
+
+            <p:commandButton value="Enviar enlace de recuperación" action="#{passwordResetBean.sendResetPasswordEmail}"
+                             update=":forgotForm :resetForm" process="@form" ajax="true" />
+
+            <h:messages globalOnly="true" />
+        </h:form>
+
+        <!-- Mostrar el token generado en la interfaz -->
+        <h:panelGroup rendered="#{not empty passwordResetBean.token}">
+            <h3>Token Generado:</h3>
+            <p><b>#{passwordResetBean.token}</b></p>
+        </h:panelGroup>
+
+        <!-- Formulario de "Reset Password" (Restablecer Contraseña) -->
+        <h:form id="resetForm" rendered="#{not empty passwordResetBean.token}">
+            <h3>Restablecer Contraseña</h3>
+
+            <h:outputLabel for="newPassword" value="Nueva Contraseña:" />
+            <h:inputSecret id="newPassword" value="#{passwordResetBean.newPassword}" required="true" label="Nueva Contraseña" />
+
+            <h:outputLabel for="confirmPassword" value="Confirmar Contraseña:" />
+            <h:inputSecret id="confirmPassword" value="#{passwordResetBean.confirmPassword}" required="true" label="Confirmar Contraseña" />
+
+            <p:commandButton value="Restablecer Contraseña" action="#{passwordResetBean.resetPassword}"
+                             update=":forgotForm :resetForm" process="@form" ajax="true" />
+
+            <h:messages globalOnly="true" />
+        </h:form>
+    </ui:define>
+
+</ui:composition>

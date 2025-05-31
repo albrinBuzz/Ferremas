@@ -66,9 +66,11 @@ INSERT INTO sucursal (nombre, direccion, telefono, id_ciudad) VALUES
 ('FERREMAS Valparaíso', 'Calle Blanco 4321, Valparaíso', '324567890', 2);
 
 -- Insertar usuarios (con RUT corregidos)
-INSERT INTO Usuario (nombreUsuario, contrasena, correo, rut_usuario) VALUES
-('adminFERREMAS', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'admin@ferremas.cl', '12345678-9'),
 
+INSERT INTO Usuario (nombreUsuario, contrasena, correo, rut_usuario,first_login) VALUES
+('adminFERREMAS', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'admin@ferremas.cl', '12345678-9',true);
+
+INSERT INTO Usuario (nombreUsuario, contrasena, correo, rut_usuario) VALUES
 ('vendedor1', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'vendedor1@ferremas.cl', '23456789-0'),
 ('bodeguero1', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'bodeguero1@ferremas.cl', '34567890-1'),
 ('contador1', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'contador1@ferremas.cl', '45678901-2'),
@@ -83,20 +85,22 @@ INSERT INTO Usuario (nombreUsuario, contrasena, correo, rut_usuario) VALUES
 
 ('cliente1', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'cliente1@ferremas.cl', '56789012-3'),
 ('cliente2', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'cliente2@ferremas.cl', '90123456-7'),
-('cliente3', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'cliente3@ferremas.cl', '01234567-8');
+('cliente3', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'cliente3@ferremas.cl', '01234567-8'),
+('cris', '$2a$10$hsjnyiws1X0PpAZYrNNbYuFacX53JUO9jfasNhL.WhHa6JpkO4O/m', 'cr.romanz@duocuc.cl', '21406584-6');
 
 -- Insertar clientes
 INSERT INTO Cliente (nombre, telefono, direccion, rut_usuario) VALUES
 ('Juan Pérez', '987654321', 'Calle Falsa 123, Santiago', '56789012-3'),
 ('Carlos Gómez', '987654322', 'Calle Los Andes 2345, Santiago', '89012345-6'),
 ('Gómez Carlos ', '98224311', 'Calle Los Andes 2345, Santiago', '01234567-8'),
+('cristobal ', '98224311', 'Calle Los Andes 2345, Santiago', '21406584-6'),
 ('Ana María Pérez', '987654323', 'Calle del Sol 5678, Rancagua', '90123456-7');
 
 -- Asignar el rol 'Usuario' a los clientes utilizando su rut_usuario
 INSERT INTO RolUsuario (rut_usuario, id_rol)
 SELECT rut_usuario, (SELECT id_rol FROM Rol WHERE nombre = 'Cliente')
 FROM USUARIO
-WHERE rut_usuario IN ('56789012-3', '89012345-6', '90123456-7','01234567-8');
+WHERE rut_usuario IN ('56789012-3', '89012345-6', '90123456-7','01234567-8','21406584-6');
 
 -- Insertar empleados
 INSERT INTO Empleado (rut_usuario, id_sucursal)
@@ -131,22 +135,65 @@ VALUES
 -- Insertar los productos en la tabla PRODUCTO
 INSERT INTO PRODUCTO (nombre, descripcion, precio, marca, id_categoria, imagen)
 VALUES
-    ('Cinta Métrica Stanley 30-615', 'Cinta métrica de 5 metros y 25mm de ancho, con carcasa resistente y gancho para mediciones precisas', 1, 'Stanley', 1, 'Cinta_Métrica_Stanley_30-615.jpeg'),
-    ('Juego de Alicates Ingco HKPS28318', 'Conjunto de 3 alicates: de corte, punta y combinación, con mangos antideslizantes', 2, 'Ingco', 2, 'Juego_de_Alicates_Ingco_HKPS28318.jpeg'),
-    ('Llave Inglesa Bahco 9031', 'Llave ajustable fabricada en acero al cromo-vanadio, con diseño ergonómico', 3, 'Bahco', 3, 'Llave_Inglesa_Bahco_9031.jpeg'),
-    ('Nivel de Burbuja Truper NT-9', 'Nivel magnético de 9 pulgadas con dos burbujas horizontales y una vertical, fabricado en ABS', 1, 'Truper', 4, 'Nivel_de_Burbuja_Truper_NT-9.jpeg'),
-    ('Sierra de Mano Lidl Parkside PSBS 85 A1', 'Sierra de mano 3 en 1 para cortar madera, metal y plástico', 4, 'Lidl Parkside', 5, 'Sierra_de_Mano_Lidl_Parkside_PSBS_85_A1.jpeg'),
-    ('Esmeril Angular Total Tools 750W', 'Esmeril angular de 4.1/2 pulgadas con 750W de potencia, ideal para cortar y pulir materiales', 5, 'Total Tools', 6, 'Esmeril_Angular_Total_Tools_750W.jpeg'),
-    ('Lijadora DeWalt DWE6411-B3', 'Lijadora de acabado fino de 225W para superficies de madera y metal', 7, 'DeWalt', 7, 'Lijadora_DeWalt_DWE6411-B3.jpeg'),
-    ('Martillo Stanley 51-162', 'Martillo de carpintero con mango de fibra de vidrio y cabeza de acero forjado', 1, 'Stanley', 8, 'MartilloStanley51-162.jpeg'),
-    ('Pistola de Calor Parkside PHG 2000 A1', 'Pistola de calor con dos niveles de temperatura y diseño ergonómico', 3, 'Parkside', 9, 'Pistola_de_Calor_Parkside_PHG_2000_A1.jpeg'),
-    ('Taladro Eléctrico Black & Decker KR504CRES', 'Taladro de percusión de 500W con dos velocidades y diseño compacto', 4, 'Black & Decker', 2, 'taladroMakinaPercutor.jpeg');
+    ('Cinta Métrica Stanley 30-615', 'Cinta métrica de 5 metros y 25mm de ancho, con carcasa resistente y gancho para mediciones precisas', 8000, 'Stanley', 1, 'Cinta_Métrica_Stanley_30-615.jpeg'),
+    ('Juego de Alicates Ingco HKPS28318', 'Conjunto de 3 alicates: de corte, punta y combinación, con mangos antideslizantes', 8600, 'Ingco', 2, 'Juego_de_Alicates_Ingco_HKPS28318.jpeg'),
+    ('Llave Inglesa Bahco 9031', 'Llave ajustable fabricada en acero al cromo-vanadio, con diseño ergonómico', 12300, 'Bahco', 3, 'Llave_Inglesa_Bahco_9031.jpeg'),
+    ('Nivel de Burbuja Truper NT-9', 'Nivel magnético de 9 pulgadas con dos burbujas horizontales y una vertical, fabricado en ABS', 4200, 'Truper', 4, 'Nivel_de_Burbuja_Truper_NT-9.jpeg'),
+    ('Sierra de Mano Lidl Parkside PSBS 85 A1', 'Sierra de mano 3 en 1 para cortar madera, metal y plástico', 42000, 'Lidl Parkside', 2, 'Sierra_de_Mano_Lidl_Parkside_PSBS_85_A1.jpeg'),
+    ('Esmeril Angular Total Tools 750W', 'Esmeril angular de 4.1/2 pulgadas con 750W de potencia, ideal para cortar y pulir materiales', 55000, 'Total Tools', 6, 'Esmeril_Angular_Total_Tools_750W.jpeg'),
+    ('Lijadora DeWalt DWE6411-B3', 'Lijadora de acabado fino de 225W para superficies de madera y metal', 27899, 'DeWalt', 7, 'Lijadora_DeWalt_DWE6411-B3.jpeg'),
+    ('Martillo Stanley 51-162', 'Martillo de carpintero con mango de fibra de vidrio y cabeza de acero forjado', 18880, 'Stanley', 8, 'MartilloStanley51-162.jpeg'),
+    ('Pistola de Calor Parkside PHG 2000 A1', 'Pistola de calor con dos niveles de temperatura y diseño ergonómico', 23200, 'Parkside', 9, 'Pistola_de_Calor_Parkside_PHG_2000_A1.jpeg'),
+    ('Taladro Eléctrico Black & Decker KR504CRES', 'Taladro de percusión de 500W con dos velocidades y diseño compacto',43600, 'Black & Decker', 2, 'taladroMakinaPercutor.jpeg');
 
 
--- Insertar inventarios para productos en sucursales
-INSERT INTO inventario (id_producto, id_sucursal, stock) VALUES
-(1, 1, 100),(1, 2, 17),(1, 3, 7),
-(2, 2, 150), (3, 3, 120), (4, 3, 80), (5, 1, 200),
-(6, 3, 90), (7, 1, 50), (8, 2, 30), (9, 2, 160), (10, 3, 140);
+
+-- Insertar productos en distintas combinaciones de sucursales
+-- Producto 1: Solo en FERREMAS Santiago
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(1, 1, 100);
+
+-- Producto 2: Solo en FERREMAS Santiago Centro
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(2, 2, 75);
+
+-- Producto 3: Solo en FERREMAS Santiago Norte
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(3, 3, 90);
+
+-- Producto 4: En Santiago + Santiago Centro
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(4, 1, 60),
+(4, 2, 50);
+
+-- Producto 5: En Santiago + Santiago Norte
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(5, 1, 70),
+(5, 3, 65);
+
+-- Producto 6: En Santiago Centro + Santiago Norte
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(6, 2, 55),
+(6, 3, 40);
+
+-- Producto 7: En las tres sucursales
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(7, 1, 30),
+(7, 2, 20),
+(7, 3, 50);
+
+-- Producto 8: Solo en Santiago
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(8, 1, 80);
+
+-- Producto 9: En Santiago Centro y Santiago Norte
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(9, 2, 45),
+(9, 3, 35);
+
+-- Producto 10: Solo en Santiago Norte
+INSERT INTO Inventario (id_producto, id_sucursal, stock) VALUES
+(10, 3, 90);
+
 
 

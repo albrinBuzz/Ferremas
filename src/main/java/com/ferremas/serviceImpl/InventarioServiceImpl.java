@@ -66,8 +66,19 @@ public class InventarioServiceImpl implements InventarioService {
     }
 
     @Override
-    public void eliminarPorId(InventarioPK id) {
-        inventarioRepository.deleteById(id);
+    @Transactional
+    public void eliminarPorId(int idSucursal,int idProducto) {
+        //inventarioRepository.deleteById(id);
+        StoredProcedureQuery query = em.createStoredProcedureQuery("sp_eliminarInv");
+
+        query.registerStoredProcedureParameter("p_id_producto", Integer.class, ParameterMode.IN);
+        query.registerStoredProcedureParameter("p_id_sucursal", Integer.class, ParameterMode.IN);
+
+
+        query.setParameter("p_id_producto", idProducto);
+        query.setParameter("p_id_sucursal", idSucursal);
+
+        query.execute();
     }
 
     @Override

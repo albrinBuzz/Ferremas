@@ -2,6 +2,7 @@ package com.ferremas.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ferremas.util.Logger;
 import jakarta.persistence.*;
 
@@ -32,21 +33,28 @@ public class Usuario implements Serializable {
 
 	private String nombreusuario;
 
+	@Column(nullable = false)
+	private boolean firstLogin;
+
 	//bi-directional one-to-one association to Cliente
 	@OneToOne(mappedBy="usuario",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	@JsonIgnore
 	private Cliente cliente;
 
 	//bi-directional one-to-one association to Empleado
 	@OneToOne(mappedBy="usuario",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	@JsonIgnore
 	private Empleado empleado;
 
 	//bi-directional many-to-many association to Rol
+
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 			name="rolusuario",
 			joinColumns = {@JoinColumn(name="rut_usuario")},
 			inverseJoinColumns = {@JoinColumn(name="id_rol")}
 	)
+
 	private Set<Rol> roles = new HashSet<>();
 
 	public Usuario() {
@@ -107,6 +115,16 @@ public class Usuario implements Serializable {
 	public void setRoles(Set<Rol> roles) {
 		this.roles = roles;
 	}
+
+
+	public boolean isFirstLogin() {
+		return firstLogin;
+	}
+
+	public void setFirstLogin(boolean firstLogin) {
+		this.firstLogin = firstLogin;
+	}
+
 
 	@Override
 	public String toString() {

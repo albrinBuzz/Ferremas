@@ -6,6 +6,14 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/template/main.xhtml">
 
+    <h:head>
+        <title>Tienda - Ferremas</title>
+
+        <!-- Agregar PrimeIcons CSS en el head -->
+
+        <link rel="stylesheet" href="/META-INF/resources/resources/css/primeicons.css"/>
+    </h:head>
+
     <ui:define name="contenido">
         <div class="container py-5">
             <h2 class="text-center text-primary mb-4">Finalizar Compra</h2>
@@ -24,40 +32,54 @@
 
                                 <div class="mb-3">
                                     <h:outputLabel for="nombre" value="Nombre completo"/>
-                                    <h:inputText id="nombre" value="#{checkoutBean.clienteInvitado.nombre}"
+                                    <h:inputText id="nombre" value="#{checkoutBean.clienteInvitado.nombre}" required="true"
+                                                 requiredMessage="El nombre es obligatorio"
                                                  styleClass="form-control"/>
                                 </div>
 
                                 <div class="mb-3">
-                                    <h:outputLabel for="rut" value="Rut"/>
-                                    <h:inputText id="rut" value="#{checkoutBean.clienteInvitado.rutcliente}"
-                                                 styleClass="form-control"/>
+                                    <h:outputLabel for="rut" value="RUT"/>
+                                    <p:inputText id="rut" value="#{checkoutBean.clienteInvitado.rutcliente}" required="true"
+                                                 requiredMessage="El RUT es obligatorio"
+                                                 styleClass="form-control">
+                                        <f:validator validatorId="rutValidator" />
+                                    </p:inputText>
                                 </div>
 
                                 <div class="mb-3">
                                     <h:outputLabel for="correo" value="Correo electrónico"/>
-                                    <h:inputText id="correo" value="#{checkoutBean.clienteInvitado.correo}"
-                                                 styleClass="form-control"/>
+                                    <p:inputText id="correo" value="#{checkoutBean.clienteInvitado.correo}" required="true"
+                                                 requiredMessage="El correo es obligatorio"
+                                                 styleClass="form-control">
+                                        <f:validator validatorId="correoValidator" />
+                                    </p:inputText>
                                 </div>
 
                                 <div class="mb-3">
                                     <h:outputLabel for="telefono" value="Teléfono"/>
-                                    <h:inputText id="telefono" value="#{checkoutBean.clienteInvitado.telefono}"
+                                    <h:inputText id="telefono" value="#{checkoutBean.clienteInvitado.telefono}" required="true"
+                                                 requiredMessage="El teléfono es obligatorio"
                                                  styleClass="form-control"/>
                                 </div>
                             </div>
                         </ui:fragment>
 
+
+                        <!-- Método de Pago con Iconos -->
                         <div class="card p-4 shadow-sm mb-4">
                             <h4 class="mb-3 text-primary">Método de Pago</h4>
-                            <div class="form-check">
-                                <h:selectOneRadio value="#{checkoutBean.metodoPago}" layout="pageDirection"
-                                                  requiredMessage="El Metodo de pago es obligatorio" >
-                                    <f:selectItem itemLabel="webPay" itemValue="webPay"/>
-                                    <f:selectItem itemLabel="Tarjeta de Crédito" itemValue="tarjeta"/>
-                                    <f:selectItem itemLabel="Paypal" itemValue="paypal"/>
-                                    <f:selectItem itemLabel="Transferencia Bancaria" itemValue="transferencia"/>
-                                </h:selectOneRadio>
+
+                            <div class="mt-3 d-flex justify-content-between">
+                                <!-- Iconos de Métodos de Pago -->
+                                <p:selectOneRadio value="#{checkoutBean.metodoPago}" layout="grid" required="true"
+                                                  requiredMessage="El método de pago es obligatorio">
+                                    <f:selectItem itemLabel="webPay" itemValue="webPay" itemIcon="pi pi-credit-card" />
+
+                                    <f:selectItem itemLabel="Tarjeta de Crédito" itemValue="tarjeta" itemIcon="pi pi-credit-card" />
+
+                                    <f:selectItem itemLabel="Paypal" itemValue="paypal" itemIcon="pi pi-paypal" />
+                                    <f:selectItem itemLabel="Transferencia Bancaria" itemValue="transferencia" itemIcon="pi pi-bank" />
+                                </p:selectOneRadio>
                             </div>
                         </div>
 
@@ -91,14 +113,106 @@
                             </ui:repeat>
 
                             <hr/>
-                            <div class="d-flex justify-content-between">
-                                <strong>Total:</strong>
+
+
+                            <!-- Mensaje informativo sobre los posibles descuentos -->
+                            <div class="alert alert-info mt-3" role="alert">
+                                <strong>¡Atención!</strong> Si compras más de <strong>$100.000</strong>, obtienes un <strong>10% de descuento</strong> en tu compra. <br />
+                                También puedes obtener un descuento de <strong>2%</strong> si compras más de 4 productos. <br />
+                                Si cumples ambas condiciones, ¡te damos un <strong>12% de descuento</strong>!
+                            </div>
+
+                            <!-- Panel de Descuento Aplicado -->
+                            <p:panel rendered="#{checkoutBean.descuento}" header="Resumen de Descuento" styleClass="mt-3">
+                                <!-- Descuento Aplicado -->
+                                <div class="d-flex justify-content-between">
+                                    <strong>Descuento Aplicado:</strong>
+                                    <strong style="color: green;">
+                                        <h:outputText value="#{checkoutBean.descuentoVal}">
+                                            <f:convertNumber type="currency" currencySymbol="$"/>
+                                        </h:outputText>
+                                    </strong>
+                                </div>
+
+                                <!-- Detalles del SubTotal -->
+                                <div class="d-flex justify-content-between">
+                                    <strong>Subtotal:</strong>
+                                    <span>
+                                        <h:outputText value="#{checkoutBean.subTotal}">
+                                            <f:convertNumber type="currency" currencySymbol="$"/>
+                                        </h:outputText>
+                                    </span>
+                                </div>
+
+                                <!-- Total Después del Descuento -->
+                                <div class="d-flex justify-content-between mt-2">
+                                    <strong>Total Final:</strong>
+                                    <strong style="color: green;">
+                                        <h:outputText value="#{checkoutBean.total}">
+                                            <f:convertNumber type="currency" currencySymbol="$"/>
+                                        </h:outputText>
+                                    </strong>
+                                </div>
+
+                                <!-- Tipo de Descuento Aplicado -->
+                                <div class="mt-2">
+                                    <strong>Tipo de Descuento:</strong>
+                                    <p class="text-success">#{checkoutBean.descuentoTipo}</p>
+                                </div>
+                            </p:panel>
+
+                            <!-- Panel de Caso Sin Descuento -->
+                            <p:panel rendered="#{not checkoutBean.descuento}" header="Resumen de Compra" styleClass="mt-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong>Sin Descuento:</strong>
+                                    <span>
+                                        <h:outputText value="#{checkoutBean.total}">
+                                            <f:convertNumber type="currency" currencySymbol="$"/>
+                                        </h:outputText>
+                                    </span>
+                                </div>
+                            </p:panel>
+
+                            <!-- Detalles del Total -->
+                            <div class="d-flex justify-content-between mt-3">
+                                <strong>SubTotal:</strong>
                                 <strong>
-                                    <h:outputText value="#{carroBean.total}">
+                                    <h:outputText value="#{checkoutBean.subTotal}">
                                         <f:convertNumber type="currency" currencySymbol="$"/>
                                     </h:outputText>
                                 </strong>
                             </div>
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong>Total CLP:</strong>
+                                    <h:outputText value="#{checkoutBean.total}">
+                                        <f:convertNumber type="currency" currencySymbol="$" />
+                                    </h:outputText>
+                                </div>
+
+                                <div class="d-flex justify-content-between mt-2">
+                                    <strong>Total USD:</strong>
+                                    <p:outputPanel id="dolarPanelPrecio">
+                                        <h:outputText rendered="#{tiendaBean.valorDolar gt 0}"
+                                                      value="#{checkoutBean.total / tiendaBean.valorDolar}">
+                                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                                        </h:outputText>
+
+                                        <h:outputText rendered="#{tiendaBean.valorDolar le 0}" value="Obteniendo valor del dólar..." />
+
+                                        <p:poll interval="2"
+                                                update="dolarPanelPrecio"
+                                                listener="#{tiendaBean.checkValorDolar}"
+                                                stop="#{tiendaBean.valorDolar gt 0}" />
+                                    </p:outputPanel>
+                                </div>
+                            </div>
+
+
+
+
+
 
                             <div class="mt-2">
                                 <h:outputText value="Sucursal seleccionada: #{checkoutBean.sucursal.nombre}" rendered="#{checkoutBean.sucursal != null}"/>
@@ -123,7 +237,7 @@
                     <h:outputText value="Elija la sucursal donde desea retirar su pedido."/>
                     <p:dataTable value="#{checkoutBean.sucursals}" var="sucursal" paginator="true" rows="5" required="true"
                                  requiredMessage="El Metodo de pago es obligatorio"
-                                 emptyMessage="No hay sucursales con todos los productos, en stock."
+                                 emptyMessage="No hay sucursales que tenga en stock, todos los productos seleccionados"
                                  selection="#{checkoutBean.sucursal}" rowKey="#{sucursal.idSucursal}" cellNavigation="true">
                         <p:column selectionBox="true" style="width:16px;text-align:center"/>
                         <p:column headerText="Sucursal">

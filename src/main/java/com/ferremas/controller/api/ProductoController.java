@@ -56,9 +56,12 @@ public class ProductoController {
     // Obtener un producto por su ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getProductoById(@PathVariable("id") Integer id) {
+        Logger.logInfo("Id producto: "+id);
         try {
             Optional<Producto> producto = productoService.buscarPorId(id);
+
             if (producto.isPresent()) {
+                Logger.logInfo(producto.get().toString());
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(new ApiResponse("Producto encontrado con éxito.", HttpStatus.OK.value(), producto.get()));
             } else {
@@ -111,7 +114,7 @@ public class ProductoController {
     }
 
     // Filtrar productos por nombre
-    @GetMapping("/{nombre}")
+    @GetMapping("/nombre/{nombre}")
     public ResponseEntity<?> getProductosByNombre(@PathVariable("nombre") String nombre) {
         try {
             List<Producto> productos = productoService.buscarPorNombre(nombre);
