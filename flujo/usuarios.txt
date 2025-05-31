@@ -1,6 +1,6 @@
 Usuario 1: Cliente Particular
 ------------------------------
-RUT: 16958120-7
+RUT: 16.958.120-7
 Correo Electrónico: juan.perez@gmail.com
 Contraseña: Pass@1234
 Nombre de Usuario: juanperez

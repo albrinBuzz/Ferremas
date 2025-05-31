@@ -39,18 +39,20 @@
 
                                 <div class="mb-3">
                                     <h:outputLabel for="rut" value="RUT"/>
-                                    <h:inputText id="rut" value="#{checkoutBean.clienteInvitado.rutcliente}" required="true"
+                                    <p:inputText id="rut" value="#{checkoutBean.clienteInvitado.rutcliente}" required="true"
                                                  requiredMessage="El RUT es obligatorio"
-                                                 styleClass="form-control"
-                                                  />
+                                                 styleClass="form-control">
+                                        <f:validator validatorId="rutValidator" />
+                                    </p:inputText>
                                 </div>
 
                                 <div class="mb-3">
                                     <h:outputLabel for="correo" value="Correo electrónico"/>
-                                    <h:inputText id="correo" value="#{checkoutBean.clienteInvitado.correo}" required="true"
+                                    <p:inputText id="correo" value="#{checkoutBean.clienteInvitado.correo}" required="true"
                                                  requiredMessage="El correo es obligatorio"
-                                                 styleClass="form-control"
-                                                  />
+                                                 styleClass="form-control">
+                                        <f:validator validatorId="correoValidator" />
+                                    </p:inputText>
                                 </div>
 
                                 <div class="mb-3">
@@ -181,14 +183,32 @@
                                 </strong>
                             </div>
 
-                            <div class="d-flex justify-content-between">
-                                <strong>Total:</strong>
-                                <strong>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong>Total CLP:</strong>
                                     <h:outputText value="#{checkoutBean.total}">
-                                        <f:convertNumber type="currency" currencySymbol="$"/>
+                                        <f:convertNumber type="currency" currencySymbol="$" />
                                     </h:outputText>
-                                </strong>
+                                </div>
+
+                                <div class="d-flex justify-content-between mt-2">
+                                    <strong>Total USD:</strong>
+                                    <p:outputPanel id="dolarPanelPrecio">
+                                        <h:outputText rendered="#{tiendaBean.valorDolar gt 0}"
+                                                      value="#{checkoutBean.total / tiendaBean.valorDolar}">
+                                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                                        </h:outputText>
+
+                                        <h:outputText rendered="#{tiendaBean.valorDolar le 0}" value="Obteniendo valor del dólar..." />
+
+                                        <p:poll interval="2"
+                                                update="dolarPanelPrecio"
+                                                listener="#{tiendaBean.checkValorDolar}"
+                                                stop="#{tiendaBean.valorDolar gt 0}" />
+                                    </p:outputPanel>
+                                </div>
                             </div>
+
 
 
 

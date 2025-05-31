@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ui:composition lang="es"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fs="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/main.xhtml">
+
+    <ui:define name="contenido">
+
+        <h:form>
+
+            <p:panel header="🧠 Dashboard de Informes" style="margin-bottom:20px;">
+                <p:calendar value="#{null}" pattern="yyyy-MM-dd" placeholder="Fecha Inicio" />
+                <p:calendar value="#{null}" pattern="yyyy-MM-dd" placeholder="Fecha Fin" />
+                <p:commandButton value="🔍 Generar" />
+            </p:panel>
+
+            <!-- 📈 INFORMES DE VENTAS -->
+            <p:panel header="📈 Informes de Ventas" toggleable="true" style="margin-bottom: 20px;">
+
+                <h3>📊 Ventas por Día (simulado)</h3>
+                <table class="ui-widget ui-widget-content" style="width:100%; text-align:center; margin-bottom: 10px;">
+                    <thead class="ui-widget-header">
+                    <tr><th>Fecha</th><th>Monto ($)</th><th>Cantidad Pedidos</th><th>Productos Vendidos</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr><td>2025-05-24</td><td>350</td><td>5</td><td>20</td></tr>
+                    <tr><td>2025-05-25</td><td>420</td><td>7</td><td>28</td></tr>
+                    <tr><td>2025-05-26</td><td>300</td><td>6</td><td>18</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>Ventas por Sucursal</h3>
+                <table class="ui-widget ui-widget-content" style="width:60%; margin-bottom: 10px;">
+                    <thead class="ui-widget-header"><tr><th>Sucursal</th><th>Monto ($)</th></tr></thead>
+                    <tbody>
+                    <tr><td>Santiago</td><td>1,500</td></tr>
+                    <tr><td>Valparaíso</td><td>1,100</td></tr>
+                    <tr><td>Concepción</td><td>900</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>🔝 Productos más vendidos</h3>
+                <table class="ui-widget ui-widget-content" style="width:80%; margin-bottom: 10px;">
+                    <thead class="ui-widget-header"><tr><th>Producto</th><th>Cantidad Vendida</th><th>Monto ($)</th></tr></thead>
+                    <tbody>
+                    <tr><td>Martillo</td><td>150</td><td>3,000</td></tr>
+                    <tr><td>Taladro</td><td>120</td><td>4,800</td></tr>
+                    <tr><td>Destornillador</td><td>90</td><td>900</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>👑 Clientes top compradores</h3>
+                <table class="ui-widget ui-widget-content" style="width:70%; margin-bottom: 10px;">
+                    <thead class="ui-widget-header"><tr><th>Cliente</th><th>Cantidad Pedidos</th><th>Total Gastado ($)</th></tr></thead>
+                    <tbody>
+                    <tr><td>María Gómez</td><td>15</td><td>2,500</td></tr>
+                    <tr><td>Carlos Pérez</td><td>12</td><td>2,000</td></tr>
+                    <tr><td>Lucía Fernández</td><td>10</td><td>1,800</td></tr>
+                    </tbody>
+                </table>
+
+                <h4>💸 Promedio de gasto por pedido: <b>$83.50</b></h4>
+
+                <h3>Métodos de Pago</h3>
+                <table class="ui-widget ui-widget-content" style="width:50%; margin-bottom: 10px;">
+                    <thead class="ui-widget-header"><tr><th>Método</th><th>Monto ($)</th><th>Porcentaje</th></tr></thead>
+                    <tbody>
+                    <tr><td>Transferencia</td><td>3,500</td><td>50%</td></tr>
+                    <tr><td>Tarjeta Crédito</td><td>2,500</td><td>36%</td></tr>
+                    <tr><td>Efectivo</td><td>1,000</td><td>14%</td></tr>
+                    </tbody>
+                </table>
+
+            </p:panel>
+
+            <!-- 📊 INFORMES DE INVENTARIO -->
+            <p:panel header="📊 Informes de Inventario" toggleable="true" style="margin-bottom: 20px;">
+
+                <h3>📦 Stock actual por producto y sucursal</h3>
+                <table class="ui-widget ui-widget-content" style="width:70%; margin-bottom: 10px;">
+                    <thead class="ui-widget-header"><tr><th>Producto</th><th>Sucursal</th><th>Stock</th></tr></thead>
+                    <tbody>
+                    <tr><td>Mouse XYZ</td><td>Santiago</td><td>23</td></tr>
+                    <tr><td>Teclado ABC</td><td>Valparaíso</td><td>8</td></tr>
+                    <tr><td>USB Cable</td><td>Concepción</td><td>3</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>🚨 Productos con bajo stock (&lt; 10 unidades)</h3>
+                <ul>
+                    <li>Teclado ABC (8)</li>
+                    <li>USB Cable (3)</li>
+                </ul>
+
+                <h3>❌ Productos sin ventas (últimos 30 días)</h3>
+                <ul>
+                    <li>Parlante XYZ</li>
+                    <li>Adaptador HDMI</li>
+                </ul>
+
+            </p:panel>
+
+            <!-- 📋 INFORMES DE PEDIDOS -->
+            <p:panel header="📋 Informes de Pedidos" toggleable="true" style="margin-bottom: 20px;">
+
+                <h3>📦 Pedidos por estado</h3>
+                <ul>
+                    <li>Pendiente: 15</li>
+                    <li>Completado: 102</li>
+                    <li>Cancelado: 4</li>
+                </ul>
+
+                <h4>⏱️ Tiempo promedio de entrega: <b>2.3 días</b></h4>
+
+                <h3>📑 Detalle de pedidos por cliente</h3>
+                <table class="ui-widget ui-widget-content" style="width:60%;">
+                    <thead class="ui-widget-header"><tr><th>Pedido</th><th>Fecha</th><th>Monto ($)</th></tr></thead>
+                    <tbody>
+                    <tr><td>#1023</td><td>15/05/2025</td><td>120</td></tr>
+                    <tr><td>#1024</td><td>17/05/2025</td><td>90</td></tr>
+                    <tr><td>#1025</td><td>20/05/2025</td><td>140</td></tr>
+                    </tbody>
+                </table>
+
+            </p:panel>
+
+            <!-- 👤 INFORMES DE CLIENTES Y USUARIOS -->
+            <p:panel header="👤 Informes de Clientes y Usuarios" toggleable="true" style="margin-bottom: 20px;">
+
+                <h3>🧾 Clientes registrados vs invitados</h3>
+                <table class="ui-widget ui-widget-content" style="width:40%; margin-bottom: 10px;">
+                    <thead class="ui-widget-header"><tr><th>Tipo</th><th>Cantidad Pedidos</th></tr></thead>
+                    <tbody>
+                    <tr><td>Registrados</td><td>90</td></tr>
+                    <tr><td>Invitados</td><td>31</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>🔐 Usuarios con intentos de recuperación de contraseña</h3>
+                <ul>
+                    <li>15/05/2025: maria@ejemplo.com</li>
+                    <li>16/05/2025: luis@ejemplo.com</li>
+                </ul>
+
+                <h3>👨‍💼 Empleados por sucursal</h3>
+                <table class="ui-widget ui-widget-content" style="width:50%; margin-bottom: 10px;">
+                    <thead class="ui-widget-header"><tr><th>Sucursal</th><th>Empleados</th></tr></thead>
+                    <tbody>
+                    <tr><td>Santiago</td><td>6</td></tr>
+                    <tr><td>Valparaíso</td><td>4</td></tr>
+                    <tr><td>Concepción</td><td>5</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>📈 Clientes nuevos por mes</h3>
+                <table class="ui-widget ui-widget-content" style="width:40%;">
+                    <thead class="ui-widget-header"><tr><th>Mes</th><th>Nuevos Clientes</th></tr></thead>
+                    <tbody>
+                    <tr><td>Marzo</td><td>12</td></tr>
+                    <tr><td>Abril</td><td>22</td></tr>
+                    <tr><td>Mayo</td><td>18</td></tr>
+                    </tbody>
+                </table>
+
+            </p:panel>
+
+            <!-- 💸 INFORMES DE TRANSACCIONES Y PAGOS -->
+            <p:panel header="💸 Informes de Transacciones y Pagos" toggleable="true">
+
+                <h3>✅ Transferencias recibidas</h3>
+                <table class="ui-widget ui-widget-content" style="width:60%; margin-bottom: 10px;">
+                    <thead class="ui-widget-header"><tr><th>Pedido</th><th>Monto ($)</th><th>Estado</th></tr></thead>
+                    <tbody>
+                    <tr><td>#1023</td><td>85</td><td>Confirmada</td></tr>
+                    <tr><td>#1026</td><td>100</td><td>Confirmada</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>⏳ Transferencias pendientes</h3>
+                <table class="ui-widget ui-widget-content" style="width:60%; margin-bottom: 10px;">
+                    <thead class="ui-widget-header"><tr><th>Pedido</th><th>Monto ($)</th><th>Estado</th></tr></thead>
+                    <tbody>
+                    <tr><td>#1040</td><td>120</td><td>Pendiente</td></tr>
+                    <tr><td>#1041</td><td>150</td><td>Pendiente</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>💰 Ingresos totales por método de pago</h3>
+                <table class="ui-widget ui-widget-content" style="width:50%;">
+                    <thead class="ui-widget-header"><tr><th>Método</th><th>Total ($)</th></tr></thead>
+                    <tbody>
+                    <tr><td>Transferencia</td><td>3,500</td></tr>
+                    <tr><td>Tarjeta Crédito</td><td>2,500</td></tr>
+                    <tr><td>Efectivo</td><td>1,000</td></tr>
+                    </tbody>
+                </table>
+
+            </p:panel>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

@@ -16,6 +16,7 @@
             <h2 class="text-center text-primary mb-4">Carrito de Compras</h2>
 
             <h:form id="formCarrito">
+                <p:outputPanel id="dolarPanelCarrito">
 
                 <!-- Mensaje si el carrito está vacío -->
                 <h:panelGroup rendered="#{empty carroBean.pedido.detallepedidos}">
@@ -32,6 +33,12 @@
                                 <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
                             </h:outputText>
                         </h4>
+                        <h4 class="text-primary">Total en USD:
+                            <h:outputText value="#{carroBean.total/tiendaBean.valorDolar}">
+                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
+                            </h:outputText>
+                        </h4>
+
 
                         <p:linkButton outcome="/home/checkout.xhtml" value="Proceder a la compra"
                                       icon="pi pi-check" styleClass="btn btn-success" />
@@ -45,8 +52,10 @@
                                 <th>Imagen</th>
                                 <th>Producto</th>
                                 <th>Precio</th>
+                                <th>Precio USD</th>
                                 <th>Cantidad</th>
                                 <th>Total</th>
+                                <th>Total USD</th>
                                 <th>Eliminar</th>
                             </tr>
                             </thead>
@@ -66,6 +75,14 @@
                                             <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
                                         </h:outputText>
                                     </td>
+
+                                    <td>
+                                        <h:outputText value="#{item.producto.precio/tiendaBean.valorDolar}">
+                                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
+                                        </h:outputText>
+                                    </td>
+
+
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center gap-2">
 
@@ -97,6 +114,14 @@
                                             <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
                                         </h:outputText>
                                     </td>
+
+                                    <td>
+                                        <h:outputText value="#{(item.producto.precio * item.cantidad)/tiendaBean.valorDolar}">
+                                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
+                                        </h:outputText>
+                                    </td>
+
+
                                     <td>
 
                                         <p:commandButton icon="pi pi-trash"
@@ -113,6 +138,13 @@
                         </table>
                     </div>
                 </h:panelGroup>
+
+                    <p:poll interval="2"
+                            update="dolarPanelCarrito"
+                            listener="#{tiendaBean.checkValorDolar}"
+                            stop="#{tiendaBean.valorDolar gt 0}" />
+                </p:outputPanel>
+
             </h:form>
         </div>
 

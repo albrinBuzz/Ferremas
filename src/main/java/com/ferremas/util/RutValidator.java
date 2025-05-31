@@ -27,7 +27,7 @@ public class RutValidator implements Validator<String> {
         Pattern rutPattern = Pattern.compile("^\\d{7,8}[0-9Kk]$");
         Matcher matcher = rutPattern.matcher(rut);
         if (!matcher.matches()) {
-            FacesMessage msg = new FacesMessage("El RUT no tiene un formato válido.");
+            FacesMessage msg = new FacesMessage("El RUT no tiene un formato válido. 11.111.111-1 o 11111111-1");
             throw new ValidatorException(msg);
         }
 
@@ -36,7 +36,7 @@ public class RutValidator implements Validator<String> {
         char dv = rut.charAt(rut.length() - 1);
         char dvCalculado = calcularDigitoVerificador(rutNum);
         if (dv != dvCalculado) {
-            FacesMessage msg = new FacesMessage("El dígito verificador del RUT es incorrecto.");
+            FacesMessage msg = new FacesMessage("El dígito verificador del RUT es incorrecto. Rut invalido");
             throw new ValidatorException(msg);
         }
     }

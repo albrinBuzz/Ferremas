@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class ProductoServiceImpl implements ProductoService {
 
-    private static final String _BASE_ENDPOINT_ = "https://localhost:3000/produtos";
+    private static final String _BASE_ENDPOINT_ = "http://localhost:3000/productos";
     private static final Map<String, String> _STANDARD_HEADERS = Map.of(
             "Content-Type", "application/json",
             "Accept", "application/json",

@@ -109,6 +109,26 @@
                                             <f:convertNumber type="currency" currencySymbol="$"/>
                                         </h:outputText>
                                     </p>
+
+                                    <p class="h5 text-success mt-2">
+                                        <p:outputPanel id="dolarPanelPrecio">
+                                            <h:outputText rendered="#{tiendaBean.valorDolar gt 0}"
+                                                          value="#{producto.precio / tiendaBean.valorDolar}">
+                                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                                            </h:outputText>
+
+                                            <h:outputText rendered="#{tiendaBean.valorDolar le 0}" value="Obteniendo valor del dólar..." />
+
+                                            <p:poll interval="2"
+                                                    update="dolarPanelPrecio"
+                                                    listener="#{tiendaBean.checkValorDolar}"
+                                                    stop="#{tiendaBean.valorDolar gt 0}" />
+                                        </p:outputPanel>
+
+                                    </p>
+
+
+
                                     <div class="mt-3 d-flex justify-content-between">
                                         <p:commandButton value="Agregar" icon="pi pi-shopping-cart"
                                                          actionListener="#{carroBean.agregarItem(producto)}"
