@@ -20,7 +20,7 @@
 
                 <!-- Imagen del Producto -->
                 <div class="col-md-6 mb-4">
-                    <p:graphicImage url="/resources/images/product/#{detalleBean.producto.imagen}"
+                    <p:graphicImage url="#{configBean.urlImagenes}#{detalleBean.producto.imagen}"
                                     library="demo"
                                     styleClass="img-fluid shadow-lg rounded"
                                     alt="Imagen del producto" />
