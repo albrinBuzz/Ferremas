@@ -1,4 +1,5 @@
-<img width="1901" height="1016" alt="TiendaMain" src="https://github.com/albrinBuzz/Ferremas/blob/master/imagenes/tienda.png" /><img width="1901" height="1016" alt="TiendaMain" src="https://github.com/albrinBuzz/Ferremas/blob/master/imagenes/tienda.png" /># FERREMAS - Sistema de Comercio Electrónico
+# FERREMAS - Sistema de Comercio Electrónico
+<img width="1901" height="1016" alt="TiendaMain" src="https://github.com/albrinBuzz/Ferremas/blob/master/imagenes/tienda.png" 
 
 ## 📌 Contexto del Proyecto
 
