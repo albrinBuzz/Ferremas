@@ -23,7 +23,7 @@ Este proyecto tiene como objetivo desarrollar una solución de comercio electró
 
 
 ![TiendaMain.png](/imagenes%2FTiendaMain.png)
-![Uploading tienda.png…]()
+![tienda.png](/imagenes%2Ftienda.png)
 
 
 ## 🔧 Tecnologías Utilizadas
