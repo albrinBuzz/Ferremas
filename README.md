@@ -1,4 +1,4 @@
-# FERREMAS - Sistema de Comercio Electrónico
+<img width="1901" height="1016" alt="TiendaMain" src="https://github.com/user-attachments/assets/f0828139-6a82-464c-a5a5-ea329442097f" /><img width="1901" height="1016" alt="TiendaMain" src="https://github.com/user-attachments/assets/cc4acab6-d6c5-4b61-ad3e-d77f9a1c6e39" /># FERREMAS - Sistema de Comercio Electrónico
 
 ## 📌 Contexto del Proyecto
 
@@ -21,6 +21,7 @@ Este proyecto tiene como objetivo desarrollar una solución de comercio electró
 ## Imagenes de la tienda
 
 ![tienda.png](/imagenes%2Ftienda.png)
+![TiendaMain.png](/imagenes%2FTiendaMain.png)
 
 
 ## 🔧 Tecnologías Utilizadas
