@@ -20,6 +20,8 @@ public class Transferencia implements Serializable {
 	private Integer idtransferencia;
 
 	private String comentario;
+	@Column(name="observacion_admin")
+	private String observacionAdmin;
 
 	private String comprobante;
 
@@ -87,6 +89,14 @@ public class Transferencia implements Serializable {
 
 	public void setEstadotransferencia(Estadotransferencia estadotransferencia) {
 		this.estadotransferencia = estadotransferencia;
+	}
+
+	public String getObservacionAdmin() {
+		return observacionAdmin;
+	}
+
+	public void setObservacionAdmin(String observacionAdmin) {
+		this.observacionAdmin = observacionAdmin;
 	}
 
 	public Pedido getPedido() {

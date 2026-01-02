@@ -3,122 +3,216 @@
                 xmlns:f="jakarta.faces.core"
                 xmlns:h="jakarta.faces.html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:fs="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/template/main.xhtml">
 
     <ui:define name="contenido">
+        <h:outputStylesheet>
+            /* <![CDATA[ */
+            .profile-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
 
-        <h:form id="formUsuario">
-            <p:card header="Perfil de Usuario" styleClass="ui-card-shadow">
+            .profile-header-card {
+                background: linear-gradient(135deg, #1c2128 0%, #161b22 100%);
+                border: 1px solid rgba(255,255,255,0.08);
+                border-radius: 20px;
+                padding: 30px;
+                margin-bottom: 25px;
+                display: flex;
+                align-items: center;
+                gap: 25px;
+            }
 
-                <!-- Información de Usuario -->
-                <p:panelGrid columns="2" columnClasses="label,value" style="width: 100%; margin-bottom: 20px; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
-                    <h:outputLabel value="RUT Usuario:" />
-                    <h:outputText value="#{userBean.usuario.rutUsuario}" />
+            .avatar-circle {
+                width: 80px; height: 80px;
+                background: rgba(251, 191, 36, 0.1);
+                border: 2px solid #fbbf24;
+                border-radius: 50%;
+                display: flex; align-items: center; justify-content: center;
+                color: #fbbf24; font-size: 2rem;
+            }
 
-                    <h:outputLabel value="Nombre de Usuario:" />
-                    <h:outputText value="#{userBean.usuario.nombreusuario}" />
+            .info-card {
+                background: #161b22;
+                border: 1px solid rgba(255,255,255,0.08);
+                border-radius: 15px;
+                padding: 25px;
+                height: 100%;
+            }
 
-                    <h:outputLabel value="Correo Electrónico:" />
-                    <h:outputText value="#{userBean.usuario.correo}" />
+            .data-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 12px 0;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+            }
+            .data-row:last-child { border-bottom: none; }
 
-                    <h:outputLabel value="Roles:" />
-                    <ui:repeat value="#{userBean.usuario.roles}" var="rol">
-                        <p:chip label="#{rol.nombre}" icon="pi pi-user" style="margin-right: 5px;" />
-                    </ui:repeat>
-                </p:panelGrid>
+            .data-label {
+                font-size: 0.7rem;
+                font-weight: 700;
+                color: rgba(255,255,255,0.4);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
 
-                <!-- Separador entre secciones -->
-                <p:separator style="border-top: 2px solid #ccc; margin-bottom: 20px;" />
+            .data-value { font-size: 0.85rem; color: #fff; font-weight: 500; }
 
-                <!-- Información de Cliente (renderiza solo si hay cliente asociado) -->
-                <p:panelGrid rendered="#{userBean.usuario.cliente != null}" columns="2" columnClasses="label,value" style="width: 100%; margin-bottom: 20px; padding: 20px; background-color: #f7f7f7; border-radius: 8px; border: 1px solid #b0b0b0;">
-                    <h:outputLabel value="Dirección Cliente:" />
-                    <h:outputText value="#{userBean.usuario.cliente.direccion}" />
+            .role-chip {
+                background: rgba(251, 191, 36, 0.1) !important;
+                color: #fbbf24 !important;
+                border: 1px solid rgba(251, 191, 36, 0.2) !important;
+                font-size: 0.7rem !important;
+                font-weight: 700 !important;
+            }
 
-                    <h:outputLabel value="Nombre Cliente:" />
-                    <h:outputText value="#{userBean.usuario.cliente.nombre}" />
+            .section-title {
+                font-size: 0.9rem;
+                font-weight: 800;
+                color: #fff;
+                margin-bottom: 20px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            /* ]]> */
+        </h:outputStylesheet>
 
-                    <h:outputLabel value="Teléfono Cliente:" />
-                    <h:outputText value="#{userBean.usuario.cliente.telefono}" />
-                </p:panelGrid>
+        <div class="profile-container">
+            <h:form id="formUsuario">
+                <div class="profile-header-card shadow-lg">
+                    <div class="avatar-circle">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div>
+                        <h2 class="m-0 fw-black text-white" style="font-size: 1.5rem;">#{userBean.usuario.nombreusuario}</h2>
+                        <p class="text-muted small mb-2">#{userBean.usuario.correo}</p>
+                        <div class="d-flex gap-2">
+                            <ui:repeat value="#{userBean.usuario.roles}" var="rol">
+                                <p:chip label="#{rol.nombre}" styleClass="role-chip" />
+                            </ui:repeat>
+                        </div>
+                    </div>
+                </div>
 
-                <!-- Separador entre Cliente y Empleado -->
-                <p:separator style="border-top: 2px solid #b0b0b0; margin-bottom: 20px;" />
-
-                <!-- Información de Empleado (renderiza solo si hay empleado asociado) -->
-                <p:panelGrid rendered="#{userBean.usuario.empleado != null}" columns="2" columnClasses="label,value" style="width: 100%; padding: 20px; background-color: #e8f0f8; border-radius: 8px; border: 1px solid #7d9db7;">
-                    <h:outputLabel value="Sucursal Empleado:" />
-                    <h:outputText value="#{userBean.usuario.empleado.sucursal.nombre}" />
-
-                </p:panelGrid>
-
-                <p:separator />
-
-                <!--   <p:commandButton value="Editar Perfil"
-                                   icon="pi pi-pencil"
-                                   action="#{perfilUsuarioBean.irAEditarPerfil}"
-                                   styleClass="p-button-rounded p-button-info" />-->
-
-                <p:commandButton value="Crear Cuenta de Cliente"
-                                 icon="pi pi-plus-circle"
-                                 rendered="#{userBean.usuario.empleado != null and userBean.usuario.cliente == null}"
-                                 action="#{userBean.mostrarFormularioCrearCliente}"
-                                 update="@form clienteForm"
-                                 oncomplete="PF('manageUsuarioDialog').show()"
-                                 styleClass="p-button-rounded p-button-success"
-                                 style="margin-top: 20px;" />
-
-
-
-            </p:card>
-          </h:form>
+                <div class="row g-4">
 
 
-        <p:dialog header="Formulario de Cliente"
+                    <div class="row g-4 align-items-stretch">
+                        <div class="col-md-6 col-lg-5">
+                            <div class="info-card h-100">
+                                <div class="section-title">
+                                    <i class="fas fa-id-card text-warning"></i> Cuenta de Usuario
+                                </div>
+                                <div class="data-row">
+                                    <span class="data-label">RUT Identificador</span>
+                                    <span class="data-value">#{userBean.usuario.rutUsuario}</span>
+                                </div>
+                                <div class="data-row">
+                                    <span class="data-label">Estado de Cuenta</span>
+                                    <span class="data-value text-success">
+                    <i class="fas fa-check-circle me-1"></i> Activa
+                </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-lg-7">
+                            <div class="d-flex flex-column gap-4">
+
+                                <h:panelGroup rendered="#{userBean.usuario.cliente != null}" layout="block">
+                                    <div class="info-card" style="border-left: 4px solid #fbbf24;">
+                                        <div class="section-title">
+                                            <i class="fas fa-shopping-bag text-warning"></i> Perfil de Cliente
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-12 data-row">
+                                                <span class="data-label">Razón Social / Nombre</span>
+                                                <span class="data-value">#{userBean.usuario.cliente.nombre}</span>
+                                            </div>
+                                            <div class="col-6 data-row border-0">
+                                                <span class="data-label">Teléfono</span>
+                                                <span class="data-value">#{userBean.usuario.cliente.telefono}</span>
+                                            </div>
+                                            <div class="col-12 data-row">
+                                                <span class="data-label">Dirección de Despacho</span>
+                                                <span class="data-value text-end">#{userBean.usuario.cliente.direccion}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </h:panelGroup>
+
+                                <h:panelGroup rendered="#{userBean.usuario.empleado != null}" layout="block">
+                                    <div class="info-card" style="border-left: 4px solid #3b82f6;">
+                                        <div class="section-title text-primary">
+                                            <i class="fas fa-briefcase me-2"></i> Perfil de Empleado
+                                        </div>
+                                        <div class="data-row">
+                                            <span class="data-label">Sucursal Asignada</span>
+                                            <span class="data-value fw-bold">#{userBean.usuario.empleado.sucursal.nombre}</span>
+                                        </div>
+                                        <div class="data-row">
+                                            <span class="data-label">Identificador Interno</span>
+                                            <span class="data-value text-muted"># EMP-#{userBean.usuario.rutUsuario.split('-')[0]}</span>
+                                        </div>
+                                    </div>
+                                </h:panelGroup>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-5">
+                    <p:commandButton value="Completar Perfil de Cliente"
+                                     icon="pi pi-plus-circle"
+                                     rendered="#{userBean.usuario.empleado != null and userBean.usuario.cliente == null}"
+                                     action="#{userBean.mostrarFormularioCrearCliente}"
+                                     update="@form clienteForm"
+                                     oncomplete="PF('manageUsuarioDialog').show()"
+                                     styleClass="ui-button-warning rounded-pill px-4 fw-bold shadow" />
+                </div>
+            </h:form>
+        </div>
+
+        <p:dialog header="Vincular Perfil de Cliente"
                   widgetVar="manageUsuarioDialog"
                   modal="true"
-                  closable="false"
+                  closable="true"
                   resizable="false"
-                  draggable="false"
                   showEffect="fade"
-                  hideEffect="fade"
-                  visible="#{userBean.mostrarFormularioCliente}"
-                  responsive="true">
+                  responsive="true"
+                  styleClass="dark-dialog">
 
-            <h:form id="clienteForm">
+            <h:form id="clienteForm" style="min-width: 350px;">
                 <p:messages id="msgs" showDetail="true" closable="true" />
 
-                <p:panelGrid columns="2" columnClasses="label,value" style="width:100%; margin-bottom: 20px;">
-                    <h:outputLabel for="nombre" value="Nombre del Cliente:" />
-                    <p:inputText id="nombre" value="#{userBean.nuevoCliente.nombre}" required="true" label="Nombre" />
+                <div class="mb-3">
+                    <p:outputLabel for="nombre" value="Nombre del Cliente" styleClass="data-label d-block mb-1" />
+                    <p:inputText id="nombre" value="#{userBean.nuevoCliente.nombre}" required="true" styleClass="w-full bg-dark text-white border-secondary" />
+                </div>
 
-                    <h:outputLabel for="direccion" value="Dirección:" />
-                    <p:inputText id="direccion" value="#{userBean.nuevoCliente.direccion}" required="true" label="Dirección" />
+                <div class="mb-3">
+                    <p:outputLabel for="direccion" value="Dirección" styleClass="data-label d-block mb-1" />
+                    <p:inputText id="direccion" value="#{userBean.nuevoCliente.direccion}" required="true" styleClass="w-full bg-dark text-white border-secondary" />
+                </div>
 
-                    <h:outputLabel for="telefono" value="Teléfono:" />
-                    <p:inputText id="telefono" value="#{userBean.nuevoCliente.telefono}" required="true" label="Teléfono" />
-                </p:panelGrid>
+                <div class="mb-4">
+                    <p:outputLabel for="telefono" value="Teléfono" styleClass="data-label d-block mb-1" />
+                    <p:inputText id="telefono" value="#{userBean.nuevoCliente.telefono}" required="true" styleClass="w-full bg-dark text-white border-secondary" />
+                </div>
 
-                <p:commandButton value="Guardar Cliente"
-                                 icon="pi pi-save"
-                                 action="#{userBean.crearClienteParaUsuario}"
-                                 update=":formUsuario"
-                                 styleClass="p-button-success" />
-
-                <p:commandButton value="Cancelar"
-                                 icon="pi pi-times"
-                                 action="#{userBean.cancelarFormularioCliente}"
-                                 immediate="true"
-                                 update="clienteForm"
-                                 oncomplete="PF('manageUsuarioDialog').hide()"
-                                 styleClass="p-button-secondary"
-                                 style="margin-left: 10px;" />
+                <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                    <p:commandButton value="Cancelar" icon="pi pi-times"
+                                     action="#{userBean.cancelarFormularioCliente}"
+                                     oncomplete="PF('manageUsuarioDialog').hide()"
+                                     styleClass="ui-button-flat ui-button-plain" />
+                    <p:commandButton value="Guardar Cambios" icon="pi pi-save"
+                                     action="#{userBean.crearClienteParaUsuario}"
+                                     update=":formUsuario"
+                                     styleClass="ui-button-warning" />
+                </div>
             </h:form>
         </p:dialog>
 
-
-
     </ui:define>
-  </ui:composition>
+</ui:composition>

@@ -3,24 +3,141 @@
                 xmlns:f="jakarta.faces.core"
                 xmlns:h="jakarta.faces.html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:fs="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/template/main.xhtml">
 
-    <h:head>
-        <title>Error en el Pago</title>
-    </h:head>
-
     <ui:define name="contenido">
-        <div class="container text-center py-5">
-        <div class="text-center">
-            <p:graphicImage url="/resources/images/imgs/errorPago.jpg" library="images" width="150" />
-        </div>
-            <h2 class="text-danger mt-4">Ocurrió un Error</h2>
-            <p class="mt-3">
-                No se pudo procesar tu pago. Por favor, intenta nuevamente o usa otro método de pago.
-            </p>
-            <p:button value="Intentar de Nuevo" icon="pi pi-refresh" outcome="/home/checkout.xhtml" styleClass="btn btn-outline-warning mt-4"/>
+        <h:outputStylesheet>
+            /* <![CDATA[ */
+            .error-payment-wrapper {
+                padding: 60px 0;
+                background-color: #0f111a;
+                min-height: 90vh;
+                display: flex;
+                align-items: center;
+            }
+
+            .error-card {
+                background: #161b22;
+                border-radius: 20px;
+                border: 1px solid rgba(239, 68, 68, 0.2);
+                max-width: 550px;
+                margin: 0 auto;
+                padding: 40px;
+                text-align: center;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            }
+
+            .error-icon-circle {
+                width: 100px;
+                height: 100px;
+                background: rgba(239, 68, 68, 0.1);
+                color: #ef4444;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 25px;
+                font-size: 3.5rem;
+            }
+
+            .error-title {
+                color: #ffffff;
+                font-weight: 800;
+                margin-bottom: 15px;
+            }
+
+            .error-text {
+                color: #94a3b8;
+                font-size: 1.1rem;
+                line-height: 1.6;
+            }
+
+            .help-box {
+                background: rgba(255, 255, 255, 0.03);
+                border-radius: 12px;
+                padding: 20px;
+                margin: 30px 0;
+                text-align: left;
+            }
+
+            .help-box ul {
+                padding-left: 20px;
+                margin-bottom: 0;
+                color: #cbd5e1;
+                font-size: 0.9rem;
+            }
+
+            .help-box li { margin-bottom: 8px; }
+
+            .btn-retry {
+                background: #fbbf24 !important;
+                border: none !important;
+                color: #000 !important;
+                font-weight: 700 !important;
+                padding: 12px 30px !important;
+                border-radius: 50px !important;
+            }
+
+            .btn-support {
+                color: #94a3b8 !important;
+                text-decoration: none;
+                font-size: 0.9rem;
+                transition: color 0.2s;
+            }
+            .btn-support:hover { color: #ffffff !important; }
+            /* ]]> */
+        </h:outputStylesheet>
+
+        <div class="error-payment-wrapper">
+            <div class="container">
+                <div class="error-card animate__animated animate__shakeX">
+
+                    <div class="error-icon-circle">
+                        <i class="pi pi-times-circle"></i>
+                    </div>
+
+                    <h2 class="error-title">Pago Interrumpido</h2>
+
+                    <p class="error-text">
+                        No pudimos procesar la transacción con tu entidad bancaria en este momento.
+                    </p>
+
+                    <div class="help-box">
+                        <span class="text-white small fw-bold d-block mb-2">¿Qué pudo haber pasado?</span>
+                        <ul>
+                            <li>Fondos insuficientes en la cuenta seleccionada.</li>
+                            <li>Límite de transferencia diaria excedido.</li>
+                            <li>La conexión con el medio de pago expiró.</li>
+                            <li>Datos del titular ingresados incorrectamente.</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                        <p:button value="Reintentar Pago"
+                                  icon="pi pi-refresh"
+                                  outcome="/home/checkout.xhtml"
+                                  styleClass="btn-retry shadow" />
+
+                        <p:button value="Volver al Carrito"
+                                  icon="pi pi-shopping-cart"
+                                  outcome="/home/carrito.xhtml"
+                                  styleClass="ui-button-outlined ui-button-plain rounded-pill" />
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="mailto:soporte@ferremas.cl" class="btn-support">
+                            <i class="pi pi-envelope me-1"></i> Contactar a Soporte Técnico
+                        </a>
+                    </div>
+                </div>
+
+                <div class="text-center mt-5 opacity-25">
+                    <p:graphicImage url="/resources/images/imgs/errorPago.jpg"
+                                    rendered="false"
+                                    style="max-width: 120px; filter: grayscale(1);" />
+                </div>
+            </div>
         </div>
     </ui:define>
 </ui:composition>

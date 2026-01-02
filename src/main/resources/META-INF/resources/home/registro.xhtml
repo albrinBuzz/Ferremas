@@ -1,95 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui:composition lang="es"
                 xmlns:f="jakarta.faces.core"
                 xmlns:h="jakarta.faces.html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:fs="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/template/main.xhtml">
 
-    <h:head>
-        <title>Registro de Cliente</title>
-    </h:head>
-
     <ui:define name="contenido">
-        <div class="card">
-            <h:form id="formRegistroCliente">
+        <h:outputStylesheet>
+            /* <![CDATA[ */
+            .reg-container {
+                max-width: 900px;
+                margin: 40px auto;
+                background: #161b22;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 24px;
+                overflow: hidden;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            }
+            .reg-header {
+                background: linear-gradient(135deg, #1c2128 0%, #161b22 100%);
+                padding: 30px;
+                text-align: center;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+            }
+            .reg-body { padding: 40px; }
+
+            .section-label {
+                font-size: 0.7rem;
+                font-weight: 800;
+                color: #fbbf24;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                margin-bottom: 25px;
+                display: flex;
+                align-items: center;
+            }
+            .section-label::after {
+                content: "";
+                flex: 1;
+                height: 1px;
+                background: rgba(251, 191, 36, 0.2);
+                margin-left: 15px;
+            }
+
+            .custom-label {
+                font-size: 0.65rem;
+                font-weight: 700;
+                color: rgba(255,255,255,0.5);
+                text-transform: uppercase;
+                margin-bottom: 8px;
+                display: block;
+            }
+
+            .ui-inputfield, .ui-password input {
+                background: #0d1117 !important;
+                border: 1px solid rgba(255,255,255,0.1) !important;
+                color: #fff !important;
+                padding: 10px !important;
+                font-size: 0.85rem !important;
+                border-radius: 8px !important;
+                transition: 0.3s !important;
+            }
+            .ui-inputfield:focus {
+                border-color: #fbbf24 !important;
+                box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1) !important;
+            }
+
+            .btn-save {
+                background: #fbbf24 !important;
+                border: none !important;
+                color: #000 !important;
+                font-weight: 800 !important;
+                font-size: 0.8rem !important;
+                padding: 12px 30px !important;
+                border-radius: 10px !important;
+            }
+            /* ]]> */
+        </h:outputStylesheet>
+
+        <div class="reg-container">
+            <div class="reg-header">
+                <i class="fas fa-user-shield text-warning fs-3 mb-2"></i>
+                <h2 class="text-white fw-black m-0" style="font-size: 1.25rem;">REGISTRO DE CLIENTE</h2>
+                <p class="text-muted small m-0">Únete a la red de especialistas Ferremas</p>
+            </div>
+
+            <h:form id="formRegistroCliente" class="reg-body">
                 <p:growl id="msgs" showDetail="true" life="5000" />
 
-                <h1 style="text-align:center; color:#007ad9; margin-bottom: 2rem;">
-                    <i class="pi pi-user-plus" style="margin-right: 10px;"></i>
-                    Registro de Nuevo Cliente
-                </h1>
+                <div class="row">
+                    <div class="col-md-6 pe-md-4">
+                        <div class="section-label">Credenciales</div>
 
-                <div class="ui-fluid formgrid grid">
-
-                    <!-- Columna izquierda -->
-                    <div class="col-12 md:col-6">
-                        <div class="field">
-                            <p:outputLabel for="rut" value="RUT" />
-                            <p:inputText id="rut" value="#{userBean.usuarioRegistro.rutUsuario}" required="true"
-                                         requiredMessage="El RUT es obligatorio">
+                        <div class="mb-3">
+                            <p:outputLabel for="rut" value="RUT Institucional / Personal" styleClass="custom-label" />
+                            <p:inputText id="rut" value="#{userBean.usuarioRegistro.rutUsuario}"
+                                         required="true" placeholder="12.345.678-9" styleClass="w-100">
                                 <f:validator validatorId="rutValidator" />
                             </p:inputText>
                         </div>
 
-                        <div class="field">
-                            <p:outputLabel for="correo" value="Correo Electrónico" />
-                            <p:inputText id="correo" value="#{userBean.usuarioRegistro.correo}" required="true"
-                                         requiredMessage="El correo es obligatorio">
+                        <div class="mb-3">
+                            <p:outputLabel for="nombreUsuario" value="ID de Usuario" styleClass="custom-label" />
+                            <p:inputText id="nombreUsuario" value="#{userBean.usuarioRegistro.nombreusuario}"
+                                         required="true" placeholder="ej: jperez_pro" styleClass="w-100" />
+                        </div>
+
+                        <div class="mb-3">
+                            <p:outputLabel for="correo" value="Email Corporativo" styleClass="custom-label" />
+                            <p:inputText id="correo" value="#{userBean.usuarioRegistro.correo}"
+                                         required="true" placeholder="contacto@empresa.cl" styleClass="w-100">
                                 <f:validator validatorId="correoValidator" />
                             </p:inputText>
                         </div>
 
-                        <div class="field">
-                            <p:outputLabel for="contrasena" value="Contraseña" />
-                            <p:password id="contrasena" value="#{userBean.contrasenaInput}" required="true"
-                                        feedback="true" toggleMask="true" promptLabel="Ingrese una contraseña segura"
-                                        weakLabel="Débil" goodLabel="Buena" strongLabel="Fuerte">
+                        <div class="mb-3">
+                            <p:outputLabel for="contrasena" value="Contraseña de Seguridad" styleClass="custom-label" />
+                            <p:password id="contrasena" value="#{userBean.contrasenaInput}"
+                                        required="true" feedback="true" toggleMask="true"
+                                        promptLabel="Use números y símbolos"
+                                        weakLabel="Insegura" goodLabel="Aceptable" strongLabel="Robusta"
+                                        styleClass="w-100 shadow-none">
                                 <f:validator validatorId="contrasenaValidator" />
                             </p:password>
                         </div>
                     </div>
 
-                    <!-- Columna derecha -->
-                    <div class="col-12 md:col-6">
-                        <div class="field">
-                            <p:outputLabel for="nombreUsuario" value="Nombre de Usuario" />
-                            <p:inputText id="nombreUsuario" value="#{userBean.usuarioRegistro.nombreusuario}" required="true" />
+                    <div class="col-md-6 ps-md-4 border-start border-secondary border-opacity-10">
+                        <div class="section-label">Información de Contacto</div>
+
+                        <div class="mb-3">
+                            <p:outputLabel for="nombre" value="Nombre Completo" styleClass="custom-label" />
+                            <p:inputText id="nombre" value="#{userBean.cliente.nombre}"
+                                         required="true" placeholder="Juan Pérez Soto" styleClass="w-100" />
                         </div>
 
-                        <div class="field">
-                            <p:outputLabel for="nombre" value="Nombre del Cliente" />
-                            <p:inputText id="nombre" value="#{userBean.cliente.nombre}" required="true" />
+                        <div class="mb-3">
+                            <p:outputLabel for="telefono" value="Teléfono de Contacto" styleClass="custom-label" />
+                            <p:inputText id="telefono" value="#{userBean.cliente.telefono}"
+                                         placeholder="+56 9 1234 5678" styleClass="w-100" />
                         </div>
 
-                        <div class="field">
-                            <p:outputLabel for="telefono" value="Teléfono" />
-                            <p:inputText id="telefono" value="#{userBean.cliente.telefono}" />
-                        </div>
-
-                        <div class="field">
-                            <p:outputLabel for="direccion" value="Dirección" />
-                            <p:inputTextarea id="direccion" value="#{userBean.cliente.direccion}" rows="3" autoResize="true" />
+                        <div class="mb-3">
+                            <p:outputLabel for="direccion" value="Dirección de Despacho" styleClass="custom-label" />
+                            <p:inputTextarea id="direccion" value="#{userBean.cliente.direccion}"
+                                             rows="4" autoResize="false" placeholder="Calle, Número, Comuna, Región"
+                                             styleClass="w-100" />
                         </div>
                     </div>
                 </div>
 
-                <!-- Acciones -->
-                <div class="flex justify-content-center mt-4">
-                    <p:commandButton value="Guardar Cliente"
-                                     icon="pi pi-save"
+                <div class="d-flex justify-content-center gap-3 mt-5 pt-4 border-top border-secondary border-opacity-10">
+                    <p:commandButton value="CREAR CUENTA"
+                                     icon="pi pi-check-circle"
                                      actionListener="#{userBean.guardarCliente}"
                                      update="@form"
-                                     styleClass="ui-button-success"
-                                     style="margin-right:1rem;" />
+                                     styleClass="btn-save shadow" />
 
-                    <p:commandButton value="Limpiar"
+                    <p:commandButton value="LIMPIAR"
                                      icon="pi pi-refresh"
                                      actionListener="#{clienteBean.limpiarFormulario}"
                                      update="@form"
-                                     styleClass="ui-button-secondary"
+                                     process="@this"
+                                     styleClass="ui-button-flat ui-button-plain text-muted"
+                                     style="font-size: 0.75rem;"
                                      type="reset" />
                 </div>
+
             </h:form>
         </div>
     </ui:define>

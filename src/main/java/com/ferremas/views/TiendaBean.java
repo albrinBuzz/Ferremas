@@ -4,6 +4,7 @@ import com.ferremas.model.Categoria;
 import com.ferremas.model.Producto;
 import com.ferremas.service.CategoriaService;
 import com.ferremas.service.ProductoService;
+import com.ferremas.util.Logger;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import jakarta.annotation.PostConstruct;
@@ -11,172 +12,147 @@ import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
+import org.primefaces.model.ResponsiveOption;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Named("tiendaBean")
 @ViewScoped
-public class TiendaBean {
-    // Lista de categorías disponibles (puede ser un mock-up)
+public class TiendaBean implements java.io.Serializable {
+
     private String searchQuery;
-    // Lista de categorías seleccionadas por el usuario
-    private List<String> selectedCategories;
+    private String filtroCategoria;
+    private Integer precioMin = 0;
+    private Integer precioMax = 1000000; // Valor por defecto alto
+    private String orden = "desc"; // price_asc, price_desc, desc
+    private String vista = "grid";
+
     @Autowired
-    private ProductoService productoService;  // Suponiendo que tienes un servicio que maneja los productos.
+    private ProductoService productoService;
     @Autowired
     private CategoriaService categoriaService;
 
     private List<Producto> productos;
-    private List<Categoria>listaCategorias;
-
-    private String filtroCategoria;
-    private Integer precioMin;
-    private Integer precioMax;
-    private boolean soloDisponibles;
-    // todos los productos
-    private List<Producto> productosFiltrados;  // productos con filtros aplicados
+    private List<Categoria> listaCategorias;
+    private List<Producto> productosFiltrados;
     private double valorDolar;
 
+    private List<org.primefaces.model.ResponsiveOption> responsiveOptions;
 
     @PostConstruct
     public void init() {
         productos = productoService.listarTodos();  // Cargar todos los productos al inicio
         productosFiltrados=productoService.listarTodos();  // Cargar todos los productos al inicio
         listaCategorias=categoriaService.findAll();
+        responsiveOptions = new ArrayList<>();
+
+        responsiveOptions.add(new org.primefaces.model.ResponsiveOption("1024px", 4, 1));
+        responsiveOptions.add(new org.primefaces.model.ResponsiveOption("768px", 2, 1));
+        responsiveOptions.add(new org.primefaces.model.ResponsiveOption("560px", 1, 1));
+
+
+        // Inicializamos con todos los productos
+        aplicarFiltros();
+
         CompletableFuture.runAsync(this::cargarValorDolar);
     }
 
+    /**
+     * Lógica de filtrado y ordenamiento combinada
+     */
+    public void aplicarFiltros() {
+        // 1. Filtrado
+        Logger.logInfo("Aplicando Filtros");
+        List<Producto> streamFiltrado = productos.stream()
+                .filter(p -> searchQuery == null || searchQuery.isEmpty() ||
+                        p.getNombre().toLowerCase().contains(searchQuery.toLowerCase()))
+                .filter(p -> filtroCategoria == null || filtroCategoria.isEmpty() ||
+                        p.getCategoria().getIdCategoria().toString().equals(filtroCategoria))
+                .filter(p -> p.getPrecio() >= (precioMin != null ? precioMin : 0))
+                .filter(p -> p.getPrecio() <= (precioMax != null ? precioMax : Integer.MAX_VALUE))
+                .collect(Collectors.toList());
 
-    public void verDetalle(Producto producto){
+        // 2. Ordenamiento
+        if ("price_asc".equals(orden)) {
+            streamFiltrado.sort(Comparator.comparing(Producto::getPrecio));
+        } else if ("price_desc".equals(orden)) {
+            streamFiltrado.sort(Comparator.comparing(Producto::getPrecio).reversed());
+        } else {
+            // Orden por defecto (por ID o relevancia simulada)
+            streamFiltrado.sort(Comparator.comparing(Producto::getIdProducto).reversed());
+        }
 
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = facesContext.getExternalContext();
+        this.productosFiltrados = streamFiltrado;
+    }
 
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("productoSeleccionado", producto);
+    // --- Métodos de utilidad ---
 
-
+    public void cargarValorDolar() {
         try {
+            URL url = new URL("https://mindicador.cl/api");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(5000);
 
-            externalContext.redirect(externalContext.getRequestContextPath()
-                    + "/home/detalle.xhtml");
-        } catch (IOException e) {
-            e.printStackTrace();
+            try (InputStreamReader reader = new InputStreamReader(conn.getInputStream())) {
+                JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+                this.valorDolar = json.getAsJsonObject("dolar").get("valor").getAsDouble();
+            }
+        } catch (Exception e) {
+            this.valorDolar = 950.0; // Fallback en caso de error de API
+            System.err.println("Error API Dólar, usando fallback: " + this.valorDolar);
         }
     }
 
-    public void aplicarFiltros() {
-        productosFiltrados = productos.stream()
-                .filter(p -> searchQuery == null || p.getNombre().toLowerCase().contains(searchQuery.toLowerCase()))
-                .filter(p -> filtroCategoria == null || filtroCategoria.isEmpty() || p.getCategoria().getIdCategoria().toString().equals(filtroCategoria))
-                .filter(p -> precioMin == null || p.getPrecio() >= precioMin)
-                .filter(p -> precioMax == null || p.getPrecio() <= precioMax)
-                //.filter(p -> !soloDisponibles || p.getStock() > 0)
-                .collect(Collectors.toList());
-    }
+    // Getters y Setters necesarios para la nueva UI
+    public String getOrden() { return orden; }
+    public void setOrden(String orden) { this.orden = orden; }
 
-    public void setSearchQuery(String searchQuery) {
-        this.searchQuery = searchQuery;
-    }
+    public Integer getPrecioMin() { return precioMin; }
+    public void setPrecioMin(Integer precioMin) { this.precioMin = precioMin; }
 
-    public String getSearchQuery() {
-        return searchQuery;
-    }
+    public Integer getPrecioMax() { return precioMax; }
+    public void setPrecioMax(Integer precioMax) { this.precioMax = precioMax; }
 
+    public String getSearchQuery() { return searchQuery; }
+    public void setSearchQuery(String searchQuery) { this.searchQuery = searchQuery; }
 
+    public String getFiltroCategoria() { return filtroCategoria; }
+    public void setFiltroCategoria(String filtroCategoria) { this.filtroCategoria = filtroCategoria; }
 
-    public List<String> getSelectedCategories() {
-        return selectedCategories;
-    }
+    public List<Producto> getProductosFiltrados() { return productosFiltrados; }
+    public List<Categoria> getListaCategorias() { return listaCategorias; }
+    public double getValorDolar() { return valorDolar; }
 
-    public void setSelectedCategories(List<String> selectedCategories) {
-        this.selectedCategories = selectedCategories;
-    }
-
+    public void checkValorDolar() { /* Update trigger */ }
 
     public List<Producto> getProductos() {
         return productos;
     }
 
-    public void setProductos(List<Producto> productos) {
-        this.productos = productos;
+    public List<ResponsiveOption> getResponsiveOptions() {
+        return responsiveOptions;
     }
 
-    public List<Categoria> getListaCategorias() {
-        return listaCategorias;
+    public void setVista(String nuevaVista) {
+        this.vista = nuevaVista;
+        System.out.println("Cambiando vista a: " + nuevaVista);
     }
 
-    public String getFiltroCategoria() {
-        return filtroCategoria;
+    public String getVista() {
+        return vista;
     }
 
-    public void setFiltroCategoria(String filtroCategoria) {
-        this.filtroCategoria = filtroCategoria;
+    // Método opcional para ajustar columnas según la vista
+    public int getColumnas() {
+        return "list".equals(this.vista) ? 1 : 3;
     }
-
-    public Integer getPrecioMin() {
-        return precioMin;
-    }
-
-    public void setPrecioMin(Integer precioMin) {
-        this.precioMin = precioMin;
-    }
-
-    public Integer getPrecioMax() {
-        return precioMax;
-    }
-
-    public void setPrecioMax(Integer precioMax) {
-        this.precioMax = precioMax;
-    }
-
-    public boolean isSoloDisponibles() {
-        return soloDisponibles;
-    }
-
-    public void setSoloDisponibles(boolean soloDisponibles) {
-        this.soloDisponibles = soloDisponibles;
-    }
-
-    public List<Producto> getProductosFiltrados() {
-        return productosFiltrados;
-    }
-
-    public void setProductosFiltrados(List<Producto> productosFiltrados) {
-        this.productosFiltrados = productosFiltrados;
-    }
-
-    public double getValorDolar() {
-        return valorDolar;
-    }
-
-    private void cargarValorDolar() {
-        try {
-            URL url = new URL("https://mindicador.cl/api");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-
-            try (InputStreamReader reader = new InputStreamReader(conn.getInputStream())) {
-                JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
-                this.valorDolar = json.getAsJsonObject("dolar").get("valor").getAsDouble();
-                System.out.println("✅ Valor del dólar obtenido: " + this.valorDolar);
-            }
-        } catch (Exception e) {
-            this.valorDolar = -1;
-            System.err.println("❌ Error al obtener el valor del dólar:");
-            e.printStackTrace();
-        }
-    }
-
-    public void checkValorDolar() {
-        // No hace nada, solo fuerza el update
-    }
-
-
 }

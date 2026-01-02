@@ -6,166 +6,257 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/template/main.xhtml">
 
-    <h:head>
-        <title>Tienda - Ferremas</title>
-
-        <h:outputScript>
-            // Ejecutar al cargar la página
-            window.onload = function() {
-            cargarValorDolar(); // Llama al método remoto
-            }
-        </h:outputScript>
-
-
-    </h:head>
     <ui:define name="contenido">
+        <h:outputStylesheet>
+            /* <![CDATA[ */
+            .shop-wrapper { background-color: #0f111a; min-height: 100vh; padding-bottom: 50px; }
 
-        <!-- Banner -->
-        <div class="container-fluid bg-light py-5 text-center">
-            <h1 class="display-4 text-primary">Tienda Ferremas</h1>
-            <p class="lead">Explora nuestra amplia variedad de productos de ferretería. ¡Filtra lo que necesitas!</p>
-        </div>
+            /* Header Animado */
+            .shop-header {
+                background: linear-gradient(rgba(15, 17, 26, 0.8), rgba(15, 17, 26, 1)),
+                            url('https://images.unsplash.com/photo-1581244276891-e3380cb8a49d?q=80&w=2000') no-repeat center;
+                background-size: cover;
+                padding: 80px 0;
+                border-bottom: 1px solid rgba(251, 191, 36, 0.1);
+            }
 
-        <div class="container-fluid py-4">
-            <div class="row">
+            /* ToolBox Superior (Paginador y Orden) */
+            .shop-toolbox {
+                background: #161b22;
+                padding: 15px 25px;
+                border-radius: 12px;
+                margin-bottom: 25px;
+                border: 1px solid rgba(255,255,255,0.05);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
 
-                <!-- 📦 Filtros -->
-                <div class="col-md-3">
-                    <h:form id="filterForm">
-                        <div class="card p-3 shadow-sm">
-                            <h4 class="text-primary mb-3">Filtros</h4>
+            /* Tarjeta de Producto Mejorada */
+            .product-card {
+                background: #161b22 !important;
+                border: 1px solid rgba(255,255,255,0.05) !important;
+                border-radius: 16px !important;
+                transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+                margin-bottom: 20px;
+                height: 100%;
+            }
 
-                            <!-- Buscar por nombre -->
-                            <p:outputLabel for="searchQuery" value="Buscar producto" />
-                            <p:inputText id="searchQuery" value="#{tiendaBean.searchQuery}" placeholder="Ej: Taladro" styleClass="w-100 mb-3"/>
+            .product-card:hover {
+                transform: translateY(-8px);
+                border-color: #fbbf24 !important;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            }
 
-                            <!-- Categoría -->
-                            <p:outputLabel for="categoria" value="Categoría" />
-                            <p:selectOneMenu id="categoria" value="#{tiendaBean.filtroCategoria}" styleClass="w-100 mb-3">
-                                <f:selectItem itemLabel="Todas" itemValue="" />
-                                <f:selectItems value="#{tiendaBean.listaCategorias}" var="cat"
-                                               itemLabel="#{cat.nombre}" itemValue="#{cat.idCategoria}" />
-                            </p:selectOneMenu>
+            .img-container {
+                background: #0d1117;
+                padding: 25px;
+                height: 240px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+            }
 
-                            <!-- Precio mínimo y máximo
-                            <p:outputLabel value="Rango de precio" />
-                            <p:spinner value="#{tiendaBean.precioMin}" min="0" max="100000" stepFactor="1000" styleClass="w-100 mb-2"/>
-                            <p:spinner value="#{tiendaBean.precioMax}" min="0" max="100000" stepFactor="1000" styleClass="w-100 mb-3"/>-->
+            .img-container img {
+                max-width: 100%;
+                max-height: 100%;
+                transition: transform 0.5s ease;
+            }
 
-                            <!-- Stock disponible
-                            <p:selectBooleanCheckbox value="#{shopBean.soloDisponibles}" itemLabel="Solo productos en stock" styleClass="mb-3"/>-->
+            .product-card:hover .img-container img {
+                transform: scale(1.1);
+            }
 
-                            <!-- Botón aplicar -->
-                            <p:commandButton value="Aplicar Filtros" icon="pi pi-filter"
-                                             actionListener="#{tiendaBean.aplicarFiltros}"
-                                             update=":productForm:productGrid"
-                                             styleClass="btn btn-primary w-100" />
-                        </div>
-                    </h:form>
+            /* Personalización Paginador PrimeFaces */
+            .ui-paginator {
+                background: transparent !important;
+                border: none !important;
+                padding: 10px !important;
+            }
+            .ui-paginator-page, .ui-paginator-next, .ui-paginator-prev {
+                color: #94a3b8 !important;
+                border-radius: 8px !important;
+            }
+            .ui-paginator-page.ui-state-active {
+                background: #fbbf24 !important;
+                color: #000 !important;
+            }
 
-                    <h:form id="dolarForm">
-                        <p:outputPanel id="dolarPanel" styleClass="alert alert-info d-flex justify-content-between align-items-center shadow-sm mb-3">
-                            <span>
-                                <i class="pi pi-money-bill text-success me-2"></i>
-                                <strong>Precio del Dólar:</strong>
-                            </span>
+            /* Precios */
+            .price-clp { color: #fbbf24; font-weight: 900; font-size: 1.6rem; letter-spacing: -0.5px; }
+            .price-usd { color: #64748b; font-size: 0.85rem; font-family: monospace; }
 
-                                                <span class="fw-bold text-end">
-                                <h:outputText
-                                        value="#{tiendaBean.valorDolar gt 0
-                                              ? tiendaBean.valorDolar
-                                              : 'Cargando...'}">
-                                    <f:convertNumber type="currency" currencySymbol="$" locale="es_CL"/>
-                                </h:outputText>
-                            </span>
-                        </p:outputPanel>
+            /* Sidebar Sliders */
+            .ui-slider { background: #0d1117 !important; border: none !important; }
+            .ui-slider-range { background: #fbbf24 !important; }
+            .ui-slider-handle { border: 2px solid #fbbf24 !important; background: #161b22 !important; }
 
-                        <p:poll interval="1"
-                                update="dolarPanel"
-                                listener="#{tiendaBean.checkValorDolar}"
-                                stop="#{tiendaBean.valorDolar gt 0}" />
-                    </h:form>
+            /* Clase condicional para modo lista */
+.product-card.is-list {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    text-align: left;
+}
 
+.product-card.is-list .img-container {
+    width: 250px; /* Tamaño fijo para la imagen en lista */
+    height: 200px;
+    border-bottom: none;
+    border-right: 1px solid rgba(255,255,255,0.05);
+}
 
+.product-card.is-list .p-4 {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
 
-                </div>
+            /* ]]> */
+        </h:outputStylesheet>
 
-                <!-- 🛒 Productos -->
-                <div class="col-md-9">
-                    <h:form id="productForm">
-                        <p:dataGrid id="productGrid" value="#{tiendaBean.productosFiltrados}" var="producto"
-                                    columns="3" rows="9" paginator="true"
-                                    rowsPerPageTemplate="3,6,9,12" emptyMessage="No se encontraron productos.">
+        <div class="shop-wrapper">
+            <div class="shop-header text-center mb-5">
+                <h1 class="text-white fw-black display-4">SUMINISTROS <span class="text-warning">De Alta Calidad</span></h1>
+                <p class="text-muted small text-uppercase letter-spacing-2">Calidad industrial garantizada</p>
+            </div>
 
-                            <p:panel styleClass="card h-100 shadow-sm">
-                                <p:graphicImage url="#{configBean.urlImagenes}#{producto.imagen}"
-                                                alt="#{producto.nombre}"
-                                                style="width:100%; height:200px; object-fit:contain;" />
+            <div class="container-fluid px-lg-5">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <h:form id="filterForm">
+                            <div class="filter-card shadow-lg mb-4">
+                                <h6 class="text-warning fw-bold mb-4"><i class="pi pi-filter me-2"></i>BÚSQUEDA AVANZADA</h6>
 
-                                <div class="p-3">
-                                    <h5 class="text-dark">#{producto.nombre}</h5>
-                                    <p class="text-muted">#{producto.descripcion}</p>
-                                    <span class="badge bg-secondary">#{producto.categoria.nombre}</span>
-                                    <p class="h5 text-success mt-2">
-                                        <h:outputText value="#{producto.precio}">
-                                            <f:convertNumber type="currency" currencySymbol="$"/>
-                                        </h:outputText>
-                                    </p>
-
-                                    <p class="h5 text-success mt-2">
-                                        <p:outputPanel id="dolarPanelPrecio">
-                                            <h:outputText rendered="#{tiendaBean.valorDolar gt 0}"
-                                                          value="#{producto.precio / tiendaBean.valorDolar}">
-                                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
-                                            </h:outputText>
-
-                                            <h:outputText rendered="#{tiendaBean.valorDolar le 0}" value="Obteniendo valor del dólar..." />
-
-                                            <p:poll interval="2"
-                                                    update="dolarPanelPrecio"
-                                                    listener="#{tiendaBean.checkValorDolar}"
-                                                    stop="#{tiendaBean.valorDolar gt 0}" />
-                                        </p:outputPanel>
-
-                                    </p>
-
-
-
-                                    <div class="mt-3 d-flex justify-content-between">
-                                        <p:commandButton value="Agregar" icon="pi pi-shopping-cart"
-                                                         actionListener="#{carroBean.agregarItem(producto)}"
-                                                         update=":productForm"
-                                                         styleClass="btn btn-outline-success" />
-                                        <p:linkButton outcome="/home/detalle.xhtml" value="Ver Detalle"
-                                                      icon="pi pi-search" styleClass="btn btn-outline-primary">
-                                            <f:param name="productId" value="#{producto.idProducto}" />
-                                        </p:linkButton>
+                                <div class="mb-4">
+                                    <p:outputLabel value="Palabra Clave" styleClass="text-muted small d-block mb-2" />
+                                    <div class="ui-inputgroup">
+                                        <span class="ui-inputgroup-addon bg-dark border-secondary"><i class="pi pi-search text-muted"></i></span>
+                                        <p:inputText id="searchQuery" value="#{tiendaBean.searchQuery}" placeholder="Ej: Martillo..." styleClass="bg-dark text-white" />
                                     </div>
                                 </div>
-                            </p:panel>
-                        </p:dataGrid>
-                    </h:form>
+
+                                <div class="mb-4">
+                                    <p:outputLabel value="Categoría" styleClass="text-muted small d-block mb-2" />
+                                    <p:selectOneMenu id="catMenu" value="#{tiendaBean.filtroCategoria}" styleClass="w-100 bg-dark">
+                                        <f:selectItem itemLabel="Todo el Catálogo" itemValue="" />
+                                        <f:selectItems value="#{tiendaBean.listaCategorias}" var="cat"
+                                                       itemLabel="#{cat.nombre}" itemValue="#{cat.idCategoria}" />
+                                    </p:selectOneMenu>
+                                </div>
+
+                                <div class="mb-4">
+                                    <p:outputLabel value="Rango de Precio" styleClass="text-muted small d-block mb-2" />
+                                    <h:panelGrid columns="1" style="width:100%">
+                                        <p:slider for="min,max" display="displayRange" range="true"
+                                                  displayTemplate="Rango: ${min} - ${max}"
+                                                  minValue="0" maxValue="1000000" />
+
+                                        <h:outputText id="displayRange" value="Rango: $#{tiendaBean.precioMin} - $#{tiendaBean.precioMax}"
+                                                      styleClass="text-warning small mt-2 d-block" />
+
+                                        <h:inputHidden id="min" value="#{tiendaBean.precioMin}" />
+                                        <h:inputHidden id="max" value="#{tiendaBean.precioMax}" />
+                                    </h:panelGrid>
+                                </div>
+
+                                <p:commandButton value="Refinar Resultados"
+                                                 actionListener="#{tiendaBean.aplicarFiltros}"
+                                                 process="@form"
+                                                 update=":productForm:productGrid"
+                                                 icon="pi pi-sliders-v"
+                                                 styleClass="ui-button-warning w-100 fw-bold" />
+                            </div>
+                        </h:form>
+
+                        <h:form id="dolarForm">
+                            <p:outputPanel id="dolarPanel" styleClass="dolar-widget shadow">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-grow-1">
+                                        <small class="text-muted d-block">TC MERCADO</small>
+                                        <span class="text-success fw-bold">USD/CLP: </span>
+                                        <h:outputText value="#{tiendaBean.valorDolar}" styleClass="text-white">
+                                            <f:convertNumber pattern="$###,###" />
+                                        </h:outputText>
+                                    </div>
+                                    <i class="pi pi-chart-line text-success fs-4"></i>
+                                </div>
+                                <p:poll interval="60" update="dolarPanel" listener="#{tiendaBean.checkValorDolar}" />
+                            </p:outputPanel>
+                        </h:form>
+                    </div>
+
+                    <div class="col-lg-9">
+                        <h:form id="productForm">
+                            <div class="shop-toolbox">
+                                <div class="d-flex align-items-center gap-3">
+                                    <p:selectOneMenu id="sort" value="#{tiendaBean.orden}" styleClass="bg-dark border-0">
+                                        <f:selectItem itemLabel="Ordenar por: Destacados" itemValue="desc" />
+                                        <f:selectItem itemLabel="Precio: Menor a Mayor" itemValue="price_asc" />
+                                        <f:selectItem itemLabel="Precio: Mayor a Menor" itemValue="price_desc" />
+                                        <p:ajax listener="#{tiendaBean.aplicarFiltros}" update="productGrid" />
+                                    </p:selectOneMenu>
+                                    <span class="text-muted small">#{tiendaBean.productosFiltrados.size()} productos</span>
+                                </div>
+
+                                <p:commandLink update="productGrid" action="#{tiendaBean.setVista('grid')}" styleClass="me-2 text-warning"><i class="pi pi-th-large"></i></p:commandLink>
+                                <p:commandLink update="productGrid" action="#{tiendaBean.setVista('list')}" styleClass="text-muted"><i class="pi pi-list"></i></p:commandLink>
+                            </div>
+
+                            <p:dataGrid id="productGrid" value="#{tiendaBean.productosFiltrados}" var="producto"
+                                        columns="#{tiendaBean.columnas}" layout="grid" rows="6"
+                                        paginator="true" paginatorPosition="both" rowsPerPageTemplate="3,6,9,12"
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+
+
+                                <div class="product-card  #{tiendaBean.vista == 'list' ? 'd-flex' : ''}">
+                                    <div class="img-container">
+                                        <p:graphicImage url="#{configBean.urlImagenes}#{producto.imagen}" alt="#{producto.nombre}" />
+                                    </div>
+
+                                    <div class="p-4">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <span class="cat-badge">#{producto.categoria.nombre}</span>
+
+                                        </div>
+                                        <h5 class="product-title text-truncate">#{producto.nombre}</h5>
+
+                                        <div class="my-3 py-2 border-top border-bottom border-secondary" style="--bs-border-opacity: .1;">
+                                            <div class="price-clp">
+                                                <h:outputText value="#{producto.precio}">
+                                                    <f:convertNumber type="currency" currencySymbol="$" locale="es_CL" />
+                                                </h:outputText>
+                                            </div>
+                                            <div class="price-usd">
+                                                <h:outputText value="#{tiendaBean.valorDolar gt 0 ? (producto.precio / tiendaBean.valorDolar) : 0}">
+                                                    <f:convertNumber type="currency" currencySymbol="USD " maxFractionDigits="2"/>
+                                                </h:outputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-2">
+                                            <div class="col-9">
+                                                <p:commandButton icon="pi pi-shopping-cart" value="Añadir al Carro"
+                                                                 actionListener="#{carroBean.agregarItem(producto)}"
+                                                                 update=":productForm :cartWrapper"
+                                                                 styleClass="ui-button-warning w-100 fw-bold" />
+                                            </div>
+                                            <div class="col-3">
+                                                <p:linkButton outcome="/home/detalle.xhtml" icon="pi pi-external-link"
+                                                              styleClass="ui-button-outlined ui-button-plain w-100">
+                                                    <f:param name="productId" value="#{producto.idProducto}" />
+                                                </p:linkButton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:dataGrid>
+                        </h:form>
+                    </div>
                 </div>
             </div>
         </div>
-
     </ui:define>
-
-
-    <h:outputScript>
-        // Script para obtener el valor del dólar y actualizar el div "DolarO"
-        fetch('https://mindicador.cl/api').then(function(response) {
-        return response.json();
-        }).then(function(dailyIndicators) {
-        // Formato bonito para el valor del dólar
-        let dolarValue = dailyIndicators.dolar.valor.toFixed(2);
-        document.getElementById("dolarValue").innerHTML = '$' + dolarValue;
-        }).catch(function(error) {
-        console.log('Request failed', error);
-        // Si falla, mostrar un mensaje de error
-        document.getElementById("dolarValue").innerHTML = 'No se pudo obtener el precio del dólar';
-        });
-    </h:outputScript>
-
-
 </ui:composition>

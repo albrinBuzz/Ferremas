@@ -171,6 +171,7 @@ public class WebPayService {
             nuevosDetalles.add(nuevoDetalle);
         }
 
+        
         nuevoPedido.setDetallepedidos(nuevosDetalles);
         nuevoPedido.setTotal(pedidoCarrito.getTotal());
 

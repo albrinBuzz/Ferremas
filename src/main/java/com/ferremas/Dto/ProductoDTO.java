@@ -1,79 +1,30 @@
 package com.ferremas.Dto;
 
 public class ProductoDTO {
-    private Integer idProducto;
     private String nombre;
-    private String descripcion;
     private String marca;
     private Integer precio;
-    private String imagen;
-    private String categoriaNombre;
+    private Integer idCategoria; // Solo el id
 
-    public ProductoDTO(Integer idProducto, String nombre, String descripcion, String marca, Integer precio, String imagen, String categoriaNombre) {
-        this.idProducto = idProducto;
+    public ProductoDTO() {}
+
+    public ProductoDTO(String nombre, String marca, Integer precio, Integer idCategoria) {
         this.nombre = nombre;
-        this.descripcion = descripcion;
         this.marca = marca;
         this.precio = precio;
-        this.imagen = imagen;
-        this.categoriaNombre = categoriaNombre;
+        this.idCategoria = idCategoria;
     }
 
-    // Getters y Setters
+    // Getters y setters
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public Integer getIdProducto() {
-        return idProducto;
-    }
+    public String getMarca() { return marca; }
+    public void setMarca(String marca) { this.marca = marca; }
 
-    public void setIdProducto(Integer idProducto) {
-        this.idProducto = idProducto;
-    }
+    public Integer getPrecio() { return precio; }
+    public void setPrecio(Integer precio) { this.precio = precio; }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public String getMarca() {
-        return marca;
-    }
-
-    public void setMarca(String marca) {
-        this.marca = marca;
-    }
-
-    public Integer getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(Integer precio) {
-        this.precio = precio;
-    }
-
-    public String getImagen() {
-        return imagen;
-    }
-
-    public void setImagen(String imagen) {
-        this.imagen = imagen;
-    }
-
-    public String getCategoriaNombre() {
-        return categoriaNombre;
-    }
-
-    public void setCategoriaNombre(String categoriaNombre) {
-        this.categoriaNombre = categoriaNombre;
-    }
+    public Integer getIdCategoria() { return idCategoria; }
+    public void setIdCategoria(Integer idCategoria) { this.idCategoria = idCategoria; }
 }

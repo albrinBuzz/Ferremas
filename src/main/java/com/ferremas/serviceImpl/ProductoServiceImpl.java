@@ -1,21 +1,31 @@
 package com.ferremas.serviceImpl;
 
-import com.ferremas.Dto.ProductoDTO;
+
 import com.ferremas.componet.RemoteHttpClient;
 import com.ferremas.model.Producto;
 import com.ferremas.repository.ProductoRepository;
 import com.ferremas.service.ProductoService;
 
+import com.ferremas.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class ProductoServiceImpl implements ProductoService {
+    @Value("${app.upload.dir}")
+    private String uploadDir;
 
     private static final String _BASE_ENDPOINT_ = "http://localhost:3000/productos";
     private static final Map<String, String> _STANDARD_HEADERS = Map.of(
@@ -56,6 +66,22 @@ public class ProductoServiceImpl implements ProductoService {
         return (Producto) procesarOperacion("GUARDAR", producto);
     }
 
+    public String guardarImagen(MultipartFile imagen) throws IOException {
+        Logger.logInfo("guardando una imagen");
+
+        String nombreArchivo = UUID.randomUUID() + "_" + imagen.getOriginalFilename();
+
+        Path carpeta = Paths.get(uploadDir).toAbsolutePath();
+        Files.createDirectories(carpeta);
+
+        Path rutaArchivo = carpeta.resolve(nombreArchivo);
+        Files.copy(imagen.getInputStream(), rutaArchivo, StandardCopyOption.REPLACE_EXISTING);
+
+        return nombreArchivo;
+    }
+
+
+
     @Override
     public Producto actualizar(Producto producto) {
         return (Producto) procesarOperacion("ACTUALIZAR", producto);
@@ -84,7 +110,7 @@ public class ProductoServiceImpl implements ProductoService {
                 Optional.ofNullable(payload)
         );
 
-        _networkFacade.execute(request);
+        //_networkFacade.execute(request);
 
         return resolverRespuesta(codigoOperacion, argumento);
     }

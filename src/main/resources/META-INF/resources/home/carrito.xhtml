@@ -6,147 +6,177 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/template/main.xhtml">
 
-    <h:head>
-        <title>Carrito de Compras</title>
-    </h:head>
-
     <ui:define name="contenido">
+        <h:outputStylesheet>
+            /* <![CDATA[ */
+            .cart-container { padding: 40px 0; background-color: #f8fafc; min-height: 80vh; }
 
-        <div class="container py-5">
-            <h2 class="text-center text-primary mb-4">Carrito de Compras</h2>
+            /* Estilo de Tarjetas de Producto */
+            .cart-item-card {
+                background: #ffffff;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 15px;
+                border: 1px solid #e2e8f0;
+                transition: transform 0.2s;
+            }
+            .cart-item-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
-            <h:form id="formCarrito">
-                <p:outputPanel id="dolarPanelCarrito">
+            .product-img {
+                width: 100px; height: 100px;
+                object-fit: contain;
+                border-radius: 8px;
+                background: #f1f5f9;
+            }
 
-                <!-- Mensaje si el carrito está vacío -->
-                <h:panelGroup rendered="#{empty carroBean.pedido.detallepedidos}">
-                    <h3 class="text-center text-muted">Tu carrito está vacío.</h3>
-                </h:panelGroup>
+            /* Sidebar de Totales */
+            .summary-card {
+                background: #1e293b;
+                color: #ffffff;
+                border-radius: 16px;
+                padding: 30px;
+                position: sticky;
+                top: 20px;
+            }
 
-                <!-- Panel con productos si el carrito tiene elementos -->
-                <h:panelGroup id="cartPanel" rendered="#{not empty carroBean.pedido.detallepedidos}">
+            .currency-badge {
+                background: rgba(251, 191, 36, 0.1);
+                color: #fbbf24;
+                padding: 4px 10px;
+                border-radius: 6px;
+                font-size: 0.8rem;
+                font-weight: bold;
+            }
 
-                    <!-- Total y botón de pago -->
-                    <div class="d-flex justify-content-between align-items-center mt-4">
-                        <h4 class="text-primary">Total:
-                            <h:outputText value="#{carroBean.total}">
-                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
-                            </h:outputText>
-                        </h4>
-                        <h4 class="text-primary">Total en USD:
-                            <h:outputText value="#{carroBean.total/tiendaBean.valorDolar}">
-                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
-                            </h:outputText>
-                        </h4>
+            .qty-control {
+                border: 1px solid #e2e8f0;
+                border-radius: 25px;
+                padding: 5px;
+                background: #f8fafc;
+            }
 
+            .price-main { font-size: 1.1rem; font-weight: 700; color: #1e293b; }
+            .price-usd { font-size: 0.85rem; color: #64748b; }
+            /* ]]> */
+        </h:outputStylesheet>
 
-                        <p:linkButton outcome="/home/checkout.xhtml" value="Proceder a la compra"
-                                      icon="pi pi-check" styleClass="btn btn-success" />
-                    </div>
+        <div class="cart-container">
+            <div class="container">
+                <h:form id="formCarrito">
+                    <p:growl id="msgs" showDetail="true" />
 
-                    <!-- Listado de productos -->
-                    <div class="table-responsive">
-                        <table class="table table-bordered align-middle text-center">
-                            <thead class="table-primary">
-                            <tr>
-                                <th>Imagen</th>
-                                <th>Producto</th>
-                                <th>Precio</th>
-                                <th>Precio USD</th>
-                                <th>Cantidad</th>
-                                <th>Total</th>
-                                <th>Total USD</th>
-                                <th>Eliminar</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <ui:repeat value="#{carroBean.pedido.detallepedidos}" var="item">
-                                <tr>
-                                    <td>
-                                        <p:graphicImage value="/resources/images/product/#{item.producto.imagen}"
-                                                        width="80" height="80"
-                                                        alt="#{item.producto.nombre}" />
-                                    </td>
-                                    <td>
-                                        <h:outputText value="#{item.producto.nombre}" styleClass="h5" />
-                                    </td>
-                                    <td>
-                                        <h:outputText value="#{item.producto.precio}">
-                                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
-                                        </h:outputText>
-                                    </td>
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <h2 class="fw-bold m-0">Bolsa de Compras</h2>
+                                <h:outputText value="#{carroBean.pedido.detallepedidos.size()} productos" styleClass="text-muted" />
+                            </div>
 
-                                    <td>
-                                        <h:outputText value="#{item.producto.precio/tiendaBean.valorDolar}">
-                                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
-                                        </h:outputText>
-                                    </td>
+                            <p:outputPanel id="cartPanel">
+                                <h:panelGroup rendered="#{empty carroBean.pedido.detallepedidos}">
+                                    <div class="text-center py-5 bg-white rounded-4 border">
+                                        <i class="pi pi-shopping-cart text-muted mb-3" style="font-size: 3rem;"></i>
+                                        <h3 class="text-secondary">Tu carrito está vacío</h3>
+                                        <p:button outcome="/home/tienda.xhtml" value="Explorar Productos"
+                                                  styleClass="ui-button-outlined ui-button-primary mt-3" />
+                                    </div>
+                                </h:panelGroup>
 
+                                <ui:repeat value="#{carroBean.pedido.detallepedidos}" var="item">
+                                    <div class="cart-item-card d-flex align-items-center gap-4">
+                                        <p:graphicImage value="#{configBean.urlImagenes}#{item.producto.imagen}" styleClass="product-img" />
 
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center gap-2">
+                                        <div class="flex-grow-1">
+                                            <h5 class="fw-bold mb-1">#{item.producto.nombre}</h5>
+                                            <p class="text-muted small mb-2">Ref: SKU-#{item.producto.idProducto}</p>
 
-                                            <!-- Botón de restar -->
-                                            <p:commandButton icon="pi pi-minus"
-                                                             styleClass="rounded-button ui-button-secondary"
-                                                             process="@this"
-                                                             update=":formCarrito:cartPanel"
-                                                             actionListener="#{carroBean.decreamentarCantidad(item.producto)}"
-                                                             title="Disminuir cantidad" />
-
-                                            <!-- Campo cantidad (solo lectura) -->
-                                            <h:inputText value="#{item.cantidad}"
-                                                         readonly="true"
-                                                         styleClass="form-control text-center"
-                                                         style="width: 50px; font-weight: bold;" />
-
-                                            <!-- Botón de sumar -->
-                                            <p:commandButton icon="pi pi-plus"
-                                                             styleClass="rounded-button ui-button-primary"
-                                                             process="@this"
-                                                             update=":formCarrito:cartPanel"
-                                                             actionListener="#{carroBean.incrementarCantidad(item.producto)}"
-                                                             title="Aumentar cantidad" />
+                                            <div class="d-flex align-items-baseline gap-2">
+                                                <h:outputText value="#{item.producto.precio}" styleClass="price-main">
+                                                    <f:convertNumber type="currency" currencySymbol="$" />
+                                                </h:outputText>
+                                                <span class="price-usd">(USD $#{String.format('%.2f', item.producto.precio/tiendaBean.valorDolar)})</span>
+                                            </div>
                                         </div>
-                                    </td>
-                                    <td>
-                                        <h:outputText value="#{item.producto.precio * item.cantidad}">
-                                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
+
+                                        <div class="qty-control d-flex align-items-center gap-3">
+                                            <p:commandButton icon="pi pi-minus" styleClass="ui-button-rounded ui-button-flat ui-button-plain"
+                                                             actionListener="#{carroBean.decreamentarCantidad(item.producto)}"
+                                                             update=":formCarrito:cartPanel :formCarrito:summary :cartWrapper" />
+
+                                            <h:outputText value="#{item.cantidad}" styleClass="fw-bold fs-5" />
+
+                                            <p:commandButton icon="pi pi-plus" styleClass="ui-button-rounded ui-button-flat ui-button-plain"
+                                                             actionListener="#{carroBean.incrementarCantidad(item.producto)}"
+                                                             update=":formCarrito:cartPanel :formCarrito:summary :cartWrapper" />
+                                        </div>
+
+                                        <div class="text-end" style="min-width: 120px;">
+                                            <h:outputText value="#{item.producto.precio * item.cantidad}" styleClass="fw-bold fs-5 d-block">
+                                                <f:convertNumber type="currency" currencySymbol="$" />
+                                            </h:outputText>
+                                            <p:commandLink value="Eliminar" actionListener="#{carroBean.removeItemFromCart(item)}"
+                                                           update=":formCarrito:cartPanel :formCarrito:summary :cartWrapper"
+                                                           styleClass="text-danger small fw-bold text-decoration-none" />
+                                        </div>
+                                    </div>
+                                </ui:repeat>
+                            </p:outputPanel>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <p:outputPanel id="summary">
+                                <h:panelGroup layout="block" styleClass="summary-card shadow-lg"
+                                              rendered="#{not empty carroBean.pedido.detallepedidos}">
+
+                                    <h4 class="fw-bold mb-4">Resumen de Orden</h4>
+
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-light opacity-75">Subtotal</span>
+                                        <h:outputText value="#{carroBean.total}">
+                                            <f:convertNumber type="currency" currencySymbol="$" />
                                         </h:outputText>
-                                    </td>
+                                    </div>
 
-                                    <td>
-                                        <h:outputText value="#{(item.producto.precio * item.cantidad)/tiendaBean.valorDolar}">
-                                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
-                                        </h:outputText>
-                                    </td>
+                                    <div class="d-flex justify-content-between mb-4">
+                                        <span class="text-light opacity-75">Envío</span>
+                                        <span class="text-success fw-bold">Gratis</span>
+                                    </div>
 
+                                    <hr class="border-secondary" />
 
-                                    <td>
+                                    <div class="mb-4">
+                                        <div class="d-flex justify-content-between align-items-end mb-1">
+                                            <span class="fs-5">Total CLP</span>
+                                            <h:outputText value="#{carroBean.total}" styleClass="fs-3 fw-bold text-warning">
+                                                <f:convertNumber type="currency" currencySymbol="$" />
+                                            </h:outputText>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="currency-badge">USD (Dólar hoy: $#{tiendaBean.valorDolar})</span>
+                                            <h:outputText value="#{carroBean.total/tiendaBean.valorDolar}" styleClass="fs-5 opacity-75">
+                                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2" />
+                                            </h:outputText>
+                                        </div>
+                                    </div>
 
-                                        <p:commandButton icon="pi pi-trash"
-                                                         styleClass="rounded-button ui-button-primary"
-                                                         process="@form"
-                                                         update=":formCarrito:cartPanel"
-                                                         actionListener="#{carroBean.removeItemFromCart(item)}"
-                                                         title="Aumentar cantidad" />
+                                    <p:linkButton outcome="/home/checkout.xhtml" value="Finalizar Compra"
+                                                  icon="pi pi-credit-card"
+                                                  styleClass="ui-button-warning w-100 py-3 fw-bold fs-5 rounded-pill shadow" />
 
-                                    </td>
-                                </tr>
-                            </ui:repeat>
-                            </tbody>
-                        </table>
+                                    <div class="text-center mt-3">
+                                        <i class="pi pi-shield text-muted me-2"></i>
+                                        <span class="small text-muted">Pago seguro garantizado</span>
+                                    </div>
+
+                                </h:panelGroup>
+                            </p:outputPanel>
+                        </div>
                     </div>
-                </h:panelGroup>
 
-                    <p:poll interval="2"
-                            update="dolarPanelCarrito"
-                            listener="#{tiendaBean.checkValorDolar}"
+                    <p:poll interval="30" listener="#{tiendaBean.checkValorDolar}" update="summary"
                             stop="#{tiendaBean.valorDolar gt 0}" />
-                </p:outputPanel>
-
-            </h:form>
+                </h:form>
+            </div>
         </div>
-
     </ui:define>
 </ui:composition>

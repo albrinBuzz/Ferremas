@@ -6,67 +6,155 @@
                 template="/template/main.xhtml">
 
     <ui:define name="contenido">
-        <h:form enctype="multipart/form-data">
-            <p:panel header="Formulario de Transferencia Bancaria" style="max-width:600px; margin:auto;">
-                <p:messages id="msgs" showDetail="true" closable="true" />
+        <h:outputStylesheet>
+            /* <![CDATA[ */
+            .transfer-wrapper { padding: 40px 0; background-color: #0f111a; min-height: 90vh; }
 
-                <!-- Datos de la cuenta de destino (hardcodeados) -->
-                <p:panel header="Datos de la Cuenta de Destino" style="max-width:600px; margin:auto;">
-                    <h:panelGrid columns="2" cellpadding="5" style="width:100%">
-                        <h:outputLabel value="Banco:" />
-                        <h:outputText value="Banco de Chile" />
+            .bank-card {
+                background: #161b22;
+                border-radius: 16px;
+                border: 1px solid rgba(255,255,255,0.05);
+                overflow: hidden;
+            }
 
-                        <h:outputLabel value="Titular de la Cuenta:" />
-                        <h:outputText value="Juan Pérez" />
+            .bank-header {
+                background: linear-gradient(45deg, #0d6efd, #0b5ed7);
+                padding: 20px;
+                color: white;
+                text-align: center;
+            }
 
-                        <h:outputLabel value="Tipo de Cuenta:" />
-                        <h:outputText value="Cuenta Corriente" />
+            .data-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 12px 0;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+            }
 
-                        <h:outputLabel value="Número de Cuenta:" />
-                        <h:outputText value="123456789" />
+            .amount-banner {
+                background: rgba(251, 191, 36, 0.1);
+                border: 1px dashed #fbbf24;
+                border-radius: 12px;
+                padding: 20px;
+                text-align: center;
+                margin-bottom: 25px;
+            }
 
-                        <h:outputLabel value="RUT del Titular:" />
-                        <h:outputText value="12.345.678-9" />
-                    </h:panelGrid>
-                </p:panel>
+            .upload-zone {
+                border: 2px dashed rgba(255,255,255,0.1);
+                border-radius: 12px;
+                padding: 20px;
+                text-align: center;
+                transition: all 0.3s;
+            }
+            .upload-zone:hover { border-color: #fbbf24; background: rgba(255,255,255,0.02); }
 
-                <!-- Formulario de la Transferencia -->
-                <p:panel header="Formulario de Transferencia Bancaria" style="max-width:600px; margin:auto;">
-                    <h:panelGrid columns="2" cellpadding="5" style="width:100%">
+            .ui-inputnumber input, .ui-inputtextarea {
+                background: #0d1117 !important;
+                color: white !important;
+                border: 1px solid rgba(255,255,255,0.1) !important;
+                width: 100%;
+            }
+            /* ]]> */
+        </h:outputStylesheet>
+
+        <div class="transfer-wrapper">
+            <div class="container">
+                <h:form enctype="multipart/form-data" id="formTransfer">
 
 
-                        <!-- Mostrar total esperado encima o debajo -->
-                        <h:outputText value="Total a transferir: $#{transferenciaBean.carritoBean.pedido.total} CLP"
-                                      styleClass="text-info font-weight-bold" />
+                    <div class="row justify-content-center">
+                        <div class="col-lg-6">
 
+                            <div class="amount-banner">
+                                <span class="text-muted small d-block mb-1">MONTO EXACTO A TRANSFERIR</span>
+                                <h2 class="text-warning fw-black m-0">
+                                    <h:outputText value="#{transferenciaBean.carritoBean.pedido.total}">
+                                        <f:convertNumber type="currency" currencySymbol="$" />
+                                    </h:outputText>
+                                </h2>
+                                <small class="text-white-50">Pedido ID: ##{transferenciaBean.carritoBean.pedido.idPedido}</small>
+                            </div>
 
+                            <div class="bank-card mb-4 shadow-lg">
+                                <div class="bank-header">
+                                    <i class="pi pi-university fs-3 mb-2"></i>
+                                    <h5 class="m-0 fw-bold">Cuenta de Destino Ferremas</h5>
+                                </div>
+                                <div class="p-4">
+                                    <div class="data-row">
+                                        <span class="text-muted">Banco</span>
+                                        <span class="text-white fw-bold">Banco de Chile</span>
+                                    </div>
+                                    <div class="data-row">
+                                        <span class="text-muted">Titular</span>
+                                        <span class="text-white fw-bold">Comercial Ferremas S.A.</span>
+                                    </div>
+                                    <div class="data-row">
+                                        <span class="text-muted">RUT</span>
+                                        <span class="text-white fw-bold">76.543.210-K</span>
+                                    </div>
+                                    <div class="data-row">
+                                        <span class="text-muted">Tipo de Cuenta</span>
+                                        <span class="text-white fw-bold">Cuenta Corriente</span>
+                                    </div>
+                                    <div class="data-row border-0">
+                                        <span class="text-muted">N° de Cuenta</span>
+                                        <span class="text-warning fw-black fs-5">123456789</span>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <h:outputLabel for="monto" value="Monto (CLP):" />
-                        <p:inputNumber id="monto" value="#{transferenciaBean.transferencia.monto}" required="true"
-                                       decimalPlaces="0" minValue="0" thousandSeparator="." />
+                            <p:messages id="msgs" showDetail="true" closable="true" />
 
+                            <div class="bank-card p-4 shadow-lg">
+                                <h5 class="text-white fw-bold mb-4">Información de tu Transferencia</h5>
 
-                        <h:outputLabel for="comentario" value="Comentario adicional:" />
-                        <p:inputTextarea id="comentario" value="#{transferenciaBean.transferencia.comentario}"
-                                         rows="3" autoResize="true" maxlength="255" counter="charCount" />
+                                <div class="mb-3">
+                                    <p:outputLabel for="monto" value="Monto transferido (CLP)" styleClass="small text-muted mb-2 d-block" />
+                                    <p:inputNumber id="monto" value="#{transferenciaBean.transferencia.monto}"
+                                                   required="true" requiredMessage="Indica el monto transferido"
+                                                   decimalPlaces="0" minValue="0" thousandSeparator="."
+                                                   inputStyleClass="form-control-lg fw-bold text-warning" />
+                                </div>
 
-                        <f:facet name="footer">
-                            <h:outputText id="charCount" />
-                        </f:facet>
+                                <div class="mb-3">
+                                    <p:outputLabel for="comprobante" value="Adjuntar Comprobante (JPG/PNG)" styleClass="small text-muted mb-2 d-block" />
+                                    <div class="upload-zone">
+                                        <p:fileUpload id="comprobante" mode="simple" skinSimple="true"
+                                                      value="#{transferenciaBean.file}"
+                                                      allowTypes="/(\.|\/)(jpg|jpeg|png)$/"
+                                                      label="Seleccionar Imagen" required="true"
+                                                      styleClass="ui-button-outlined ui-button-plain" />
+                                        <p class="small text-muted mt-2 mb-0">Máximo 5MB</p>
+                                    </div>
+                                </div>
 
-                        <h:outputLabel for="comprobante" value="Comprobante de transferencia (JPG/PNG):" />
-                        <p:fileUpload id="comprobante" mode="simple" skinSimple="true"
-                                      value="#{transferenciaBean.file}"
-                                      allowTypes="/(\.|\/)(jpg|jpeg|png)$/"
-                                      label="Subir archivo" required="true" />
+                                <div class="mb-4">
+                                    <p:outputLabel for="comentario" value="Nota adicional (Opcional)" styleClass="small text-muted mb-2 d-block" />
+                                    <p:inputTextarea id="comentario" value="#{transferenciaBean.transferencia.comentario}"
+                                                     rows="2" placeholder="Ej: Pago de pedido herramientas..."
+                                                     maxlength="255" styleClass="w-100" />
+                                </div>
 
-                    </h:panelGrid>
+                                <p:commandButton value="REGISTRAR PAGO"
+                                                 action="#{transferenciaBean.guardarTransferencia}"
+                                                 icon="pi pi-send"
+                                                 update="msgs"
+                                                 styleClass="ui-button-warning w-100 py-3 fw-bold rounded-3 shadow" />
 
-                    <p:commandButton value="Enviar Transferencia" action="#{transferenciaBean.guardarTransferencia}"
-                                     icon="pi pi-save" update="msgs" styleClass="p-mt-3" />
-                </p:panel>
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">
+                                        <i class="pi pi-info-circle me-1"></i>
+                                        Tu pedido será procesado una vez validada la transferencia.
+                                    </small>
+                                </div>
+                            </div>
 
-            </p:panel>
-        </h:form>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+        </div>
     </ui:define>
 </ui:composition>

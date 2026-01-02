@@ -41,10 +41,10 @@
 
                         <!-- Botón para añadir al carrito -->
                         <div class="mt-4">
-                            <p:commandButton value="Agregar" icon="pi pi-shopping-cart"
+                            <p:commandButton value="Agregar"
                                              actionListener="#{carroBean.agregarItem(detalleBean.producto)}"
-                                             update=":productForm"
-                                             styleClass="btn btn-outline-success" />
+                                             update=":cartWrapper" />
+
 
                             <!-- <p:commandButton value="Añadir al carrito" icon="pi pi-shopping-cart"
                                               action="#{detalleBean.addToCart(detalleBean.producto)}"

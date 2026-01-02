@@ -135,7 +135,7 @@ VALUES
 -- Insertar los productos en la tabla PRODUCTO
 INSERT INTO PRODUCTO (nombre, descripcion, precio, marca, id_categoria, imagen)
 VALUES
-    ('Cinta Métrica Stanley 30-615', 'Cinta métrica de 5 metros y 25mm de ancho, con carcasa resistente y gancho para mediciones precisas', 8000, 'Stanley', 1, 'Cinta_Métrica_Stanley_30-615.jpeg'),
+    ('Cinta Métrica Stanley 30-615', 'Cinta métrica de 5 metros y 25mm de ancho, con carcasa resistente y gancho para mediciones precisas', 8000, 'Stanley', 1, 'Cinta_Metrica_Stanley_30-615.jpeg'),
     ('Juego de Alicates Ingco HKPS28318', 'Conjunto de 3 alicates: de corte, punta y combinación, con mangos antideslizantes', 8600, 'Ingco', 2, 'Juego_de_Alicates_Ingco_HKPS28318.jpeg'),
     ('Llave Inglesa Bahco 9031', 'Llave ajustable fabricada en acero al cromo-vanadio, con diseño ergonómico', 12300, 'Bahco', 3, 'Llave_Inglesa_Bahco_9031.jpeg'),
     ('Nivel de Burbuja Truper NT-9', 'Nivel magnético de 9 pulgadas con dos burbujas horizontales y una vertical, fabricado en ABS', 4200, 'Truper', 4, 'Nivel_de_Burbuja_Truper_NT-9.jpeg'),

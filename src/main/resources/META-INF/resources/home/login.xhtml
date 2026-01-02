@@ -1,34 +1,155 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:f="jakarta.faces.core"
                 xmlns:h="jakarta.faces.html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:fs="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/template/main.xhtml">
 
-    <h:head>
-        <title>Iniciar Sesión</title>
-    </h:head>
-
     <ui:define name="contenido">
+        <h:outputStylesheet>
+            /* <![CDATA[ */
+            .login-wrapper {
+                min-height: 90vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #0f111a;
+                padding: 20px;
+            }
 
-        <h:form prependId="false">
-            <p:panel header="Iniciar Sesión" style="max-width: 400px; margin: 50px auto;">
-                <p:messages id="messages" showDetail="true" closable="true" />
+            .login-card {
+                background: #161b22;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 20px;
+                width: 100%;
+                max-width: 420px;
+                padding: 40px;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            }
 
-                <p:inputText id="username" value="#{loginBean.username}" label="Correo electrónico" required="true"
-                             placeholder="Correo electrónico" styleClass="w-100" />
-                <br/><br/>
-                <p:password id="password" value="#{loginBean.password}" label="Contraseña" required="true"
-                            feedback="false" styleClass="w-100" placeholder="Contraseña" />
-                <br/><br/>
-                <p:commandButton value="Ingresar" action="#{loginBean.login}" icon="pi pi-sign-in"
-                                 update="messages" styleClass="w-100 ui-button-primary"/>
-            </p:panel>
-        </h:form>
+            .login-logo {
+                text-align: center;
+                margin-bottom: 30px;
+            }
 
+            .login-logo i {
+                font-size: 3rem;
+                color: #fbbf24;
+                margin-bottom: 10px;
+            }
+
+            .field-container {
+                position: relative;
+                margin-bottom: 20px;
+            }
+
+            .field-container i {
+                position: absolute;
+                left: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #64748b;
+                z-index: 2;
+            }
+
+            .ui-inputtext, .ui-password input {
+                width: 100% !important;
+                padding-left: 45px !important;
+                height: 50px !important;
+                background: #0d1117 !important;
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                color: white !important;
+                border-radius: 10px !important;
+                transition: all 0.3s;
+            }
+
+            .ui-inputtext:focus, .ui-password input:focus {
+                border-color: #fbbf24 !important;
+                box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.1) !important;
+            }
+
+            .btn-login {
+                height: 50px !important;
+                background: #fbbf24 !important;
+                border: none !important;
+                color: #000 !important;
+                font-weight: 700 !important;
+                font-size: 1rem !important;
+                border-radius: 10px !important;
+                margin-top: 10px;
+            }
+
+            .login-footer {
+                text-align: center;
+                margin-top: 25px;
+                color: #94a3b8;
+                font-size: 0.9rem;
+            }
+
+            .login-footer a {
+                color: #fbbf24;
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+            .divider {
+                height: 1px;
+                background: rgba(255,255,255,0.05);
+                margin: 25px 0;
+            }
+            /* ]]> */
+        </h:outputStylesheet>
+
+        <div class="login-wrapper">
+            <div class="login-card animate__animated animate__fadeIn">
+
+                <div class="login-logo">
+                    <i class="pi pi-user-circle"></i>
+                    <h3 class="text-white fw-bold m-0">Bienvenido</h3>
+                    <p class="text-muted small">Ingresa tus credenciales para continuar</p>
+                </div>
+
+                <h:form id="loginFormV2" prependId="false">
+                    <p:messages id="messages" showDetail="true" closable="true" />
+
+                    <div class="field-container">
+                        <i class="pi pi-envelope"></i>
+                        <p:inputText id="username" value="#{loginBean.username}"
+                                     required="true" requiredMessage="El correo es obligatorio"
+                                     placeholder="Correo electrónico" />
+                    </div>
+
+                    <div class="field-container">
+                        <i class="pi pi-lock"></i>
+                        <p:password id="password" value="#{loginBean.password}"
+                                    required="true" requiredMessage="La contraseña es obligatoria"
+                                    placeholder="Contraseña" feedback="false"
+                                    toggleMask="true" />
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rememberMe" />
+                            <label class="form-check-label text-muted small" for="rememberMe">Recordarme</label>
+                        </div>
+                        <p:link value="¿Olvidaste tu clave?" outcome="/home/olvideClave.xhtml" styleClass="small text-warning text-decoration-none" />
+                    </div>
+
+                    <p:commandButton value="INICIAR SESIÓN"
+                                     action="#{loginBean.login}"
+                                     icon="pi pi-sign-in"
+                                     update="messages"
+                                     styleClass="w-100 btn-login" />
+
+                    <div class="divider"></div>
+
+                    <div class="login-footer">
+                        ¿No tienes una cuenta?
+                        <p:link value="Regístrate aquí" outcome="/home/registro.xhtml" />
+                    </div>
+                </h:form>
+            </div>
+        </div>
     </ui:define>
-
 </ui:composition>

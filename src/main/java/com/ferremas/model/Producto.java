@@ -46,6 +46,7 @@ public class Producto implements Serializable {
 	//bi-directional many-to-one association to Categoria
 	@ManyToOne
 	@JoinColumn(name="id_categoria")
+	@JsonIgnore
 	private Categoria categoria;
 
 	public Producto() {

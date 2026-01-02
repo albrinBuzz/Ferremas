@@ -13,7 +13,9 @@ import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
@@ -43,40 +45,48 @@ public class UserBean implements Serializable {
     private UsuarioService usuarioService;
     @Autowired
     private RolService rolService;
+    @Autowired
+    private HttpSession session;
 
 
     private boolean mostrarFormularioCliente = false;
     private Cliente nuevoCliente = new Cliente();
 
     // Constructor
-    public UserBean(HttpSession session) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated() && !authentication.getName().equals("anonymousUser")) {
-            this.loggedIn = true;
-            this.isAuthenticated = true;
-            
-            try {
-            	this.usuario = (Usuario) session.getAttribute("usuario");
-            	this.name = usuario.getNombreusuario();
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
 
-            // Comprobamos si el usuario tiene el rol de administrador
-            rol = authentication.getAuthorities().toArray()[0].toString();
-            this.isAdmin = authentication.getAuthorities().stream()
-                                         .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
-
-
-        }
-
-    }
 
     @PostConstruct
     public void init() {
         usuarioRegistro = new Usuario();
         cliente = new Cliente();
         contrasenaInput = null;
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Logger.logInfo("init auth = " + authentication);
+
+        if (authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            Logger.logInfo("usuario autenticado");
+
+            this.loggedIn = true;
+            this.isAuthenticated = true;
+
+            this.usuario = (Usuario) session.getAttribute("usuario");
+            this.name = usuario.getNombreusuario();
+
+            rol = authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .findFirst().orElse("");
+
+            this.isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        } else {
+            Logger.logInfo("usuario no autenticado");
+        }
+
     }
 
     public void guardarCliente() {

@@ -1,134 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui:composition lang="es"
                 xmlns:f="jakarta.faces.core"
                 xmlns:h="jakarta.faces.html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:fs="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/template/main.xhtml">
-    <h:head>
-        <title>Gestión de Pedidos</title>
-
-        <style>
-
-            .estado-pendiente {
-    background-color: #ffcccc !important;  /* Rojo claro */
-}
-
-.estado-en-proceso {
-    background-color: #ffff99 !important;  /* Amarillo claro */
-}
-
-.estado-completado {
-    background-color: #99ff99 !important;  /* Verde claro */
-}
-
-
-        </style>
-    </h:head>
 
     <ui:define name="contenido">
-        <h:form id="formPedidos">
-            <p:messages autoUpdate="true" closable="true" />
+        <h:outputStylesheet>
+            /* <![CDATA[ */
+            .orders-container { padding: 40px 0; background-color: #0f111a; min-height: 90vh; }
 
-            <!-- Filtros -->
-            <p:panelGrid columns="2" styleClass="ui-fluid">
-                <p:outputLabel for="estadoFiltro" value="Filtrar por Estado:" />
-                <p:selectOneMenu id="estadoFiltro" value="#{pedidoBean.estadoFiltro}" styleClass="ui-fluid"
-                                 filter="true" filterMatchMode="contains"
-                                 onchange="PF('pedidoTable').filter()">
-                    <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
-                    <f:selectItems value="#{pedidoBean.estados}" var="estado"
-                                   itemLabel="#{estado.nombre}" itemValue="#{estado.nombre}" />
-                </p:selectOneMenu>
-            </p:panelGrid>
+            /* Estilo de la Tabla Dark */
+            .ui-datatable thead th {
+                background: #161b22 !important;
+                color: #fbbf24 !important;
+                border: 1px solid rgba(255,255,255,0.05) !important;
+                padding: 15px !important;
+                text-transform: uppercase;
+                font-size: 0.8rem;
+                letter-spacing: 1px;
+            }
 
-            <p:dataTable id="tablaPedidos" value="#{pedidoBean.pedidosHist}" var="pedido"
-                         paginator="true" rows="10" emptyMessage="No hay pedidos para mostrar"
-                         filteredValue="#{pedidoBean.filteredPedidos}" widgetVar="pedidoTable"
-                         resizableColumns="true" sortable="true" rowStyleClass="#{pedidoBean.obtenerEstiloFila(pedido)}">
-                <!-- Filtro Global -->
-                <f:facet name="header">
-                    <p:outputPanel>
-                        <h:outputText value="Buscar: " />
-                        <p:inputText id="globalFilter" onkeyup="PF('pedidoTable').filter()"
-                                     style="width:150px" placeholder="Filtrar..." />
-                    </p:outputPanel>
-                </f:facet>
+            .ui-datatable tbody td {
+                background: #0d1117 !important;
+                color: #94a3b8 !important;
+                border: 1px solid rgba(255,255,255,0.05) !important;
+                padding: 12px !important;
+            }
 
-                <!-- Columnas -->
-                <p:column headerText="ID Pedido" filterBy="#{pedido.idPedido}">
-                    <h:outputText value="#{pedido.idPedido}" />
-                </p:column>
-                <p:column headerText="Fecha" filterBy="#{pedido.fecha}">
-                    <h:outputText value="#{pedido.fecha}" pattern="dd/MM/yyyy HH:mm"/>
-                </p:column>
+            .ui-datatable tr.ui-state-hover { background: #1c2128 !important; }
 
-                <p:column headerText="Estado" filterBy="#{pedido.estadopedido.nombre}" filterMatchMode="exact"
-                          sortBy="#{pedido.estadopedido.nombre}">
+            /* Badges de Estado Modernos */
+            .status-badge {
+                padding: 4px 10px;
+                border-radius: 4px;
+                font-size: 0.75rem;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+            .status-pendiente { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; }
+            .status-proceso { background: rgba(251, 191, 36, 0.1); color: #fbbf24; border: 1px solid #fbbf24; }
+            .status-completado { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid #10b981; }
 
-                    <h:outputText value="#{pedido.estadopedido.nombre}" />
+            /* Diálogo de Detalle */
+            .ui-dialog { background: #161b22 !important; border: 1px solid #fbbf24 !important; }
+            .ui-dialog-titlebar { background: #161b22 !important; color: white !important; border-bottom: 1px solid rgba(255,255,255,0.1) !important; }
 
-                </p:column>
+            .detail-img {
+                width: 50px; height: 50px;
+                background: white;
+                border-radius: 8px;
+                object-fit: contain;
+                padding: 2px;
+            }
 
+            .total-row { font-size: 1.1rem; color: #fbbf24; font-weight: bold; }
+            /* ]]> */
+        </h:outputStylesheet>
 
-                <p:column headerText="Total" filterBy="#{pedido.total}">
-                    <h:outputText value="#{pedido.total}" />
-                </p:column>
-                <p:column headerText="Sucursal" filterBy="#{pedido.sucursal.nombre}">
-                    <h:outputText value="#{pedido.sucursal.nombre}" />
-                </p:column>
+        <div class="orders-container">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="text-white fw-bold m-0"><i class="pi pi-box text-warning me-2"></i>Mis Pedidos</h2>
+                    <p:button icon="pi pi-home" value="Tienda" outcome="/home/index.xhtml" styleClass="ui-button-outlined ui-button-warning rounded-pill" />
+                </div>
 
+                <h:form id="formPedidos">
+                    <p:messages id="messages" showDetail="true" closable="true" />
 
-                <p:column headerText="VerDetalle">
-                    <p:commandButton icon="pi pi-eye" title="Ver Detalles"
-                                     action="#{pedidoBean.verDetallesPedido(pedido)}"
-                                     process="@this"
-                                     update=":formPedidos:detalleDialog"
-                                     oncomplete="PF('detalleDialog').show()" />
-                </p:column>
-            </p:dataTable>
+                    <div class="row mb-3 align-items-end">
+                        <div class="col-md-4">
+                            <p:outputLabel for="estadoFiltro" value="Estado del Pedido" styleClass="text-muted small d-block mb-1" />
+                            <p:selectOneMenu id="estadoFiltro" value="#{pedidoBean.estadoFiltro}"
+                                             onchange="PF('pedidoTable').filter()" styleClass="w-100 bg-dark border-secondary">
+                                <f:selectItem itemLabel="Todos los estados" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="#{pedidoBean.estados}" var="estado"
+                                               itemLabel="#{estado.nombre}" itemValue="#{estado.nombre}" />
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel value="Buscar ID o Sucursal" styleClass="text-muted small d-block mb-1" />
+                            <p:inputText id="globalFilter" onkeyup="PF('pedidoTable').filter()"
+                                         placeholder="Escribe para buscar..." styleClass="w-100 bg-dark text-white border-secondary" />
+                        </div>
+                    </div>
 
+                    <p:dataTable id="tablaPedidos" value="#{pedidoBean.pedidosHist}" var="pedido"
+                                 paginator="true" rows="10"
+                                 paginatorPosition="bottom"
+                                 emptyMessage="Aún no has realizado pedidos."
+                                 filteredValue="#{pedidoBean.filteredPedidos}"
+                                 widgetVar="pedidoTable">
 
+                        <p:column headerText="ID" sortBy="#{pedido.idPedido}" width="80" styleClass="text-center">
+                            <span class="text-white fw-bold">##{pedido.idPedido}</span>
+                        </p:column>
 
+                        <p:column headerText="Fecha" sortBy="#{pedido.fecha}">
+                            <h:outputText value="#{pedido.fecha}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                            </h:outputText>
+                        </p:column>
 
-            <p:dialog header="Detalles del Pedido #{pedidoBean.pedidoSeleccionado.idPedido}" widgetVar="detalleDialog"
-                      modal="true" showEffect="fade" hideEffect="fade" resizable="false" id="detalleDialog">
-                <p:dataTable value="#{pedidoBean.detallesPedido}" var="detalle" emptyMessage="No hay detalles para este pedido.">
+                        <p:column headerText="Sucursal">
+                            <i class="pi pi-map-marker me-1 small"></i>
+                            <h:outputText value="#{pedido.sucursal.nombre}" />
+                        </p:column>
 
-                    <p:column headerText="Imagen" exportable="false" styleClass="product-image-column">
-                        <p:graphicImage url="/resources/images/product/#{detalle.producto.imagen}"
-                                        library="demo"
-                                        styleClass="product-image"
-                                        alt="Imagen del producto"
-                                        rendered="#{not empty detalle.producto.imagen}" />
-                        <!-- Imagen por defecto en caso de no haber imagen -->
-                        <p:graphicImage url="/resources/images/default-product-image.png"
-                                        library="demo"
-                                        styleClass="product-image"
-                                        alt="Imagen por defecto"
-                                        rendered="#{empty detalle.producto.imagen}" />
-                    </p:column>
+                        <p:column headerText="Estado" styleClass="text-center">
+                            <h:panelGroup styleClass="status-badge #{pedido.estadopedido.nombre eq 'Pendiente' ? 'status-pendiente' :
+                                                            (pedido.estadopedido.nombre eq 'En Proceso' ? 'status-proceso' : 'status-completado')}">
+                                #{pedido.estadopedido.nombre}
+                            </h:panelGroup>
+                        </p:column>
 
-                    <p:column headerText="Producto">
-                        <h:outputText value="#{detalle.producto.nombre}" />
-                    </p:column>
-                    <p:column headerText="Cantidad">
-                        <h:outputText value="#{detalle.cantidad}" />
-                    </p:column>
-                    <!-- Opcional: precio o subtotal -->
-                    <p:column headerText="Precio Unitario">
-                        <h:outputText value="#{detalle.producto.precio}" />
-                    </p:column>
-                    <p:column headerText="Subtotal">
-                        <h:outputText value="#{detalle.cantidad * detalle.producto.precio}" />
-                    </p:column>
-                </p:dataTable>
-            </p:dialog>
-        </h:form>
+                        <p:column headerText="Total" sortBy="#{pedido.total}" styleClass="text-end">
+                            <h:outputText value="#{pedido.total}" styleClass="text-warning fw-bold">
+                                <f:convertNumber type="currency" currencySymbol="$" />
+                            </h:outputText>
+                        </p:column>
 
+                        <p:column headerText="Acción" width="100" styleClass="text-center">
+                            <p:commandButton icon="pi pi-search-plus"
+                                             title="Ver Detalles"
+                                             action="#{pedidoBean.verDetallesPedido(pedido)}"
+                                             update=":formPedidos:detalleDialog"
+                                             oncomplete="PF('detalleDialog').show()"
+                                             styleClass="ui-button-rounded ui-button-warning ui-button-text" />
+                        </p:column>
+                    </p:dataTable>
 
+                    <p:dialog header="Resumen del Pedido" widgetVar="detalleDialog"
+                              modal="true" showEffect="fade" hideEffect="fade"
+                              responsive="true" width="600" id="detalleDialog">
 
+                        <div class="p-2">
+                            <p:dataTable value="#{pedidoBean.detallesPedido}" var="detalle" styleClass="ui-datatable-sm">
+                                <p:column headerText="Art" width="60">
+                                    <p:graphicImage url="#{configBean.urlImagenes}#{detalle.producto.imagen}"
+                                                    styleClass="detail-img"
+                                                    rendered="#{not empty detalle.producto.imagen}"/>
+                                </p:column>
 
+                                <p:column headerText="Producto">
+                                    <h:outputText value="#{detalle.producto.nombre}" styleClass="text-white small" />
+                                </p:column>
 
+                                <p:column headerText="Cant" width="50" styleClass="text-center">
+                                    <h:outputText value="x#{detalle.cantidad}" />
+                                </p:column>
+
+                                <p:column headerText="Subtotal" styleClass="text-end">
+                                    <h:outputText value="#{detalle.cantidad * detalle.producto.precio}">
+                                        <f:convertNumber type="currency" currencySymbol="$" />
+                                    </h:outputText>
+                                </p:column>
+                            </p:dataTable>
+
+                            <div class="text-end mt-3 p-2 border-top border-secondary">
+                                <span class="text-muted me-3">Monto Total:</span>
+                                <h:outputText value="#{pedidoBean.pedidoSeleccionado.total}" styleClass="total-row">
+                                    <f:convertNumber type="currency" currencySymbol="$" />
+                                </h:outputText>
+                            </div>
+                        </div>
+
+                        <f:facet name="footer">
+                            <p:commandButton value="Cerrar" onclick="PF('detalleDialog').hide()" styleClass="ui-button-flat text-white" />
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+            </div>
+        </div>
     </ui:define>
 </ui:composition>

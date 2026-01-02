@@ -1,0 +1,100 @@
+src
+├── main
+│   ├── java
+│   │   └── com
+│   │       └── ferremas
+│   │           ├── FerremasApplication.java
+│   │  
+│   │           ├── config
+│   │           │   ├── DatabaseConfig.java
+│   │           │   ├── SecurityConfig.java
+│   │           │   ├── PaypalConfig.java
+│   │           │   ├── WebPayConfig.java
+│   │           │   └── JsfConfig.java
+│   │  
+│   │           ├── shared
+│   │           │   ├── dto
+│   │           │   │   └── CommonDTOs.java
+│   │           │   ├── exceptions
+│   │           │   │   ├── GlobalExceptionHandler.java
+│   │           │   │   └── BusinessException.java
+│   │           │   ├── util
+│   │           │   │   ├── Logger.java
+│   │           │   │   └── Validators.java
+│   │           │   └── security
+│   │           │       ├── jwt
+│   │           │       │   ├── JwtService.java
+│   │           │       │   └── JwtAuthenticationFilter.java
+│   │           │       └── AuthCustom.java
+│   │  
+│   │           ├── modules
+│   │           │   ├── auth
+│   │           │   │   ├── model
+│   │           │   │   │   └── Usuario.java
+│   │           │   │   ├── dto
+│   │           │   │   │   ├── LoginRequest.java
+│   │           │   │   │   └── RegisterRequest.java
+│   │           │   │   ├── repository
+│   │           │   │   │   └── UsuarioRepository.java
+│   │           │   │   ├── service
+│   │           │   │   │   └── AuthService.java
+│   │           │   │   ├── controller
+│   │           │   │   │   └── AuthRestController.java
+│   │           │   │   └── view
+│   │           │   │       └── LoginBean.java
+│   │           │   ├── producto
+│   │           │   │   ├── model
+│   │           │   │   │   └── Producto.java
+│   │           │   │   ├── dto
+│   │           │   │   │   └── ProductoDTO.java
+│   │           │   │   ├── repository
+│   │           │   │   │   └── ProductoRepository.java
+│   │           │   │   ├── service
+│   │           │   │   │   └── ProductoService.java
+│   │           │   │   ├── controller
+│   │           │   │   │   └── ProductoRestController.java
+│   │           │   │   └── view
+│   │           │   │       └── TiendaBean.java
+│   │           │   ├── pedido
+│   │           │   │   ├── model
+│   │           │   │   ├── service
+│   │           │   │   ├── controller
+│   │           │   │   └── view
+│   │           │   └── pago
+│   │           │       ├── model
+│   │           │       ├── service
+│   │           │       ├── controller
+│   │           │       └── view
+│   │  
+│   │           └── adapter                    # Clientes externos (Paypal, WebPay, etc.)
+│   │               ├── paypal
+│   │               │   └── PaypalClient.java
+│   │               └── webpay
+│   │                   └── WebPayClient.java
+
+│   ├── resources
+│   │   ├── application.properties
+│   │   ├── application-dev.properties
+│   │   ├── application-prod.properties
+│   │   └── messages_es.properties
+
+│   ├── webapp
+│   │   ├── WEB-INF
+│   │   │   ├── web.xml
+│   │   │   ├── faces-config.xml
+│   │   │   └── beans.xml
+│   │   ├── views
+│   │   │   ├── auth
+│   │   │   │   └── login.xhtml
+│   │   │   ├── home
+│   │   │   │   ├── index.xhtml
+│   │   │   │   └── carrito.xhtml
+│   │   │   ├── admin
+│   │   │   │   ├── dashboard.xhtml
+│   │   │   │   └── usuarios.xhtml
+│   │   │   └── template
+│   │   │       └── main.xhtml
+│   │   └── resources
+│   │       ├── css/
+│   │       ├── js/
+│   │       └── images/

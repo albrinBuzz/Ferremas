@@ -1,6 +1,7 @@
 package com.ferremas.config.security;
 
 
+import com.ferremas.config.security.jwt.JwtAuthenticationFilter;
 import com.ferremas.serviceImpl.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -8,17 +9,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.firewall.HttpFirewall;
@@ -32,13 +36,14 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
 
-
-
 	@Autowired
 	private CustomUserDetailsService userDetailsService;
 
 	@Autowired
 	AuthenticationSuccessHandler authenticationSuccessHandler;
+
+	@Autowired
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
 
 
@@ -79,7 +84,6 @@ public class SecurityConfig {
 
 	    @Bean
 	    public AuthenticationManager authenticationManager(
-	            UserDetailsService userDetailsService,
 	            PasswordEncoder passwordEncoder) {
 	        var provider = new DaoAuthenticationProvider();
 	        provider.setUserDetailsService(userDetailsService);
@@ -98,13 +102,12 @@ public class SecurityConfig {
 	    @Bean
 	    public SecurityFilterChain filterChain(HttpSecurity http,MvcRequestMatcher.Builder mvc) throws Exception {
 	        http
-
-
 	            .csrf(AbstractHttpConfigurer::disable)
 	            .authorizeHttpRequests(authorizeRequests ->
 	                authorizeRequests
 	                	.requestMatchers("/perfil/**").authenticated()
 						.requestMatchers(mvc.pattern("/home/login.xhtml")).permitAll()
+							.requestMatchers("/auth/**").permitAll()
 						//.requestMatchers("/admin/**").hasAuthority("ROLE_ADMINISTRADOR")
 						.requestMatchers("/bodega/**").hasAuthority("ROLE_BODEGUERO")
 						.requestMatchers("/contador/**").hasAuthority("ROLE_CONTADOR")
@@ -135,9 +138,12 @@ public class SecurityConfig {
 	                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 	                    .logoutSuccessUrl("/")
 	                    .permitAll()
-	            ).sessionManagement(session ->
-							session.sessionFixation().none() // 🔒 importante para mantener el carrito
-					);
+	            ).sessionManagement(sessionManager->
+							sessionManager
+									.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+					.authenticationProvider(authenticationProvider())
+					.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
 
 	        return http.build();
 	    }

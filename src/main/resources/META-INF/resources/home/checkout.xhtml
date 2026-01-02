@@ -6,254 +6,299 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/template/main.xhtml">
 
-    <h:head>
-        <title>Tienda - Ferremas</title>
-
-        <!-- Agregar PrimeIcons CSS en el head -->
-
-        <link rel="stylesheet" href="/META-INF/resources/resources/css/primeicons.css"/>
-    </h:head>
-
     <ui:define name="contenido">
-        <div class="container py-5">
-            <h2 class="text-center text-primary mb-4">Finalizar Compra</h2>
+        <h:outputStylesheet>
+            /* <![CDATA[ */
+            .checkout-wrapper { background-color: #0f111a; min-height: 90vh; padding: 40px 0; color: #e2e8f0; }
+    .ui-growl {
+                    z-index: 9999 !important; /* Por encima de todo, incluso de diálogos */
+                }
 
-            <h:form id="checkoutForm">
-                <p:messages id="mensajes" showDetail="true" autoUpdate="true" closable="true"/>
-                <p:growl id="growl" showDetail="true" life="3000"/>
+            .ui-message {
+                background-color: rgba(239, 68, 68, 0.1) !important;
+                border: 1px solid #ef4444 !important;
+                color: #ef4444 !important;
+                margin-top: 5px;
+                border-radius: 6px;
+            }
+            .checkout-step {
+                background: #161b22;
+                border-radius: 15px;
+                padding: 25px;
+                margin-bottom: 25px;
+                border: 1px solid rgba(255,255,255,0.05);
+            }
 
-                <div class="row">
+            .step-number {
+                background: #fbbf24;
+                color: #000;
+                width: 32px; height: 32px;
+                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 900;
+                margin-right: 12px;
+            }
 
-                    <!-- Columna izquierda: datos cliente (si no autenticado), métodos de pago y sucursal -->
-                    <div class="col-md-7">
-                        <ui:fragment rendered="#{!userBean.isAuthenticated()}">
-                            <div class="card p-4 mb-4 shadow-sm">
-                                <h4 class="mb-3 text-primary">Datos de Envío</h4>
+            .summary-card {
+                background: #161b22;
+                border-radius: 15px;
+                border-top: 5px solid #fbbf24;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+                /* Ajuste de z-index para no interferir con modales */
+                z-index: 10;
+            }
 
-                                <div class="mb-3">
-                                    <h:outputLabel for="nombre" value="Nombre completo"/>
-                                    <h:inputText id="nombre" value="#{checkoutBean.clienteInvitado.nombre}" required="true"
-                                                 requiredMessage="El nombre es obligatorio"
-                                                 styleClass="form-control"/>
+            /* FIX DEFINITIVO PARA EL BUG VISUAL DEL DIÁLOGO */
+            .custom-dialog {
+                z-index: 2000 !important; /* Forzamos que el diálogo esté siempre arriba */
+            }
+
+            /* Aseguramos que el overlay (fondo oscuro del modal) esté debajo del diálogo pero sobre el resumen */
+            .ui-widget-overlay {
+                z-index: 1500 !important;
+                background: rgba(0,0,0,0.7) !important;
+                opacity: 1 !important;
+            }
+
+            .custom-dialog .ui-dialog-content {
+                background: #161b22 !important;
+                padding: 0 !important;
+                border: none !important;
+            }
+
+            .custom-dialog .ui-dialog-titlebar {
+                background: #1c2128 !important;
+                color: #fbbf24 !important;
+                border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+            }
+
+            .custom-dialog .ui-datatable thead th {
+                background: #0d1117 !important;
+                color: #fbbf24 !important;
+                border: 1px solid rgba(255,255,255,0.1) !important;
+            }
+
+            .custom-dialog .ui-datatable tbody td {
+                background: #161b22 !important;
+                color: #ffffff !important;
+                border: 1px solid rgba(255,255,255,0.05) !important;
+            }
+
+            .custom-dialog .ui-datatable .ui-state-highlight {
+                background: rgba(251, 191, 36, 0.2) !important;
+                color: #fbbf24 !important;
+            }
+
+            .discount-tag {
+                background: rgba(52, 211, 153, 0.1);
+                border: 1px dashed #34d399;
+                color: #34d399;
+                border-radius: 10px;
+                padding: 15px;
+            }
+
+            .ui-inputfield {
+                background: #0d1117 !important;
+                color: white !important;
+                border: 1px solid rgba(255,255,255,0.1) !important;
+            }
+            /* ]]> */
+        </h:outputStylesheet>
+
+        <div class="checkout-wrapper">
+            <div class="container">
+                <h:form id="checkoutForm">
+                    <p:growl id="growl" showDetail="true" life="4000"/>
+
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <h1 class="fw-black text-white mb-5">Finalizar Compra</h1>
+
+                            <h:panelGroup rendered="#{!userBean.isAuthenticated()}">
+                                <div class="checkout-step shadow-lg">
+                                    <h5 class="fw-bold text-white mb-4"><span class="step-number">1</span> Información de Contacto</h5>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <p:outputLabel for="nombre" value="Nombre Completo" styleClass="small text-muted fw-bold d-block mb-1"/>
+                                            <p:inputText id="nombre" value="#{checkoutBean.clienteInvitado.nombre}" required="true" styleClass="w-100"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p:outputLabel for="rut" value="RUT" styleClass="small text-muted fw-bold d-block mb-1"/>
+                                            <p:inputText id="rut" value="#{checkoutBean.clienteInvitado.rutcliente}" required="true" styleClass="w-100">
+                                                <f:validator validatorId="rutValidator" />
+                                            </p:inputText>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p:outputLabel for="correo" value="Email" styleClass="small text-muted fw-bold d-block mb-1"/>
+                                            <p:inputText id="correo" value="#{checkoutBean.clienteInvitado.correo}" required="true" styleClass="w-100">
+                                                <f:validator validatorId="correoValidator" />
+                                            </p:inputText>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p:outputLabel for="telefono" value="Teléfono" styleClass="small text-muted fw-bold d-block mb-1"/>
+                                            <p:inputText id="telefono" value="#{checkoutBean.clienteInvitado.telefono}" required="true" placeholder="+56 9 XXXX XXXX" styleClass="w-100"/>
+                                        </div>
+                                    </div>
                                 </div>
+                            </h:panelGroup>
 
-                                <div class="mb-3">
-                                    <h:outputLabel for="rut" value="RUT"/>
-                                    <p:inputText id="rut" value="#{checkoutBean.clienteInvitado.rutcliente}" required="true"
-                                                 requiredMessage="El RUT es obligatorio"
-                                                 styleClass="form-control">
-                                        <f:validator validatorId="rutValidator" />
-                                    </p:inputText>
-                                </div>
-
-                                <div class="mb-3">
-                                    <h:outputLabel for="correo" value="Correo electrónico"/>
-                                    <p:inputText id="correo" value="#{checkoutBean.clienteInvitado.correo}" required="true"
-                                                 requiredMessage="El correo es obligatorio"
-                                                 styleClass="form-control">
-                                        <f:validator validatorId="correoValidator" />
-                                    </p:inputText>
-                                </div>
-
-                                <div class="mb-3">
-                                    <h:outputLabel for="telefono" value="Teléfono"/>
-                                    <h:inputText id="telefono" value="#{checkoutBean.clienteInvitado.telefono}" required="true"
-                                                 requiredMessage="El teléfono es obligatorio"
-                                                 styleClass="form-control"/>
+                            <div class="checkout-step shadow-lg">
+                                <h5 class="fw-bold text-white mb-3"><span class="step-number">#{userBean.isAuthenticated() ? '1' : '2'}</span> Centro de Retiro</h5>
+                                <div class="d-flex align-items-center justify-content-between p-4 rounded-3" style="background: #0d1117; border: 1px solid rgba(251, 191, 36, 0.2);">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-warning rounded-circle p-3 me-3" style="--bs-bg-opacity: .1;">
+                                            <i class="pi pi-map-marker text-warning fs-4"></i>
+                                        </div>
+                                        <h:panelGroup rendered="#{checkoutBean.sucursal != null}">
+                                            <div>
+                                                <h6 class="fw-bold text-white mb-0">#{checkoutBean.sucursal.nombre}</h6>
+                                                <small class="text-muted">#{checkoutBean.sucursal.direccion}</small>
+                                            </div>
+                                        </h:panelGroup>
+                                        <h:panelGroup rendered="#{checkoutBean.sucursal == null}">
+                                            <span class="text-muted">No has seleccionado una sucursal para retiro</span>
+                                        </h:panelGroup>
+                                    </div>
+                                    <p:commandButton value="#{checkoutBean.sucursal == null ? 'Elegir' : 'Cambiar'}"
+                                                     icon="pi pi-search"
+                                                     update=":formSucursales"
+                                                     oncomplete="PF('dlgSucursales').show();"
+                                                     styleClass="ui-button-warning ui-button-flat rounded-pill"/>
                                 </div>
                             </div>
-                        </ui:fragment>
 
+                            <div class="checkout-step shadow-lg">
+                                <h5 class="fw-bold text-white mb-4">
+                                    <span class="step-number">#{userBean.isAuthenticated() ? '2' : '3'}</span>
+                                    Método de Pago Seguro
+                                </h5>
 
-                        <!-- Método de Pago con Iconos -->
-                        <div class="card p-4 shadow-sm mb-4">
-                            <h4 class="mb-3 text-primary">Método de Pago</h4>
+                                <p:selectOneRadio id="metodoPago"
+                                                  value="#{checkoutBean.metodoPago}"
+                                                  layout="pageDirection"
+                                                  required="true"
 
-                            <div class="mt-3 d-flex justify-content-between">
-                                <!-- Iconos de Métodos de Pago -->
-                                <p:selectOneRadio value="#{checkoutBean.metodoPago}" layout="grid" required="true"
-                                                  requiredMessage="El método de pago es obligatorio">
-                                    <f:selectItem itemLabel="webPay" itemValue="webPay" itemIcon="pi pi-credit-card" />
-
-                                    <f:selectItem itemLabel="Tarjeta de Crédito" itemValue="tarjeta" itemIcon="pi pi-credit-card" />
-
-                                    <f:selectItem itemLabel="Paypal" itemValue="paypal" itemIcon="pi pi-paypal" />
-                                    <f:selectItem itemLabel="Transferencia Bancaria" itemValue="transferencia" itemIcon="pi pi-bank" />
+                                                  requiredMessage="Debe seleccionar un método de pago para continuar"
+                                                  styleClass="text-white custom-radio-group">
+                                    <f:selectItem itemLabel="Webpay Plus - Crédito / Débito" itemValue="webPay" />
+                                    <f:selectItem itemLabel="PayPal Checkout" itemValue="paypal" />
+                                    <f:selectItem itemLabel="Transferencia Bancaria Directa" itemValue="transferencia" />
                                 </p:selectOneRadio>
+
+                                <p:message for="metodoPago" display="text" styleClass="mt-2 d-block" />
                             </div>
+
                         </div>
 
-                        <div class="mt-3">
-                            <p:commandButton value="Elegir sucursal para retiro"
-                                             icon="pi pi-map-marker"
+                        <div class="col-lg-5">
+                            <div class="summary-card p-4 shadow-lg sticky-top" style="top: 20px;">
+                                <h5 class="fw-black text-white mb-4">Resumen de Carga</h5>
 
-                                             update="dialogSucursales"
-                                             oncomplete="PF('dlgSucursales').show();"
-                                             styleClass="btn btn-primary btn-block"/>
-                        </div>
-                    </div>
+                                <div class="mb-4" style="max-height: 250px; overflow-y: auto;">
+                                    <ui:repeat value="#{carroBean.pedido.detallepedidos}" var="item">
+                                        <div class="d-flex justify-content-between mb-3 align-items-center">
+                                            <div>
+                                                <h6 class="mb-0 text-white small">#{item.producto.nombre}</h6>
+                                                <small class="text-muted">Cant: #{item.cantidad}</small>
+                                            </div>
+                                            <h:outputText value="#{item.producto.precio * item.cantidad}" styleClass="fw-bold text-white">
+                                                <f:convertNumber type="currency" currencySymbol="$"/>
+                                            </h:outputText>
+                                        </div>
+                                    </ui:repeat>
+                                </div>
 
-                    <!-- Columna derecha: resumen y botón de confirmación -->
-                    <div class="col-md-5">
-                        <div class="card p-4 shadow-sm">
-                            <h4 class="mb-3 text-primary">Resumen del Pedido</h4>
+                                <div class="discount-tag mb-4">
+                                    <h:panelGroup rendered="#{not checkoutBean.descuento}">
+                                        <i class="pi pi-info-circle me-2"></i>
+                                        <small>Añade más artículos para desbloquear descuentos.</small>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{checkoutBean.descuento}">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span><i class="pi pi-verified me-2"></i>#{checkoutBean.descuentoTipo}</span>
+                                            <h:outputText value="- #{checkoutBean.descuentoVal}" styleClass="fw-black">
+                                                <f:convertNumber type="currency" currencySymbol="$"/>
+                                            </h:outputText>
+                                        </div>
+                                    </h:panelGroup>
+                                </div>
 
-                            <ui:repeat value="#{carroBean.pedido.detallepedidos}" var="item">
                                 <div class="d-flex justify-content-between mb-2">
-                                    <div>
-                                        <strong>#{item.producto.nombre}</strong>
-                                        <small class="text-muted"> x #{item.cantidad}</small>
-                                    </div>
-                                    <div>
-                                        <h:outputText value="#{item.producto.precio * item.cantidad}">
-                                            <f:convertNumber type="currency" currencySymbol="$"/>
-                                        </h:outputText>
-                                    </div>
-                                </div>
-                            </ui:repeat>
-
-                            <hr/>
-
-
-                            <!-- Mensaje informativo sobre los posibles descuentos -->
-                            <div class="alert alert-info mt-3" role="alert">
-                                <strong>¡Atención!</strong> Si compras más de <strong>$100.000</strong>, obtienes un <strong>10% de descuento</strong> en tu compra. <br />
-                                También puedes obtener un descuento de <strong>2%</strong> si compras más de 4 productos. <br />
-                                Si cumples ambas condiciones, ¡te damos un <strong>12% de descuento</strong>!
-                            </div>
-
-                            <!-- Panel de Descuento Aplicado -->
-                            <p:panel rendered="#{checkoutBean.descuento}" header="Resumen de Descuento" styleClass="mt-3">
-                                <!-- Descuento Aplicado -->
-                                <div class="d-flex justify-content-between">
-                                    <strong>Descuento Aplicado:</strong>
-                                    <strong style="color: green;">
-                                        <h:outputText value="#{checkoutBean.descuentoVal}">
-                                            <f:convertNumber type="currency" currencySymbol="$"/>
-                                        </h:outputText>
-                                    </strong>
-                                </div>
-
-                                <!-- Detalles del SubTotal -->
-                                <div class="d-flex justify-content-between">
-                                    <strong>Subtotal:</strong>
-                                    <span>
-                                        <h:outputText value="#{checkoutBean.subTotal}">
-                                            <f:convertNumber type="currency" currencySymbol="$"/>
-                                        </h:outputText>
-                                    </span>
-                                </div>
-
-                                <!-- Total Después del Descuento -->
-                                <div class="d-flex justify-content-between mt-2">
-                                    <strong>Total Final:</strong>
-                                    <strong style="color: green;">
-                                        <h:outputText value="#{checkoutBean.total}">
-                                            <f:convertNumber type="currency" currencySymbol="$"/>
-                                        </h:outputText>
-                                    </strong>
-                                </div>
-
-                                <!-- Tipo de Descuento Aplicado -->
-                                <div class="mt-2">
-                                    <strong>Tipo de Descuento:</strong>
-                                    <p class="text-success">#{checkoutBean.descuentoTipo}</p>
-                                </div>
-                            </p:panel>
-
-                            <!-- Panel de Caso Sin Descuento -->
-                            <p:panel rendered="#{not checkoutBean.descuento}" header="Resumen de Compra" styleClass="mt-3">
-                                <div class="d-flex justify-content-between">
-                                    <strong>Sin Descuento:</strong>
-                                    <span>
-                                        <h:outputText value="#{checkoutBean.total}">
-                                            <f:convertNumber type="currency" currencySymbol="$"/>
-                                        </h:outputText>
-                                    </span>
-                                </div>
-                            </p:panel>
-
-                            <!-- Detalles del Total -->
-                            <div class="d-flex justify-content-between mt-3">
-                                <strong>SubTotal:</strong>
-                                <strong>
-                                    <h:outputText value="#{checkoutBean.subTotal}">
+                                    <span class="text-muted small">Subtotal CLP</span>
+                                    <h:outputText value="#{checkoutBean.subTotal}" styleClass="text-muted small">
                                         <f:convertNumber type="currency" currencySymbol="$"/>
                                     </h:outputText>
-                                </strong>
-                            </div>
-
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between">
-                                    <strong>Total CLP:</strong>
-                                    <h:outputText value="#{checkoutBean.total}">
-                                        <f:convertNumber type="currency" currencySymbol="$" />
-                                    </h:outputText>
                                 </div>
 
-                                <div class="d-flex justify-content-between mt-2">
-                                    <strong>Total USD:</strong>
-                                    <p:outputPanel id="dolarPanelPrecio">
-                                        <h:outputText rendered="#{tiendaBean.valorDolar gt 0}"
-                                                      value="#{checkoutBean.total / tiendaBean.valorDolar}">
-                                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                                <div class="d-flex justify-content-between align-items-end mt-4 mb-4">
+                                    <span class="fw-bold text-white">TOTAL FINAL</span>
+                                    <div class="text-end">
+                                        <h:outputText value="#{checkoutBean.total}" styleClass="fs-2 fw-black text-warning d-block" style="line-height: 1;">
+                                            <f:convertNumber type="currency" currencySymbol="$" />
                                         </h:outputText>
-
-                                        <h:outputText rendered="#{tiendaBean.valorDolar le 0}" value="Obteniendo valor del dólar..." />
-
-                                        <p:poll interval="2"
-                                                update="dolarPanelPrecio"
-                                                listener="#{tiendaBean.checkValorDolar}"
-                                                stop="#{tiendaBean.valorDolar gt 0}" />
-                                    </p:outputPanel>
+                                        <p:outputPanel id="dolarPanel">
+                                            <span class="text-muted small">Est. USD $#{String.format('%.2f', checkoutBean.total / (tiendaBean.valorDolar gt 0 ? tiendaBean.valorDolar : 1))}</span>
+                                        </p:outputPanel>
+                                    </div>
                                 </div>
-                            </div>
 
-
-
-
-
-
-                            <div class="mt-2">
-                                <h:outputText value="Sucursal seleccionada: #{checkoutBean.sucursal.nombre}" rendered="#{checkoutBean.sucursal != null}"/>
-                            </div>
-
-                            <div class="d-flex justify-content-end mt-4">
-                                <p:commandButton value="Confirmar Pedido"
-                                                 icon="pi pi-check"
+                                <p:commandButton value="PROCESAR PAGO SEGURO"
+                                                 icon="pi pi-lock"
                                                  action="#{checkoutBean.confirmarPedido}"
-                                                 update="checkoutForm growl"
-                                                 styleClass="btn btn-success"/>
+                                                 process="@form"
+                                                 update="@form growl"
+                                                 styleClass="ui-button-warning w-100 py-3 fw-black rounded-3 shadow"
+                                                 disabled="#{checkoutBean.sucursal == null }"/>
                             </div>
                         </div>
                     </div>
-                </div>
-            </h:form>
+                </h:form>
+            </div>
+        </div>
 
-            <!-- Diálogo de sucursales -->
-            <p:dialog id="dialogSucursales" header="Sucursales Disponibles" widgetVar="dlgSucursales" modal="true"
-                      showEffect="fade" hideEffect="fade">
-                <h:form id="formSucursales">
-                    <h:outputText value="Elija la sucursal donde desea retirar su pedido."/>
-                    <p:dataTable value="#{checkoutBean.sucursals}" var="sucursal" paginator="true" rows="5" required="true"
-                                 requiredMessage="El Metodo de pago es obligatorio"
-                                 emptyMessage="No hay sucursales que tenga en stock, todos los productos seleccionados"
-                                 selection="#{checkoutBean.sucursal}" rowKey="#{sucursal.idSucursal}" cellNavigation="true">
-                        <p:column selectionBox="true" style="width:16px;text-align:center"/>
-                        <p:column headerText="Sucursal">
-                            <h:outputText value="#{sucursal.nombre}"/>
+        <p:dialog id="dialogSucursales"
+                  header="Selecciona Punto de Retiro"
+                  widgetVar="dlgSucursales"
+                  modal="true"
+                  width="700"
+                  responsive="true"
+                  styleClass="custom-dialog"
+                  showEffect="fade"
+                  appendTo="@(body)"
+                  draggable="false"
+                  resizable="false">
+
+            <h:form id="formSucursales">
+                <div class="p-3">
+                    <p:dataTable value="#{checkoutBean.sucursals}" var="sucursal"
+                                 selection="#{checkoutBean.sucursal}" rowKey="#{sucursal.idSucursal}"
+                                 selectionMode="single" paginator="true" rows="5"
+                                 styleClass="border-0">
+
+                        <p:ajax event="rowSelect" update=":checkoutForm" oncomplete="PF('dlgSucursales').hide()"/>
+
+                        <p:column headerText="Sucursal" sortBy="#{sucursal.nombre}">
+                            <i class="pi pi-building me-2 text-warning"></i>
+                            <h:outputText value="#{sucursal.nombre}" styleClass="fw-bold" />
                         </p:column>
+
                         <p:column headerText="Dirección">
-                            <h:outputText value="#{sucursal.direccion}"/>
+                            <h:outputText value="#{sucursal.direccion}" styleClass="small opacity-75" />
                         </p:column>
                     </p:dataTable>
 
-                    <p:commandButton value="Confirmar Selección"
-                                     update="checkoutForm"
-                                     oncomplete="PF('dlgSucursales').hide();"
-                                     icon="pi pi-check"/>
-                </h:form>
-            </p:dialog>
-        </div>
+                    <h:panelGroup rendered="#{empty checkoutBean.sucursals}">
+                        <div class="text-center p-4">
+                            <i class="pi pi-exclamation-circle fs-1 text-muted d-block mb-2"></i>
+                            <h:outputText value="No Hay Sucursales con Stock para estos productos." styleClass="text-muted" />
+                        </div>
+                    </h:panelGroup>
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <p:poll interval="45" listener="#{tiendaBean.checkValorDolar}" update="checkoutForm:dolarPanel" />
     </ui:define>
 </ui:composition>

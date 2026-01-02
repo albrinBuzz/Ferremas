@@ -81,4 +81,13 @@ public class Categoria implements Serializable {
 		return producto;
 	}
 
+	@Override
+	public String toString() {
+		final StringBuffer sb = new StringBuffer("Categoria{");
+		sb.append("idCategoria=").append(idCategoria);
+		sb.append(", descripcion='").append(descripcion).append('\'');
+		sb.append(", nombre='").append(nombre).append('\'');
+		sb.append('}');
+		return sb.toString();
+	}
 }

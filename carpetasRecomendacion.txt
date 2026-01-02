@@ -1,0 +1,74 @@
+feature-based package structure
+
+com/ferremas
+ ├── producto
+ │    ├── controller
+ │    │    └── ProductoController.java
+ │    ├── service
+ │    │    ├── ProductoService.java
+ │    │    └── impl
+ │    │         └── ProductoServiceImpl.java
+ │    ├── repository
+ │    │    └── ProductoRepository.java
+ │    ├── dto
+ │    │    └── ProductoDTO.java
+ │    ├── mapper
+ │    │    └── ProductoMapper.java
+ │    ├── model
+ │    │    └── Producto.java
+ │    └── exception
+ │         └── ProductoNotFoundException.java
+ │
+ ├── usuario
+ │    ├── controller
+ │    │    └── UsuarioController.java
+ │    ├── service
+ │    │    ├── UsuarioService.java
+ │    │    └── impl
+ │    │         └── UsuarioServiceImpl.java
+ │    ├── repository
+ │    │    └── UsuarioRepository.java
+ │    ├── dto
+ │    │    └── UsuarioDTO.java
+ │    ├── mapper
+ │    │    └── UsuarioMapper.java
+ │    ├── model
+ │    │    └── Usuario.java
+ │    └── exception
+ │         └── UsuarioNotFoundException.java
+ │
+ ├── auth
+ │    ├── controller
+ │    │    └── AuthController.java
+ │    ├── service
+ │    │    ├── AuthService.java
+ │    │    └── impl
+ │    │         └── AuthServiceImpl.java
+ │    ├── security
+ │    │    ├── JwtService.java
+ │    │    └── SecurityConfig.java
+ │    ├── dto
+ │    │    ├── LoginRequest.java
+ │    │    └── RegisterRequest.java
+ │    └── exception
+ │         └── AuthenticationException.java
+ │
+ ├── config
+ │    ├── database
+ │    │    └── JpaConfig.java
+ │    ├── security
+ │    │    └── WebSecurityConfig.java
+ │    └── web
+ │         └── WebConfig.java
+ │
+ ├── util
+ │    ├── validation
+ │    │    └── RutValidator.java
+ │    └── logging
+ │         └── Logger.java
+ │
+ └── views
+      └── jsf
+           ├── ProductoBean.java
+           ├── UsuarioBean.java
+           └── LoginBean.java

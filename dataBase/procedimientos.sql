@@ -50,7 +50,8 @@ RETURNS TABLE (
     id_pedido INTEGER,
     comprobante VARCHAR,
     comentario VARCHAR,
-    idestadotrnsf INTEGER
+    idestadotrnsf INTEGER,
+	observacion_admin varchar
 )
 AS $$
 BEGIN
@@ -62,7 +63,8 @@ BEGIN
         trn.id_pedido,
         trn.comprobante,
         trn.comentario,
-        trn.idestadotrnsf
+        trn.idestadotrnsf,
+		trn.observacion_admin
     FROM transferencia trn
     JOIN pedido p ON p.id_pedido = trn.id_pedido
     JOIN sucursal suc ON suc.id_sucursal = p.id_sucursal
@@ -72,4 +74,6 @@ $$ LANGUAGE plpgsql;
 
 SELECT * FROM fn_transPorSucursal(1);
 
+
+select * from transferencia;
 

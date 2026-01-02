@@ -3,98 +3,175 @@
                 xmlns:f="jakarta.faces.core"
                 xmlns:h="jakarta.faces.html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:fs="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/template/main.xhtml">
 
-    <h:head>
-        <title>Boleta de Pago</title>
-    </h:head>
-
     <ui:define name="contenido">
+        <h:outputStylesheet>
+            /* <![CDATA[ */
+            .success-wrapper { padding: 50px 0; background-color: #0f111a; min-height: 90vh; }
 
-        <!-- Contenedor principal de la boleta -->
-        <h:panelGroup rendered="#{not empty pagoExitosoBean.pedido}">
-            <div class="container py-5">
+            .receipt-card {
+                background: #ffffff;
+                border-radius: 20px;
+                color: #1a1d23;
+                max-width: 600px;
+                margin: 0 auto;
+                position: relative;
+                overflow: hidden;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            }
 
-                <!-- Título de la boleta -->
-                <h2 class="text-center text-success font-weight-bold mb-4">¡Transferencia enviada con exito!</h2>
+            .receipt-header {
+                background: #198754;
+                padding: 40px 20px;
+                color: white;
+                text-align: center;
+            }
 
-                <!-- Imagen de confirmación de pago -->
-                <div class="text-center">
-                    <p:graphicImage url="/resources/images/imgs/pagoExitoso.png" library="images" style="max-width: 250px;" />
+            .check-icon {
+                font-size: 4rem;
+                background: rgba(255,255,255,0.2);
+                width: 100px;
+                height: 100px;
+                line-height: 100px;
+                border-radius: 50%;
+                margin: 0 auto 15px;
+            }
+
+            .order-id-badge {
+                background: #f1f5f9;
+                border: 2px dashed #cbd5e1;
+                padding: 15px;
+                border-radius: 12px;
+                margin: 20px 0;
+            }
+
+            .info-grid { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+            .info-label { color: #64748b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+            .info-value { color: #1e293b; font-weight: 700; text-align: right; }
+
+            .product-list {
+                background: #f8fafc;
+                border-radius: 12px;
+                padding: 15px;
+                margin-top: 20px;
+            }
+
+            .product-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #e2e8f0;
+                font-size: 0.9rem;
+            }
+
+            .total-section {
+                border-top: 2px solid #1a1d23;
+                margin-top: 20px;
+                padding-top: 15px;
+                text-align: center;
+            }
+
+            .btn-home {
+                background: #1a1d23 !important;
+                color: white !important;
+                border: none !important;
+                border-radius: 50px !important;
+                padding: 12px 30px !important;
+            }
+            /* ]]> */
+        </h:outputStylesheet>
+
+        <div class="success-wrapper">
+            <h:panelGroup rendered="#{not empty pagoExitosoBean.pedido}">
+                <div class="container">
+                    <div class="receipt-card animate__animated animate__fadeInUp">
+
+                        <div class="receipt-header">
+                            <div class="check-icon">
+                                <i class="pi pi-check"></i>
+                            </div>
+                            <h2 class="fw-black m-0">¡Pago Enviado!</h2>
+                            <p class="opacity-75 mb-0">La transferencia ha sido registrada correctamente.</p>
+                        </div>
+
+                        <div class="p-4 p-md-5">
+                            <div class="alert alert-warning border-0 small mb-4">
+                                <i class="pi pi-info-circle me-2"></i>
+                                Tu pedido pasará a validación. Te avisaremos vía email cuando esté <b>listo para retiro</b>.
+                            </div>
+
+                            <div class="order-id-badge text-center">
+                                <span class="text-muted small d-block mb-1">CÓDIGO DE RETIRO</span>
+                                <h3 class="fw-black text-primary m-0">##{pagoExitosoBean.pedido.idPedido}</h3>
+                            </div>
+
+                            <h5 class="fw-bold mb-3 border-bottom pb-2">Resumen de Transacción</h5>
+                            <table class="info-grid">
+                                <tr>
+                                    <td class="info-label">Comercio</td>
+                                    <td class="info-value">Ferremas S.A.</td>
+                                </tr>
+                                <tr>
+                                    <td class="info-label">Sucursal de Retiro</td>
+                                    <td class="info-value">#{pagoExitosoBean.pedido.sucursal.nombre}</td>
+                                </tr>
+                                <tr>
+                                    <td class="info-label">Dirección</td>
+                                    <td class="info-value small">#{pagoExitosoBean.pedido.sucursal.direccion}</td>
+                                </tr>
+                                <tr>
+                                    <td class="info-label">Fecha y Hora</td>
+                                    <td class="info-value">
+                                        <h:outputText value="#{pagoExitosoBean.pedido.fecha}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                        </h:outputText>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div class="product-list">
+                                <h6 class="fw-bold text-muted mb-3"><i class="pi pi-box me-2"></i>Artículos</h6>
+                                <ui:repeat value="#{pagoExitosoBean.pedido.detallepedidos}" var="detalle">
+                                    <div class="product-item">
+                                        <span>#{detalle.producto.nombre} <b class="text-muted">x#{detalle.cantidad}</b></span>
+                                        <h:outputText value="#{detalle.producto.precio * detalle.cantidad}" styleClass="fw-bold">
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </div>
+                                </ui:repeat>
+                            </div>
+
+                            <div class="total-section">
+                                <span class="text-muted small fw-bold">TOTAL PAGADO</span>
+                                <h2 class="fw-black text-dark">
+                                    <h:outputText value="#{pagoExitosoBean.pedido.total}">
+                                        <f:convertNumber type="currency" currencySymbol="$" />
+                                    </h:outputText>
+                                </h2>
+                            </div>
+
+                            <div class="text-center mt-5">
+                                <p:button outcome="/home/index.xhtml" value="Volver al Inicio"
+                                          icon="pi pi-home" styleClass="btn-home shadow me-2" />
+
+                                <p:commandButton value="Imprimir Comprobante" type="button"
+                                                 icon="pi pi-print" styleClass="ui-button-outlined ui-button-secondary rounded-pill"
+                                                 onclick="window.print();" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </h:panelGroup>
 
-                <!-- Mensaje de agradecimiento -->
-                <p class="text-center mt-3">
-                    ¡Gracias por tu compra! Hemos recibido tu pago y tu pedido será procesado en breve.
-                </p>
-                <div class="alert alert-warning text-center mt-3">
-                    Te enviaremos un correo electrónico cuando el pago sea confirmado y tu pedido esté listo para retiro.
+            <h:panelGroup rendered="#{empty pagoExitosoBean.pedido}">
+                <div class="container text-center py-5">
+                    <i class="pi pi-exclamation-triangle text-warning mb-4" style="font-size: 4rem;"></i>
+                    <h3 class="text-white">Lo sentimos, no pudimos localizar los datos del pedido.</h3>
+                    <p:button outcome="/home/index.xhtml" value="Ir a la Tienda" styleClass="mt-3" />
                 </div>
-
-
-                <!-- Resaltar el ID de Pedido -->
-                <div class="alert alert-info text-center mt-4">
-                    <h4 class="font-weight-bold">ID de Pedido: <span class="text-primary">#{pagoExitosoBean.pedido.idPedido}</span></h4>
-                    <p>Guarda este número. Lo necesitarás al momento de retirar tu pedido en tienda o al Momento de ver el estado del pedido.</p>
-                </div>
-
-                <!-- Detalles del Pedido -->
-                <h4 class="text-center mt-4">Detalles del Pedido</h4>
-                <h:panelGrid columns="2" styleClass="mt-4 text-left mx-auto" columnClasses="font-weight-bold,text-muted">
-                    <h:outputText value="Número de Orden de Pedido:" />
-                    <h:outputText value="#{pagoExitosoBean.pedido.idPedido}" />
-
-                    <h:outputText value="Nombre del Comercio:" />
-                    <h:outputText value="Ferremas S.A." />
-
-
-                    <h:outputText value="Sucursal de retiro:" />
-                    <h:outputText value="#{pagoExitosoBean.pedido.sucursal.nombre} " />
-                    <h:outputText value="Direccion:" />
-                    <h:outputText value="#{pagoExitosoBean.pedido.sucursal.direccion} " />
-
-                    <h:outputText value="Monto y Moneda:" />
-                    <h:outputText value="$#{pagoExitosoBean.pedido.total} CLP" />
-
-                    <h:outputText value="Fecha de Transacción:" />
-                    <h:outputText value="#{pagoExitosoBean.pedido.fecha}"
-                                  converter="jakarta.faces.DateTime"
-                                  converterPattern="dd/MM/yyyy HH:mm" />
-                </h:panelGrid>
-
-                <!-- Detalle de los productos -->
-                <h4 class="text-center mt-4">Productos del Pedido</h4>
-                <h:panelGrid columns="3" styleClass="mt-4 text-left mx-auto" columnClasses="font-weight-bold,text-muted">
-                    <h:outputText value="Producto" />
-                    <h:outputText value="Cantidad" />
-                    <h:outputText value="Precio Unitario" />
-                </h:panelGrid>
-
-                <!-- Iterar sobre los detalles del pedido -->
-                <ui:repeat value="#{pagoExitosoBean.pedido.detallepedidos}" var="detalle">
-                    <h:panelGrid columns="3" styleClass="mt-2 text-left mx-auto" columnClasses="text-muted,text-muted,text-muted">
-                        <h:outputText value="#{detalle.producto.nombre}" />
-                        <h:outputText value="#{detalle.cantidad}" />
-                        <h:outputText value="#{detalle.producto.precio}" />
-                    </h:panelGrid>
-                </ui:repeat>
-
-                <!-- Total del pedido -->
-                <div class="text-center mt-4">
-                    <h3 class="text-primary font-weight-bold">Total: $ #{pagoExitosoBean.pedido.total}</h3>
-                </div>
-
-
-
-            </div>
-        </h:panelGroup>
-
-        <!-- Mensaje si no se encuentra el pedido -->
-        <h:outputText value="No se encontró el pedido." rendered="#{empty pagoExitosoBean.pedido}"
-                      styleClass="text-danger mt-4 font-weight-bold" />
-
+            </h:panelGroup>
+        </div>
     </ui:define>
-
 </ui:composition>

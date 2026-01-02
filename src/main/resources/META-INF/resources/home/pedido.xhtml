@@ -2,287 +2,364 @@
                 xmlns:f="jakarta.faces.core"
                 xmlns:h="jakarta.faces.html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:fs="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/template/main.xhtml">
 
-    <h:head>
-        <title>Consultar Pedido</title>
-        <style>
-            /* Estilos generales */
-            body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background-color: #f4f7f9;
-            }
-
-            /* Estilos del formulario de búsqueda */
-            .search-form-container {
-                max-width: 600px;
-                margin: 30px auto;
-                background-color: #ffffff;
-                border-radius: 8px;
-                padding: 20px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
-
-            .search-form-container h3 {
-                font-size: 20px;
-                margin-bottom: 20px;
-                color: #007bff;
-            }
-
-            .search-form-container p:outputLabel {
-                font-weight: bold;
-                font-size: 16px;
-                color: #333;
-            }
-
-            .search-form-container p:inputText {
-                width: 100%;
-                margin-bottom: 20px;
-                padding: 10px;
-                border-radius: 5px;
-                border: 1px solid #ddd;
-                background-color: #f9f9f9;
-                font-size: 16px;
-            }
-
-            .search-form-container p:inputText:focus {
-                border-color: #007bff;
-                background-color: #fff;
-            }
-
-            .ui-button-success {
-                background-color: #28a745;
-                border-color: #28a745;
-                color: white;
-                font-size: 16px;
-                font-weight: bold;
-                border-radius: 5px;
-                padding: 10px 20px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                transition: background-color 0.3s ease, border-color 0.3s ease;
-                width: 100%;
-                margin-top: 10px;
-            }
-
-            .ui-button-success:hover {
-                background-color: #218838;
-                border-color: #1e7e34;
-            }
-
-            /* Panel de error */
-            .panel-error {
-                background-color: #f8d7da;
-                border: 1px solid #f5c6cb;
-                padding: 20px;
-                border-radius: 8px;
-                text-align: center;
-                font-size: 16px;
-                color: #721c24;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                margin-top: 20px;
-            }
-
-            /* Panel de detalles del pedido */
-            .order-details {
-                margin-top: 20px;
-                padding: 20px;
-                background-color: #ffffff;
-                border-radius: 8px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
-
-            /* Mejora de la tabla */
-            .detalle-pedido .ui-column-header {
-                background-color: #007bff;
-                color: white;
-                font-weight: bold;
-                text-align: center;
-                padding: 12px;
-                font-size: 16px;
-            }
-
-            .detalle-pedido .ui-column-body {
-                text-align: center;
-                padding: 12px;
-                font-size: 14px;
-            }
-
-            /* Botones del formulario */
-            .ui-commandbutton {
-                margin-top: 20px;
-                background-color: #007bff;
-                color: white;
-                border: 1px solid #0056b3;
-                border-radius: 5px;
-                padding: 10px 20px;
-                transition: background-color 0.3s ease, border-color 0.3s ease;
-                font-size: 16px;
-                width: 100%;
-            }
-
-            .ui-commandbutton:hover {
-                background-color: #0056b3;
-                border-color: #003f8a;
-            }
-
-            /* Estilos para las tablas */
-            .p-dataTable thead {
-                background-color: #007bff;
-                color: white;
-                font-weight: bold;
-                font-size: 16px;
-            }
-
-            .p-dataTable tbody {
-                background-color: #f9f9f9;
-            }
-        </style>
-    </h:head>
-
     <ui:define name="contenido">
-        <!-- Formulario de Búsqueda -->
-        <h:form id="formConsultaPedido" enctype="multipart/form-data" class="search-form-container">
-            <h3>Consulta de Pedido</h3>
-            <p:messages id="msgs" showDetail="true" closable="true" />
+        <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true" life="5000" />
 
-            <!-- Campos de Búsqueda -->
-            <p:outputLabel for="idPedido" value="ID del Pedido:" />
-            <h:inputText id="idPedido" value="#{miPedidoBean.idPedido}" required="true" />
+        <div class="background-fancy p-d-flex p-jc-center p-ai-center min-h-screen p-py-6">
+            <div class="p-col-12 p-md-8 p-lg-6">
 
-            <p:outputLabel for="rutCliente" value="RUT del Cliente:" />
-            <h:inputText id="rutCliente" value="#{miPedidoBean.rutCliente}" required="true" />
-
-            <!-- Botón de Buscar -->
-            <h:commandButton value="Ver Estado" action="#{miPedidoBean.cargarPedido}" styleClass="ui-button-success" />
-
-            <!-- Panel de Detalles del Pedido -->
-            <h:panelGroup rendered="#{miPedidoBean.pedido != null}" class="order-details">
-                <h3>Detalles del Pedido</h3>
-
-                <div style="display: flex; flex-wrap: wrap; margin-bottom: 10px;">
-                    <div style="width: 200px; font-weight: bold;">Estado del Pedido:</div>
-                    <div style="flex: 1;">#{miPedidoBean.pedido.estadopedido.nombre}</div>
-
-                    <div style="width: 200px; font-weight: bold;">Fecha del Pedido:</div>
-                    <div style="flex: 1;">#{miPedidoBean.pedido.fecha}</div>
-
-                    <div style="width: 200px; font-weight: bold;">Total:</div>
-                    <div style="flex: 1;">
-                        <h:outputText value="#{miPedidoBean.pedido.total}">
-                            <f:convertNumber pattern="###,##0" currencySymbol="CLP " />
-                        </h:outputText>
-                    </div>
-                </div>
-
-                <!-- Detalles del Pedido -->
-                <h:outputLabel value="Detalles del Pedido:" />
-                <p:dataTable value="#{miPedidoBean.pedido.detallepedidos}" var="detalle">
-                    <p:column headerText="Producto">
-                        <h:outputText value="#{detalle.producto.nombre}" />
-                    </p:column>
-                    <p:column headerText="Cantidad">
-                        <h:outputText value="#{detalle.cantidad}" />
-                    </p:column>
-                    <p:column headerText="Precio">
-                        <h:outputText value="#{detalle.producto.precio}" />
-                    </p:column>
-                    <p:column headerText="Subtotal">
-                        <h:outputText value="#{detalle.cantidad * detalle.producto.precio}" />
-                    </p:column>
-                </p:dataTable>
-            </h:panelGroup>
-
-
-            <h:panelGroup rendered="#{not empty miPedidoBean.pedido.transferencias}">
-                <p:panel header="Formulario de Transferencia Bancaria" styleClass="transfer-form-container">
-
-
-                    <h:panelGrid columns="2" cellpadding="5" style="width:100%">
-                        <h:outputLabel for="monto" value="Monto transferido (CLP):" />
-                        <p:inputNumber id="monto" value="#{transferenciaBean.transferencia.monto}" required="true" decimalPlaces="0" thousandSeparator="." />
-
-                        <h:outputLabel for="comentario" value="Comentario adicional:" />
-                        <p:inputTextarea id="comentario" value="#{transferenciaBean.transferencia.comentario}" rows="3" maxlength="255" counter="charCount" />
-
-                        <f:facet name="footer">
-                            <h:outputText id="charCount" />
+                <h:form id="formBusqueda">
+                    <p:card styleClass="fancy-card mb-5 animated fadeInDown shadow-6 border-none">
+                        <f:facet name="title">
+                            <div class="p-d-flex p-ai-center p-jc-between">
+                                <div class="p-d-flex p-ai-center">
+                                    <div class="search-badge p-mr-3">
+                                        <i class="pi pi-search text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h2 class="p-m-0 fancy-title text-2xl">Rastreo de Pedido</h2>
+                                        <p class="p-m-0 text-sm font-normal text-500">Consulta el avance de tu compra en tiempo real</p>
+                                    </div>
+                                </div>
+                                <i class="pi pi-shield text-3xl text-primary-200 opacity-50"></i>
+                            </div>
                         </f:facet>
 
-                        <h:outputLabel for="comprobante" value="Comprobante de transferencia (PDF/JPG/PNG):" />
-                        <p:fileUpload id="comprobante" mode="simple" skinSimple="true" value="#{transferenciaBean.file}" allowTypes="/(\.|\/)(pdf|jpg|jpeg|png)$/"
-                                      label="Subir archivo" required="true" />
-                    </h:panelGrid>
+                        <div class="p-py-4">
+                            <div class="ui-fluid p-formgrid p-grid">
+                                <div class="p-field p-col-12 p-md-6 p-pr-md-3">
+                                    <p:outputLabel for="idPedido" value="Número de Orden" styleClass="font-semibold p-mb-2 p-d-block text-700" />
+                                    <div class="ui-inputgroup custom-group">
+                                        <span class="ui-inputgroup-addon bg-transparent"><i class="pi pi-id-card text-primary"></i></span>
+                                        <p:inputText id="idPedido" value="#{miPedidoBean.idPedido}"
+                                                     required="true" placeholder="00000"
+                                                     styleClass="border-left-none" />
+                                    </div>
+                                    <p:message for="idPedido" display="text" />
+                                </div>
 
-                    <p:commandButton value="Enviar Transferencia" action="#{transferenciaBean.guardarTransferencia(miPedidoBean.pedido)}"
-                                     icon="pi pi-save" update="msgs, formConsultaPedido, tablaTransferencias" process="@form"
-                                     styleClass="ui-commandbutton" ajax="true" onstart="PF('spinner').show();" oncomplete="PF('spinner').hide();" />
+                                <div class="p-field p-col-12 p-md-6 p-pl-md-3">
+                                    <p:outputLabel for="rutCliente" value="RUT del Titular" styleClass="font-semibold p-mb-2 p-d-block text-700" />
+                                    <div class="ui-inputgroup custom-group">
+                                        <span class="ui-inputgroup-addon bg-transparent"><i class="pi pi-user text-primary"></i></span>
+                                        <p:inputText id="rutCliente" value="#{miPedidoBean.rutCliente}"
+                                                     required="true" placeholder="12.345.678-9"
+                                                     styleClass="border-left-none" />
+                                    </div>
+                                    <p:message for="rutCliente" display="text" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <f:facet name="footer">
+                            <div class="p-grid p-ai-center p-pt-2">
+                                <div class="p-col-12 p-md-8">
+                                    <p:commandButton value="Consultar Detalles del Pedido"
+                                                     action="#{miPedidoBean.cargarPedido}"
+                                                     update="msgs panelResultados"
+                                                     icon="pi pi-arrow-right"
+                                                     iconPos="right"
+                                                     styleClass="p-button-fancy w-full p-py-3 font-bold text-lg shadow-4" />
+                                </div>
+
+                            </div>
+                        </f:facet>
+                    </p:card>
+                </h:form>
+
+                <p:outputPanel id="panelResultados">
+
+                    <h:panelGroup rendered="#{miPedidoBean.pedido != null}" styleClass="animated fadeInUp">
+
+                        <p:card styleClass="fancy-card mb-5 border-left-3 border-purple-500">
+                            <f:facet name="title">
+                                <div class="p-d-flex p-ai-center">
+                                    <i class="pi pi-shopping-cart p-mr-3 text-3xl text-purple-500"></i>
+                                    <h3 class="p-m-0 fancy-subtitle">Detalles del Pedido <span class="text-color-secondary">##{miPedidoBean.pedido.idPedido}</span></h3>
+                                </div>
+                            </f:facet>
+
+                            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank fancy-grid">
+                                <h:panelGroup styleClass="p-d-flex p-ai-center p-py-2">
+                                    <i class="pi pi-info-circle p-mr-2 text-xl text-500"></i>
+                                    <span class="font-bold">Estado:</span>
+                                </h:panelGroup>
+                                <p:tag severity="#{miPedidoBean.pedido.estadopedido.nombre eq 'Completado' ? 'success' : (miPedidoBean.pedido.estadopedido.nombre eq 'Pendiente' ? 'warning' : 'info')}"
+                                       value="#{miPedidoBean.pedido.estadopedido.nombre.toUpperCase()}" styleClass="p-py-2 p-px-3" />
+
+                                <h:panelGroup styleClass="p-d-flex p-ai-center p-py-2">
+                                    <i class="pi pi-calendar p-mr-2 text-xl text-500"></i>
+                                    <span class="font-bold">Fecha:</span>
+                                </h:panelGroup>
+                                <h:outputText value="#{miPedidoBean.pedido.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+
+                                <h:panelGroup styleClass="p-d-flex p-ai-center p-py-2">
+                                    <i class="pi pi-dollar p-mr-2 text-xl text-500"></i>
+                                    <span class="font-bold">Total:</span>
+                                </h:panelGroup>
+                                <h:outputText value="#{miPedidoBean.pedido.total}" styleClass="text-2xl text-purple-600 font-bold">
+                                    <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0" />
+                                </h:outputText>
+                            </p:panelGrid>
+
+                            <p:divider align="left" styleClass="my-4">
+                                <span class="p-tag p-tag-rounded p-tag-secondary p-px-3 p-py-2">
+                                    <i class="pi pi-list p-mr-2"></i> Productos del Pedido
+                                </span>
+                            </p:divider>
+
+                            <p:dataTable value="#{miPedidoBean.pedido.detallepedidos}" var="detalle" size="small" reflow="true"
+                                         styleClass="fancy-datatable shadow-2">
+                                <p:column headerText="Producto"><h:outputText value="#{detalle.producto.nombre}" /></p:column>
+                                <p:column headerText="Cant." style="width: 50px; text-align: center"><h:outputText value="#{detalle.cantidad}" /></p:column>
+                                <p:column headerText="Precio Unit." styleClass="text-right">
+                                    <h:outputText value="#{detalle.producto.precio}"><f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0" /></h:outputText>
+                                </p:column>
+                                <p:column headerText="Subtotal" styleClass="text-right font-bold">
+                                    <h:outputText value="#{detalle.cantidad * detalle.producto.precio}"><f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="0" /></h:outputText>
+                                </p:column>
+                            </p:dataTable>
+                        </p:card>
+
+                        <h:form id="formTransferencia" enctype="multipart/form-data">
+                            <p:panel header="Registrar Pago de Transferencia" toggleable="true" collapsed="true"
+                                     styleClass="fancy-card mb-5 animated fadeInUp border-left-3 border-orange-500 shadow-3">
+
+                                <f:facet name="actions">
+                                    <p:commandLink title="Limpiar" action="#{transferenciaBean.limpiar}"
+                                                   update="formTransferencia" process="@this" styleClass="p-mr-2">
+                                        <i class="pi pi-refresh text-orange-500"></i>
+                                    </p:commandLink>
+                                </f:facet>
+
+                                <div class="ui-fluid p-formgrid p-grid">
+
+                                    <div class="p-field p-col-12 p-md-6 p-mb-4">
+                                        <p:outputLabel for="monto" value="Monto transferido" styleClass="font-bold p-d-block p-mb-2" />
+                                        <div class="ui-inputgroup">
+                                            <span class="ui-inputgroup-addon"><i class="pi pi-money-bill"></i></span>
+                                            <p:inputNumber id="monto" value="#{transferenciaBean.transferencia.monto}"
+                                                           required="true" symbol="$ " decimalPlaces="0"
+                                                           placeholder="Ej: 50000" />
+                                        </div>
+                                    </div>
+
+                                    <div class="p-field p-col-12 p-mb-4">
+                                        <p:outputLabel for="comentario" value="Nota o Comentario adicional" styleClass="font-bold p-d-block p-mb-2" />
+                                        <p:inputTextarea id="comentario" value="#{transferenciaBean.transferencia.comentario}"
+                                                         rows="3" counter="display" maxlength="255"
+                                                         counterTemplate="{0} caracteres restantes"
+                                                         placeholder="Escribe aquí algún detalle de tu pago..." />
+                                        <h:outputText id="display" styleClass="p-d-block p-text-right text-xs text-color-secondary p-mt-1" />
+                                    </div>
+
+                                    <div class="p-field p-col-12 p-mb-4">
+                                        <p:outputLabel value="Comprobante Bancario" styleClass="font-bold p-d-block p-mb-2" />
+                                        <div class="p-d-flex p-ai-center p-flex-wrap" style="gap: 10px;">
+                                            <p:fileUpload value="#{transferenciaBean.file}" mode="simple" skinSimple="true"
+                                                          label="Elegir Comprobante" chooseIcon="pi pi-image" />
+                                            <small class="text-500">PDF, JPG, PNG (Máx 2MB)</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-grid">
+                                    <div class="p-col-12 p-d-flex p-jc-end">
+                                        <p:commandButton value="Confirmar y Enviar Transferencia"
+                                                         action="#{transferenciaBean.guardarTransferencia(miPedidoBean.pedido)}"
+                                                         icon="pi pi-send"
+                                                         update="msgs panelResultados"
+                                                         styleClass="p-button-fancy p-px-5"
+                                                         style="width: auto; min-width: 250px;"/>
+                                    </div>
+                                </div>
+                            </p:panel>
+                        </h:form>
+
+                        <h:form id="formHistorial">
+                            <p:dataTable value="#{miPedidoBean.pedido.transferencias}" var="trans"
+                                         rendered="#{not empty miPedidoBean.pedido.transferencias}"
+                                         stripedRows="true" size="small" styleClass="fancy-datatable shadow-2 animated fadeInUp">
+                                <f:facet name="header">
+                                    <i class="pi pi-history p-mr-2"></i> Historial de Transferencias
+                                </f:facet>
+                                <p:column headerText="Fecha" width="100">
+                                    <h:outputText value="#{trans.fecha}"><f:convertDateTime pattern="dd/MM/yy" /></h:outputText>
+                                </p:column>
+                                <p:column headerText="Comentario">
+                                    <h:outputText value="#{trans.comentario}" />
+                                </p:column>
+                                <p:column headerText="Monto" styleClass="text-right">
+                                    <h:outputText value="#{trans.monto}"><f:convertNumber currencySymbol="$" type="currency" maxFractionDigits="0"/></h:outputText>
+                                </p:column>
+                                <p:column headerText="Estado">
+                                    <p:badge value="#{trans.estadotransferencia.nombre}" severity="warning" />
+                                </p:column>
+                                <p:column headerText="Ver" style="width: 60px; text-align: center">
+                                    <p:commandButton icon="pi pi-eye" title="Ver Comprobante"
+                                                     actionListener="#{miPedidoBean.verComprobante(trans)}"
+                                                     update="comprobanteDialog"
+                                                     oncomplete="PF('comprobanteDialogWidget').show()"
+                                                     styleClass="p-button-rounded p-button-text p-button-secondary" />
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </h:panelGroup>
+
+                    <p:staticMessage severity="warn" summary="AVISO" detail="No se encontró el pedido o los datos son incorrectos."
+                                     rendered="#{miPedidoBean.pedido == null and facesContext.postback}"
+                                     styleClass="animated shake mt-5" />
+                </p:outputPanel>
+            </div>
+        </div>
+
+        <p:dialog id="comprobanteDialog" widgetVar="comprobanteDialogWidget" modal="true"
+                  header="Comprobante de Transferencia"
+                  responsive="true"
+                  width="500px"
+                  maxWidth="90%"
+                  showEffect="fade"
+                  hideEffect="fade"
+                  styleClass="fancy-dialog">
+
+            <p:outputPanel id="displayTransfer" styleClass="text-center p-py-4">
+                <div class="p-d-flex p-jc-between p-px-3 text-sm text-color-secondary">
+                    <span><i class="pi pi-file p-mr-1"></i> #{miPedidoBean.transferencia.comprobante}</span>
+                    <p:commandButton type="button" icon="pi pi-external-link" value="Ampliar"
+                                     onclick="window.open('#{configBean.urlImagenes}transferencias/#{miPedidoBean.transferencia.comprobante}', '_blank')"
+                                     styleClass="p-button-text p-button-sm" />
+                </div>
+                <p:divider styleClass="p-my-3" />
+
+                <div class="image-container">
+                    <p:graphicImage url="#{configBean.urlImagenes}transferencias/#{miPedidoBean.transferencia.comprobante}"
+                                    rendered="#{not empty miPedidoBean.transferencia.comprobante}"
+                                    styleClass="fancy-img-preview" />
+                </div>
 
 
-                </p:panel>
-            </h:panelGroup>
-
-            <h:panelGroup rendered="#{not empty miPedidoBean.pedido.transferencias}">
-                <h3>Transferencias Asociadas</h3>
-                <p:dataTable value="#{miPedidoBean.pedido.transferencias}" var="transferencia" id="tablaTransferencias" widgetVar="transfeTable">
-                    <p:column headerText="Comentario">
-                        <h:outputText value="#{transferencia.comentario}" />
-                    </p:column>
-                    <p:column headerText="Monto (CLP)">
-                        <h:outputText value="#{transferencia.monto}" />
-                    </p:column>
-                    <p:column headerText="Fecha">
-                        <h:outputText value="#{transferencia.fecha}" />
-                    </p:column>
-                    <p:column headerText="Estado de Transferencia">
-                        <h:outputText value="#{transferencia.estadotransferencia.nombre}" />
-                    </p:column>
-                    <!--<p:column headerText="Comprobante">
-                        <h:outputText value="#{transferencia.comprobante}" />
-                    </p:column>
 
 
-                    <p:column headerText="Comprobante">
-                        <p:commandButton icon="pi pi-eye" title="Ver Comprobante"
-                                         actionListener="#{miPedidoBean.verComprobante(transferencia)}"
-                                         update=":comprobanteDialog"
-                                         oncomplete="PF('comprobanteDialogWidget').show()">
-                    </p:commandButton>
-
-                    </p:column>-->
-
-
-                </p:dataTable>
-            </h:panelGroup>
-
-
-    <!-- Error en la búsqueda -->
-            <h:panelGroup rendered="#{miPedidoBean.pedido == null}">
-                <h:outputText value="No se encontró el pedido. Verifique el ID y el RUT." styleClass="panel-error" />
-            </h:panelGroup>
-        </h:form>
-
-
-        <p:dialog id="comprobanteDialog"
-                  widgetVar="comprobanteDialogWidget"
-                  modal="true"
-                  header="Comprobante"
-                  closable="true"
-                  maximizable="true"
-                  resizable="true"
-                  draggable="true"
-                  width="500"
-                  height="auto">
-
-            <h:panelGroup rendered="#{not empty miPedidoBean.transferencia}">
-                <p:graphicImage url="/resources/images/transa/#{miPedidoBean.transferencia.comprobante}"
-                                style="max-width: 100%; max-height: 80vh; object-fit: contain;"
-                                alt="Comprobante" />
-            </h:panelGroup>
-
+            </p:outputPanel>
         </p:dialog>
 
-    </ui:define>
+        <style type="text/css">
+            /* <![CDATA[ */
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&amp;display=swap');
 
+            body { font-family: 'Poppins', sans-serif; background-color: #f0f2f5; }
+            .background-fancy { background: linear-gradient(135deg, #e0f2f7 0%, #d1e2f0 100%); min-height: 100vh; }
+            .fancy-card { background: rgba(255, 255, 255, 0.9); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
+            .fancy-title { color: #4a4a68; font-weight: 700; }
+            .fancy-subtitle { color: #6a5acd; font-weight: 600; }
+            .fancy-icon { color: #6a5acd; }
+            .p-button-fancy { background: linear-gradient(45deg, #6a5acd 0%, #8a2be2 100%); border: none; font-weight: 600; box-shadow: 0 4px 15px rgba(106, 90, 205, 0.4); }
+            .fancy-datatable .p-datatable-thead > tr > th { background: linear-gradient(to right, #6a5acd, #8a2be2); color: white; font-weight: 600; border: none; }
+
+            .animated { animation-duration: 0.6s; animation-fill-mode: both; }
+            @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+            @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+            @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } }
+            .fadeInDown { animation-name: fadeInDown; }
+            .fadeInUp { animation-name: fadeInUp; }
+            .shake { animation-name: shake; }
+
+            .fancy-img-preview {
+        max-width: 350px; /* Tamaño máximo de ancho controlado */
+        max-height: 500px; /* Tamaño máximo de alto para comprobantes largos */
+        width: auto;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        border: 3px solid white;
+        transition: transform 0.3s ease;
+    }
+
+    .fancy-img-preview:hover {
+        transform: scale(1.02); /* Efecto sutil al pasar el mouse */
+    }
+
+    /* Ajuste para el diálogo */
+    .fancy-dialog .ui-dialog-titlebar {
+        background: #f8f9fa;
+        border-bottom: 1px solid #eee;
+    }
+
+    .image-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #fdfdfd;
+        padding: 10px;
+        border-radius: 15px;
+    }
+
+    .upload-box {
+        border-style: dashed !important;
+        background-color: #fafafa;
+        transition: background-color 0.3s;
+    }
+    .upload-box:hover {
+        background-color: #f0f7ff;
+        border-color: #2196F3 !important;
+    }
+
+    /* Ajuste para que los iconos de los inputs no se vean mal con floating labels */
+    .p-input-icon-left > i {
+        z-index: 1;
+    }
+
+.search-badge {
+        background: rgba(106, 90, 205, 0.1);
+        color: #6a5acd;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(106, 90, 205, 0.2);
+    }
+
+    /* Input Groups Personalizados */
+    .custom-group .ui-inputgroup-addon {
+        border-color: #dee2e6;
+        border-right: none;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .custom-group .ui-inputfield {
+        border-left: none !important;
+        padding: 12px !important;
+    }
+
+    /* Efecto de enfoque sincronizado entre addon e input */
+    .custom-group:focus-within .ui-inputgroup-addon {
+        border-color: #6a5acd !important;
+        color: #6a5acd !important;
+    }
+
+    /* Animación sutil para el botón */
+    .p-button-fancy .ui-button-icon-right {
+        transition: transform 0.3s ease;
+    }
+    .p-button-fancy:hover .ui-button-icon-right {
+        transform: translateX(5px);
+    }
+
+    /* Estilo Glassmorphism para la tarjeta si estás en tema oscuro */
+    .fancy-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 16px !important;
+    }
+
+            /* ]]> */
+        </style>
+    </ui:define>
 </ui:composition>

@@ -3,53 +3,214 @@
                 xmlns:f="jakarta.faces.core"
                 xmlns:h="jakarta.faces.html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:fs="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 template="/template/main.xhtml">
 
-    <h:head>
-        <title>Recuperación de Contraseña</title>
-    </h:head>
-
     <ui:define name="contenido">
+        <h:outputStylesheet>
+            /* <![CDATA[ */
+            .reset-container { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+            .reset-card {
+                background: #161b22; border: 1px solid rgba(251, 191, 36, 0.2);
+                border-radius: 20px; width: 100%; max-width: 420px; padding: 40px;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative;
+            }
+            .icon-circle {
+                width: 60px; height: 60px; border-radius: 50%; display: flex;
+                align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem;
+            }
+            .icon-pending { background: rgba(251, 191, 36, 0.1); color: #fbbf24; }
+            .icon-success { background: rgba(16, 185, 129, 0.1); color: #10b981; animation: pulse 2s infinite; }
 
-        <h1>Recuperación de Contraseña</h1>
+            @keyframes pulse {
+                0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+                70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+                100% { transform: scale(1); }
+            }
+
+            .reset-title { font-size: 1.25rem; font-weight: 800; color: #fff; margin-bottom: 8px; letter-spacing: 1px; }
+            .reset-subtitle { font-size: 0.9rem; color: #8b949e; margin-bottom: 30px; line-height: 1.4; }
+
+            .custom-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: #fbbf24; margin-bottom: 8px; display: block; }
+            .input-dark {
+                background: #0d1117 !important; border: 1px solid #30363d !important;
+                color: #fff !important; padding: 12px !important; border-radius: 8px !important; width: 100%;
+            }
+            .input-dark:focus { border-color: #fbbf24 !important; }
+
+            .success-banner {
+                background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981;
+                padding: 15px; border-radius: 12px; margin-bottom: 25px;
+            }
 
 
-        <!-- Formulario de "Forgot Password" (Enviar correo) -->
-        <h:form id="forgotForm" rendered="#{empty passwordResetBean.token}">
-            <h3>¿Olvidaste tu contraseña?</h3>
+            .text-success { color: #10b981 !important; }
+    .text-danger { color: #ef4444 !important; }
 
-            <h:outputLabel for="email" value="Correo electrónico:" />
-            <h:inputText id="email" value="#{passwordResetBean.email}" required="true" label="Correo" />
+    /* Animación sutil al botón para llamar a la acción */
+    .pulse-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(251, 191, 36, 0.3) !important;
+        transition: all 0.3s ease;
+    }
 
-            <p:commandButton value="Enviar enlace de recuperación" action="#{passwordResetBean.sendResetPasswordEmail}"
-                             update=":forgotForm :resetForm" process="@form" ajax="true" />
+    /* Mejora de los inputs para que se vean más "Tech" */
+    .input-dark-password .ui-inputfield {
+        border-left: 4px solid #30363d !important;
+    }
+    .input-dark-password .ui-inputfield.ui-state-focus {
+        border-left-color: #fbbf24 !important;
+    }
 
-            <h:messages globalOnly="true" />
-        </h:form>
+    /* Personalización del medidor de PrimeFaces para que combine con el fondo oscuro */
+    .ui-password-panel {
+        background: #161b22 !important;
+        border: 1px solid #fbbf24 !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+    }
 
-        <!-- Mostrar el token generado en la interfaz -->
-        <h:panelGroup rendered="#{not empty passwordResetBean.token}">
-            <h3>Token Generado:</h3>
-            <p><b>#{passwordResetBean.token}</b></p>
-        </h:panelGroup>
+    .text-success { color: #10b981 !important; } /* Verde */
+.text-danger { color: #ef4444 !important; }  /* Rojo */
+.text-secondary { color: #8b949e !important; } /* Gris */
 
-        <!-- Formulario de "Reset Password" (Restablecer Contraseña) -->
-        <h:form id="resetForm" rendered="#{not empty passwordResetBean.token}">
-            <h3>Restablecer Contraseña</h3>
 
-            <h:outputLabel for="newPassword" value="Nueva Contraseña:" />
-            <h:inputSecret id="newPassword" value="#{passwordResetBean.newPassword}" required="true" label="Nueva Contraseña" />
+.custom-error-msg.ui-message-error {
+        background: none !important;
+        border: none !important;
+        color: #f87171 !important;
+        padding: 4px 0 !important;
+        font-size: 0.7rem !important;
+        font-weight: 600;
+        margin: 0 !important;
+    }
+    .text-muted { color: #4b5563 !important; } /* Gris para requisitos no cumplidos */
 
-            <h:outputLabel for="confirmPassword" value="Confirmar Contraseña:" />
-            <h:inputSecret id="confirmPassword" value="#{passwordResetBean.confirmPassword}" required="true" label="Confirmar Contraseña" />
+            /* ]]> */
+        </h:outputStylesheet>
 
-            <p:commandButton value="Restablecer Contraseña" action="#{passwordResetBean.resetPassword}"
-                             update=":forgotForm :resetForm" process="@form" ajax="true" />
+        <div class="reset-container">
+            <h:panelGroup id="mainResetControl" layout="block" styleClass="reset-card text-center">
 
-            <h:messages globalOnly="true" />
-        </h:form>
+                <p:growl id="growl" showDetail="true" life="5000">
+                    <p:autoUpdate />
+                </p:growl>
+
+                <h:form id="forgotForm" rendered="#{not passwordResetBean.mailSent and empty passwordResetBean.token}">
+                    <div class="icon-circle icon-pending">
+                        <i class="pi pi-lock"></i>
+                    </div>
+                    <h2 class="reset-title text-uppercase">¿Olvidaste tu clave?</h2>
+                    <p class="reset-subtitle">Ingresa tu correo y te enviaremos las instrucciones.</p>
+
+                    <div class="text-start mb-4">
+                        <h:outputLabel for="email" value="Correo electrónico" styleClass="custom-label" />
+                        <p:inputText id="email" value="#{passwordResetBean.email}"
+                                     required="true" styleClass="input-dark"
+                                     placeholder="usuario@ferremas.cl" />
+                    </div>
+
+                    <p:commandButton value="ENVIAR INSTRUCCIONES"
+                                     action="#{passwordResetBean.sendResetPasswordEmail}"
+                                     update=":mainResetControl"
+                                     styleClass="p-button-warning w-full fw-bold py-3"
+                                     style="border-radius: 10px;" />
+                </h:form>
+
+                <h:panelGroup id="successPanel" rendered="#{passwordResetBean.mailSent and empty passwordResetBean.token}">
+                    <div class="icon-circle icon-success">
+                        <i class="pi pi-check-circle"></i>
+                    </div>
+                    <h2 class="reset-title">¡Correo Enviado!</h2>
+                    <div class="success-banner">
+                        <p style="color: #10b981; margin: 0; font-weight: 600;">Hemos Enviado Las Instrucciones a:</p>
+                        <p style="color: #fff; margin: 5px 0 0 0;">#{passwordResetBean.email}</p>
+                    </div>
+                    <p class="reset-subtitle">Revisa tu bandeja de entrada.</p>
+
+                </h:panelGroup>
+
+                <h:form id="resetForm" rendered="#{not empty passwordResetBean.token}">
+                    <div class="icon-circle icon-pending">
+                        <i class="pi pi-shield"></i>
+                    </div>
+                    <h2 class="reset-title text-uppercase">Seguridad de Cuenta</h2>
+                    <p class="reset-subtitle">Configura tu nueva contraseña para FERREMAS.</p>
+
+                    <div class="ui-fluid">
+                        <div class="text-start mb-3">
+                            <h:outputLabel for="newPassword" value="Nueva Contraseña" styleClass="custom-label" />
+                            <p:password id="newPassword" value="#{passwordResetBean.newPassword}"
+                                        required="true"
+                                        requiredMessage="Debes ingresar una contraseña."
+                                        validatorMessage="La contraseña debe tener letras y números."
+                                        toggleMask="true" redisplay="true"
+                                        styleClass="input-dark-password">
+
+                                <f:validateLength minimum="8" />
+                                <f:validateRegex pattern="^(?=.*[A-Za-z])(?=.*\d).+$" />
+
+                                <p:ajax event="keyup" update="pwRequirements matchMsg msgNew" process="@this confirmPassword" global="false" />
+                            </p:password>
+
+                            <p:message id="msgNew" for="newPassword" display="text" styleClass="custom-error-msg" />
+
+                            <h:panelGroup id="pwRequirements" layout="block" class="mt-2 text-start" style="font-size: 0.75rem;">
+
+                                <ui:param name="passOk" value="#{not empty passwordResetBean.newPassword and passwordResetBean.newPassword.length() >= 8}" />
+                                <div class="#{passOk ? 'text-success' : 'text-danger'} p-mb-1">
+                                    <i class="pi #{passOk ? 'pi-check-circle' : 'pi-times-circle'} p-mr-1"></i>
+                                    Mínimo 8 caracteres
+                                </div>
+
+                                <ui:param name="hasLetter" value="#{not empty passwordResetBean.newPassword and passwordResetBean.newPassword.matches('.*[A-Za-z].*')}" />
+                                <ui:param name="hasNumber" value="#{not empty passwordResetBean.newPassword and passwordResetBean.newPassword.matches('.*\\d.*')}" />
+                                <ui:param name="formatOk" value="#{hasLetter and hasNumber}" />
+
+                                <div class="#{formatOk ? 'text-success' : 'text-danger'}">
+                                    <i class="pi #{formatOk ? 'pi-check-circle' : 'pi-times-circle'} p-mr-1"></i>
+                                    Letras y números combinados
+                                </div>
+                            </h:panelGroup>
+                        </div>
+
+                        <div class="text-start mb-2">
+                            <h:outputLabel for="confirmPassword" value="Confirmar Contraseña" styleClass="custom-label" />
+                            <p:password id="confirmPassword" value="#{passwordResetBean.confirmPassword}"
+                                        required="true"
+                                        requiredMessage="Debe confirmar su contraseña."
+                                        toggleMask="true"
+                                        redisplay="true"
+                                        styleClass="input-dark-password">
+                                <p:ajax event="keyup" update="matchMsg" process="@this newPassword" global="false" />
+                            </p:password>
+                        </div>
+
+                        <h:panelGroup id="matchMsg" layout="block" style="min-height: 25px;" class="mb-4 text-start">
+                            <h:panelGroup rendered="#{not empty passwordResetBean.confirmPassword}">
+                                <ui:param name="matching" value="#{passwordResetBean.newPassword eq passwordResetBean.confirmPassword}" />
+
+                                <div class="p-d-flex p-ai-center #{matching ? 'text-success' : 'text-danger'}"
+                                     style="font-size: 0.75rem; font-weight: 800;">
+                                    <i class="pi #{matching ? 'pi-check' : 'pi-times'} p-mr-1"></i>
+                                    #{matching ? 'Las contraseñas coinciden' : 'Las contraseñas no coinciden'}
+                                </div>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                    </div>
+
+                    <p:commandButton value="ACTUALIZAR CONTRASEÑA"
+                                     action="#{passwordResetBean.resetPassword}"
+                                     update=":mainResetControl"
+                                     icon="pi pi-lock-open"
+                                     styleClass="p-button-warning w-full fw-bold py-3 shadow-4" />
+                </h:form>
+
+                <div class="mt-4">
+                    <p:link href="login.xhtml" style="color: #8b949e; text-decoration: none; font-size: 0.8rem;">
+                        <i class="pi pi-arrow-left"></i> Volver al inicio de sesión
+                    </p:link>
+                </div>
+            </h:panelGroup>
+        </div>
     </ui:define>
-
 </ui:composition>

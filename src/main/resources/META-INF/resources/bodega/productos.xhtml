@@ -67,7 +67,7 @@
 
 
                      <p:column headerText="Imagen" exportable="false" styleClass="product-image-column">
-                         <p:graphicImage url="/resources/images/product/#{product.producto.imagen}"
+                         <p:graphicImage url="#{configBean.urlImagenes}#{product.producto.imagen}"
                                          library="demo"
                                          styleClass="product-image"
                                          alt="Imagen del producto"
@@ -196,7 +196,7 @@
 
 
                 <p:column headerText="Imagen" exportable="false" styleClass="product-image-column">
-                    <p:graphicImage url="/resources/images/product/#{prod.imagen}"
+                    <p:graphicImage url="#{configBean.urlImagenes}#{prod.imagen}"
                                     library="demo"
                                     styleClass="product-image"
                                     alt="Imagen del producto"

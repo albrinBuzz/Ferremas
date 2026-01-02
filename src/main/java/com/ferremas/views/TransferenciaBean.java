@@ -16,15 +16,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.primefaces.model.file.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Named("transferenciaBean")
 @ViewScoped
@@ -34,6 +32,9 @@ public class TransferenciaBean implements Serializable {
     private List<Transferencia> transferencias;
     private UploadedFile file;
     private boolean isTransferenciaGuardada = false;  // Flag para evitar enviar nuevamente
+    @Value("${app.upload.dir}")
+    private String uploadDir;
+
 
     @Autowired
     private TransferenciaService transferenciaService;
@@ -83,14 +84,28 @@ public class TransferenciaBean implements Serializable {
             transferencia.setPedido(pedidoGuardado);
 
             if (file != null) {
-                transferencia.setComprobante(file.getFileName());
+
 
                 try {
                     InputStream in = file.getInputStream();
                     String nombre = file.getFileName();
-                    Path rutaBase = Paths.get("src", "main", "webapp", "resources", "images", "transa");
-                    Files.createDirectories(rutaBase);
-                    upload(nombre, rutaBase.toString(), in);
+                    //Path rutaBase = Paths.get("src", "main", "webapp", "resources", "images", "transa");
+
+                    Path carpeta = Paths.get(uploadDir,"transferencias").toAbsolutePath();
+                    //Path carpeta = Paths.get(uploadDir).toAbsolutePath();
+
+                    String nombreArchivo = UUID.randomUUID() + "_" + nombre;
+                    transferencia.setComprobante(nombreArchivo);
+
+                    Files.createDirectories(carpeta);
+
+                    //Path rutaBase = Paths.get("src", "main", "webapp", "resources", "images", "transa");
+
+                    Files.createDirectories(carpeta);
+                    upload(nombreArchivo, carpeta.toString(), in);
+
+                    //Files.createDirectories(rutaBase);
+                    //upload(nombre, rutaBase.toString(), in);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -141,9 +156,18 @@ public class TransferenciaBean implements Serializable {
                 try {
                     InputStream in = file.getInputStream();
                     String nombre = file.getFileName();
-                    Path rutaBase = Paths.get("src", "main", "webapp", "resources", "images", "transa");
-                    Files.createDirectories(rutaBase);
-                    upload(nombre, rutaBase.toString(), in);
+                    //Path rutaBase = Paths.get("src", "main", "webapp", "resources", "images", "transa");
+
+                    //Path carpeta = Paths.get(uploadDir,"transferencias").toAbsolutePath();
+
+                    Path carpeta = Paths.get(uploadDir).toAbsolutePath();
+
+                    Files.createDirectories(carpeta);
+
+                    //Path rutaBase = Paths.get("src", "main", "webapp", "resources", "images", "transa");
+
+                    Files.createDirectories(carpeta);
+                    upload(nombre, carpeta.toString(), in);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

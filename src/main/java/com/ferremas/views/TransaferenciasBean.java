@@ -135,6 +135,7 @@ public class TransaferenciasBean implements Serializable {
     }
 
     public void verComprobante(Transferencia trn) {
+        Logger.logInfo(trn.toString());
 
         this.transferenciaSeleccionada=trn;
     }

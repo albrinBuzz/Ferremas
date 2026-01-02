@@ -17,6 +17,7 @@ DROP SEQUENCE IF EXISTS metodo_pago_seq CASCADE;
 DROP SEQUENCE IF EXISTS transferencia_seq CASCADE;
 DROP SEQUENCE IF EXISTS estado_trasnfe_seq CASCADE;
 DROP SEQUENCE IF EXISTS password_reset_tokens_seq CASCADE;
+DROP SEQUENCE IF EXISTS notificacion_seq CASCADE;
 
 -- 2. Crear las secuencias
 CREATE SEQUENCE categoria_seq START 1;
@@ -37,6 +38,7 @@ CREATE SEQUENCE transferencia_seq START 1;
 CREATE SEQUENCE estado_trasnfe_seq START 1;
 
 CREATE SEQUENCE password_reset_tokens_seq START 1;
+CREATE SEQUENCE notificacion_seq START 1;
 
 
 -- 3. Eliminar las tablas si existen
@@ -219,3 +221,20 @@ CREATE TABLE Transferencia (
     FOREIGN KEY (idEstadoTrnsf) REFERENCES EstadoTransferencia (idEstadoTrnsf)
 );
 
+-- 1. Eliminar la tabla si ya existe para aplicar cambios
+DROP TABLE IF EXISTS Notificacion CASCADE;
+
+-- 2. Crear la tabla flexible para Clientes Registrados e Invitados
+CREATE TABLE Notificacion (
+    id_notificacion INTEGER PRIMARY KEY DEFAULT nextval('notificacion_seq'),
+    -- Este campo recibirá el NEW.rutCliente del pedido (sea invitado o usuario)
+    rut_receptor VARCHAR(15) NOT NULL,
+    titulo VARCHAR(100) NOT NULL,
+    mensaje TEXT NOT NULL,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    leido BOOLEAN DEFAULT FALSE,
+    tipo VARCHAR(20), -- 'PEDIDO' o 'TRANSFERENCIA'
+    id_referencia INTEGER -- Para guardar el ID del pedido relacionado
+);
+
+-- Nota: No agregamos FOREIGN KEY a USUARIO porque bloquearía a los clientes invitados.

@@ -35,6 +35,7 @@ public class PasswordResetBean {
     private String newPassword;
     private String confirmPassword;
     private Boolean esCambio;
+    private boolean mailSent = false;
 
     @PostConstruct
     public void init(){
@@ -97,17 +98,29 @@ public class PasswordResetBean {
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
     }
+    public boolean isMailSent() { return mailSent; }
 
     // Método para enviar el correo de recuperación de contraseña
     public void sendResetPasswordEmail() {
+        Logger.logInfo("Enviado correo a: " + email);
         try {
-            passwordResetService.sendResetPasswordEmail(email);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Correo de recuperación enviado"));
+
+             passwordResetService.sendResetPasswordEmail(email);
+
+            this.mailSent = true; // Marcamos como enviado
+            addMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Instrucciones enviadas a " + email);
         } catch (Exception e) {
-            Logger.logInfo(e.getMessage());
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage()));
+            this.mailSent = false;
+            Logger.logError(e.getMessage());
+            addMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo enviar el correo");
         }
     }
+
+    public void addMessage(FacesMessage.Severity severity, String summary, String detail) {
+        FacesContext.getCurrentInstance().
+                addMessage(null, new FacesMessage(severity, summary, detail));
+    }
+
 
     // Método para restablecer la contraseña
     public void resetPassword() {
@@ -115,11 +128,17 @@ public class PasswordResetBean {
             try {
                 passwordResetService.resetPassword(token, newPassword);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Contraseña actualizada correctamente"));
+
             } catch (Exception e) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage()));
             }
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Las contraseñas no coinciden"));
         }
+    }
+
+    public void mostrarFormularioReset() {
+        this.token = ""; // Inicializamos el token para que se muestre el resetForm
+        // Al setear el token, el rendered="#{not empty token}" del resetForm se activará
     }
 }

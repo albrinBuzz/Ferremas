@@ -9,6 +9,8 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpSession;
+import org.apache.juli.logging.Log;
+import org.primefaces.PrimeFaces;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -77,9 +79,35 @@ public class PedidoBean implements Serializable {
     // === ACCIONES ===
 
     public void editarEstado(Pedido pedido) {
-        this.pedidoSeleccionado = pedido;
-        this.estadoSeleccionado = pedido.getEstadopedido();
-        Logger.logInfo("➡️ Método editarEstado ejecutado para pedido: " + pedidoSeleccionado.getIdPedido());
+        Logger.logInfo(pedido.getEstadopedido().getNombre());
+
+        if (pedido.getEstadopedido().getNombre().equals("Pendiente")) {
+            Logger.logInfo("No se puede editar un pedido que aún está en estado Pendiente.");
+
+            FacesContext.getCurrentInstance().
+                    addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Acción no permitida", "No se puede editar un pedido que aún está en estado Pendiente."));
+            // 1. Crear el mensaje (Severidad, Resumen, Detalle)
+            /*FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN,
+                    "Acción no permitida",
+                    "No se puede editar un pedido que aún está en estado Pendiente.");
+
+            // 2. Añadirlo al contexto de JSF
+            FacesContext.getCurrentInstance().addMessage(null, message);
+
+            // 3. ACTUALIZAR el componente growl/messages para que se muestre en pantalla
+            // Usamos el ID "msgs" que definiste en tu xhtml
+            PrimeFaces.current().ajax().update("msgs");*/
+
+        } else {
+            this.pedidoSeleccionado = pedido;
+            this.estadoSeleccionado = pedido.getEstadopedido();
+            Logger.logInfo("➡️ Método editarEstado ejecutado para pedido: " + pedidoSeleccionado.getIdPedido());
+
+            // Actualizamos el contenido del diálogo y lo mostramos
+            PrimeFaces.current().ajax().update("dlgEstado");
+            PrimeFaces.current().executeScript("PF('dlgEstado').show()");
+        }
+
     }
 
     public void verDetallesPedido(Pedido pedido) {
