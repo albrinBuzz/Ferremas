@@ -22,9 +22,15 @@ Este proyecto tiene como objetivo desarrollar una solución de comercio electró
 ## Imagenes de la tienda
 
 
-![TiendaMain.png](/imagenes%2FTiendaMain.png)
-![tienda.png](/imagenes%2Ftienda.png)
+Galería de vistas y capturas de la tienda:
 
+<p style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+  <img src="imagenes/TiendaMain.png" alt="Tienda principal" width="280" />
+  <img src="imagenes/tienda.png" alt="Vista tienda" width="280" />
+  <img src="imagenes/vistaVendedor.png" alt="Vista vendedor" width="280" />
+  <img src="imagenes/vistaBodega.png" alt="Vista bodega" width="280" />
+  <img src="imagenes/vistaContador.png" alt="Vista contador" width="280" />
+</p>
 
 ## 🔧 Tecnologías Utilizadas
 
