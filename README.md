@@ -21,7 +21,7 @@ Este proyecto tiene como objetivo desarrollar una solución de comercio electró
 
 ## Imagenes de la tienda
 
-![tienda.png](/imagenes%2Ftienda.png)
+
 ![TiendaMain.png](/imagenes%2FTiendaMain.png)
 
 
